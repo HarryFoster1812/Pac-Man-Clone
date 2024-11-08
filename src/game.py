@@ -1,6 +1,30 @@
 # this should house all of the back end logic for the game eg the ghost route planning, all of the entities and perform collision checking and see if the game is over
 # house the game files
-# crearte different pac man layouts based off a text file   
+# create different pac man layouts based off a text file   
+
+from tkinter import *
+from ghosts import *
+import pacman
+
+class Game:
+    def __init__(self, root) -> None:
+        self.isPaused = True
+        self.pacMan = PacMan()
+        self.ghosts = [Blinky() , Speedy(), Inky(), Clyde()]
+        self.level = 0
+        self.score = 0
+        self.dotsCounter = 0
+        
+        pass
+
+    def tick(self):
+        pass
+
+    def toggleGame(self):
+        pass
+
+    def 
+
 
 
 # Notes while researching:
