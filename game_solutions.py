@@ -11,7 +11,7 @@ class App():
 
     def __init__(self, root) -> None:
         self.mainCanvas = Canvas(root, bg="#000", highlightthickness=0)
-        self.mainCanvas.pack(fill="both", expand="true") 
+        self.mainCanvas.pack(fill="both", expand="true", ) 
         root.bind("<Key>", self.onKeyPress) # bind the canvas so when a key is pressed it runs onKeyPress 
 
         self.currentScreen = 0 # set the current screen to the main menu
@@ -62,9 +62,9 @@ class App():
         
         elif event.keysym_num == 65293: # enter key
             match(self.selection):
-                case 0: pass # play game
+                case 0: pass # name screen
                 case 1: pass # options
-                case 2: pass # leaderboard
+                case 2: self.leaderBoardScreen() # leaderboard
                 case 3: root.quit() # exit
 
 
@@ -75,10 +75,7 @@ class App():
 
         elif(not direction and self.selection > 0):
             self.selection -= 1
-            self.arrow.place(x=100, y=(self.buttonHeight * self.selection +300))
-
-
-            
+            self.arrow.place(x=100, y=(self.buttonHeight * self.selection +300))     
 
     def nameScreen(self):
         pass
@@ -93,6 +90,20 @@ class App():
         # switch to game screen
 
         # back button at the top
+
+    def leaderBoardScreen(self):
+        self.clearCanvas()
+        
+        self.previousScreen = self.currentScreen
+        self.currentScreen = 4
+
+        self.mainCanvas.children
+
+        pass  
+
+    def clearCanvas(self):
+        for child in self.mainCanvas.winfo_children():
+            child.destroy() # make sure to destory it so the memory is freed
 
     def onKeyPress(self, event):
         #check if the boss key is pressed
@@ -116,7 +127,7 @@ class App():
             self.previousScreen = self.currentScreen
             self.bossScreen()
 
-    def gameScreen():
+    def gameScreen(self):
         raise NotImplementedError()
     
     def bossScreen(self):

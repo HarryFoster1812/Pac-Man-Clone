@@ -58,4 +58,5 @@ class Animate:
         
 
     def __del__(self) -> None:
-        self.parent.after_cancel(self.loop)
+        if hasattr(self, "loop"): # we need to check if the loop attribute is created as for a static image (1 frame) the loop will not be created
+            self.parent.after_cancel(self.loop) # cancel the loop
