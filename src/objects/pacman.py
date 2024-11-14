@@ -8,7 +8,7 @@ class Pacman:
         self.next_direction = 0 # this will be via user input 
         self.speed = 10
         self.speed_modifier = 0.1 # float 0-1
-        self.image = Animate() # need to fill this out
+        #self.image = Animate() # need to fill this out
 
     def tick():
         # update the direction (is possible)

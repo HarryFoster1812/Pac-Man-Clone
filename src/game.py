@@ -5,13 +5,14 @@
 from tkinter import *
 from src.objects.ghosts import *
 from src.objects.pacman import Pacman
+from src.objects.ghosts import Blinky, Speedy, Inky, Clyde
 from src.settings import Settings
 
 class Game:
     def __init__(self, canvas: Canvas, settings: Settings) -> None:
         self.isPaused = True
-        #self.pacman = Pacman()
-        #self.ghosts = [Blinky() , Speedy(), Inky(), Clyde()]
+        self.pacman = Pacman([0,0], [0,0])
+        self.ghosts = [Blinky.Blinky() , Speedy.Speedy(), Inky.Inky(), Clyde.Clyde()]
         self.level = 0
         self.score = 0
         self.dotsCounter = 0
@@ -29,15 +30,15 @@ class Game:
 
     def EventHandler(self, event):
         match(event.keysym_num):
-            case self.settings.up_key: pass # change the next direction to up for pacman
-            case self.settings.down_key: pass # change the next direction 
-            case self.settings.left_key: pass # change the next direction 
-            case self.settings.right_key: pass # change the next direction
-            case self.settings.pause_key: self.toggleGame() # change the next direction
+            case self.settings.getKey("up_key"): pass # change the next direction to up for pacman
+            case self.settings.getKey("down_key"): pass # change the next direction 
+            case self.settings.getKey("right_key"): pass # change the next direction 
+            case self.settings.getKey("left_key"): pass # change the next direction
+            case self.settings.getKey("pause_key"): self.toggleGame() # pause the game
 
 """
 # Notes while researching:
-# Pac man is concidered to be in a tile when his centre point is in the tile. Tile being 8x8 pixels (redundant in tkinter
+# Pac man is considered to be in a tile when his centre point is in the tile. Tile being 8x8 pixels (for this the original dimensions are scaled by 4x so each tile is now 32x32
 
 # ghosts have three modes: chase, scatter and frightened
 # in scatter each ghost has a fixed target tile 

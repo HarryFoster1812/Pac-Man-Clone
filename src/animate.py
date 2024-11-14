@@ -11,7 +11,7 @@ class Animate:
         self.currentFrame = 0
         self.delayMS = 1000//len(self.fames)
 
-        self.is_enabled = True
+        self.is_enabled = False
 
         # add the image to the parent
         if(type(self.parent) == Label): 
@@ -23,7 +23,7 @@ class Animate:
 
         # check if the gif/image has more than one frame
         if (len(self.fames) > 1):
-            self.loop =  self.parent.after(self.delayMS, self.update)
+            self.loop =  None # set it to something
 
     def update(self):
         self.currentFrame += 1 # increment the frame
@@ -59,17 +59,13 @@ class Animate:
         return frames
 
     def toggleAnimation(self):
-
         if hasattr(self, "loop"): # we need to check if the loop attribute is created as for a static image (1 frame) the loop will not be created
             if self.is_enabled:
                 self.parent.after_cancel(self.loop) # cancel the loop
                 self.is_enabled = False
             else:
                 self.loop = self.parent.after(self.delayMS, self.update)
-
-
-
-
+                self.is_enabled = True
 
     def __del__(self) -> None:
         if hasattr(self, "loop"): # we need to check if the loop attribute is created as for a static image (1 frame) the loop will not be created

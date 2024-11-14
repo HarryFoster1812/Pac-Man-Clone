@@ -28,12 +28,11 @@ class App():
 
 
     def __init__(self, root: Tk) -> None:
-        #self.mainCanvas = Canvas(root, bg="#000", highlightthickness=0)
-        #self.mainCanvas.pack(fill="both", expand="true", ) 
+        #self.mainCanvas = Canvas(root, bg="#000", )
         root.bind("<Key>", self.onKeyPress) # bind the canvas so when a key is pressed it runs onKeyPress 
 
         # set up the main menu screen
-        self.main_frame = Frame(root)
+        self.main_frame = Frame(root, highlightthickness=0)
         self.main_frame.pack(side="top", fill="both", expand = True)
         self.main_frame.grid_rowconfigure(0, weight=1)
         self.main_frame.grid_columnconfigure(0, weight=1)
@@ -63,14 +62,11 @@ class App():
 
     def goToPreviousScreen(self):
         last_screen = self.previous_screen_stack.pop()
-        self.current_screen_no = last_screen
-
-        self.current_frame = self.frames[last_screen]
-        self.current_frame.tkraise()
+        self.switchFrame(last_screen)
 
     def onKeyPress(self, event: Event):
         #check if the boss key is pressed
-        if event.keysym_num == self.settings.boss_key:  
+        if event.keysym_num == self.settings.getKey("boss_key"):  
             self.toggleBoss()
 
         else:
@@ -78,18 +74,25 @@ class App():
             self.current_frame.EventHandler(event)
 
     def switchFrame(self, frameNo):
-        self.previous_screen_stack.append(self.current_screen_no)
+
+        # if we are on a screen with threads then we need to pause them
+        # the only screen with threads are MainMenu, LevelScreen and GameScreen
+        if self.current_screen_no == App.screenNums["MainMenu"]: # if we switch to a different screen then pause the threads
+            self.frames[App.screenNums["MainMenu"]].toggleThreads()
+
+        if self.current_screen_no != App.screenNums["BossScreen"]:
+            self.previous_screen_stack.append(self.current_screen_no)
         self.current_screen_no = frameNo
         self.current_frame = self.frames[frameNo]
         self.current_frame.tkraise()
 
+
     def toggleBoss(self):
-        if self.current_screen_no == 4:
+        if self.current_screen_no == App.screenNums["BossScreen"]:
             self.goToPreviousScreen()
 
         else:
-            self.previous_screen_stack.append(self.current_screen_no)
-            self.switchFrame("")
+            self.switchFrame( App.screenNums["BossScreen"] )
 
 class MainMenu(Frame):
     def __init__(self, parent, controller):
@@ -112,7 +115,7 @@ class MainMenu(Frame):
 
         
         # add current arrow
-        self.selection = 0 # will dertermine where the arrow will be
+        self.selection = 0 # will determine where the arrow will be
 
         self.arrow = Label(self, image="", background="#000")
         self.arrow.place(x=100, y=(90*self.selection + arrow_start_y))
@@ -153,6 +156,15 @@ class MainMenu(Frame):
                 case 1: self.controller.switchFrame(App.screenNums["OptionScreen"]) # options
                 case 2: self.controller.switchFrame(App.screenNums["LeaderboardScreen"]) # leaderboard
                 case 3: root.quit() # exit
+
+    def toggleThreads(self):
+        self.title_image.toggleAnimation()
+        self.for_legal_image.toggleAnimation()
+
+    def tkraise(self, aboveThis = None):
+        self.toggleThreads()
+        return super().tkraise(aboveThis)
+    
 
 class NameScreen(Frame):
     def __init__(self, parent, controller):
@@ -265,14 +277,34 @@ class OptionScreen(Frame):
 
         self.settings =  controller.settings
 
+        self.listen = False # will become true when a button is clicked 
+        self.to_change = "" # the setting key to change
+        self.clicked_button = None
+
         title_label = Label(self, image="", background="#000") # create the title label
         title_label.pack()
 
-        for option in self.settings.getKeyValues()
+        self.buttons = []
 
+        for option in enumerate(self.settings.getKeyValues()):
+            button_index = option[0]
+            Label(self, text=option[1][0]).pack()
+            self.buttons.append( Button(self, text = option[1][1], command=lambda opt=option[1][0], idx=button_index: self.buttonPress(opt, idx)))
+            self.buttons[button_index].pack()
+        
+        Button(self, text="back", command = lambda: self.controller.goToPreviousScreen()).pack()
+
+    def buttonPress(self, setting_name: str, clicked_button_index: int) -> None:
+        self.listen = True
+        self.to_change = setting_name
+        self.clicked_button = clicked_button_index
 
     def EventHandler(self, event: Event):
-        pass
+        if self.listen:
+            self.listen = False
+            key_num = event.keysym_num
+            self.settings.setKey(self.to_change, key_num)
+            self.buttons[self.clicked_button].configure(text=key_num)
 
 class BossScreen(Frame):
     def __init__(self, parent, controller):

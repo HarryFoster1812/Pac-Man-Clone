@@ -16,12 +16,12 @@ class Settings():
     def __init__(self):
 
         self.__settings = {
-            "boss_key":  0,
-            "up_key":    0,
-            "down_key":  0,
-            "left_key":  0,
-            "right_key": 0,
-            "pause_key": 0
+            "boss_key":  98,
+            "up_key":    65362,
+            "down_key":  65364,
+            "left_key":  65361,
+            "right_key": 65363,
+            "pause_key": 32
         }
 
     def getKey(self, key_name: str) -> int:
@@ -31,4 +31,4 @@ class Settings():
         self.__settings[key_name] =  value
 
     def getKeyValues(self) -> list:
-        return [item for item in self.__settings.items] 
+        return [item for item in self.__settings.items()] 
