@@ -37,6 +37,7 @@ class App():
         self.previous_screen_stack = []
 
         self.settings = Settings()
+        self.leaderboard = Leaderboard()
 
         self.frames = []
 
@@ -251,13 +252,13 @@ class LeaderboardScreen(Frame):
         title_label = Label(self, image="", background="#000") # create the title label
         title_label.pack()
 
-        self.leaderboard = Leaderboard()
+        self.leaderboard = controller.leaderboard
 
         Label(self, text="Leaderboard").pack()
 
         # iterate through the scores and display them
         for score in self.leaderboard.scores:
-            Label(self, text=f"{score[0]}: {score[1]}", bg="#000").pack()
+            Label(self, text=f"{score[0]}: {score[1]}", bg="#000", fg="#fff").pack()
 
         Button(self, text="Back", command=lambda: controller.goToPreviousScreen()).pack() # lambda is used because otherwise it doesnt work (i dont know why)
 
