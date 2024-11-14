@@ -6,10 +6,6 @@ from src.leaderboard import Leaderboard
 from src.game import Game
 from src.settings import Settings
 
-###################################
-# reformat so each page is its own frame and the app serves as the controller just allowing the individual frames to be switched
-
-
 class App():
 
     #mainCanvas = None
