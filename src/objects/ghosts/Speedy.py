@@ -1,5 +1,5 @@
 import Ghost
 
 class Speedy(Ghost):
-
-    def
+    def __init__(self):
+        pass

@@ -1,4 +1,4 @@
-from ghosts import Ghost
+import Ghost
 
 class Blinky(Ghost):
     def __init__(self):

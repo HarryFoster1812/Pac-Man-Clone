@@ -4,16 +4,18 @@
 
 from tkinter import *
 from src.objects.ghosts import *
-import src.objects.pacman 
+from src.objects.pacman import Pacman
+from src.settings import Settings
 
 class Game:
-    def __init__(self, canvas) -> None:
+    def __init__(self, canvas: Canvas, settings: Settings) -> None:
         self.isPaused = True
         #self.pacman = Pacman()
         #self.ghosts = [Blinky() , Speedy(), Inky(), Clyde()]
         self.level = 0
         self.score = 0
         self.dotsCounter = 0
+        self.settings = settings
         
         pass
 
@@ -21,10 +23,17 @@ class Game:
         pass
 
     def toggleGame(self):
+        # set all of the entities speed modifier to 0
+        # stop the animate threads
         pass
 
     def EventHandler(self, event):
-        pass
+        match(event.keysym_num):
+            case self.settings.up_key: pass # change the next direction to up for pacman
+            case self.settings.down_key: pass # change the next direction 
+            case self.settings.left_key: pass # change the next direction 
+            case self.settings.right_key: pass # change the next direction
+            case self.settings.pause_key: self.toggleGame() # change the next direction
 
 """
 # Notes while researching:

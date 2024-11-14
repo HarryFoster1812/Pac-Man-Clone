@@ -11,6 +11,8 @@ class Animate:
         self.currentFrame = 0
         self.delayMS = 1000//len(self.fames)
 
+        self.is_enabled = True
+
         # add the image to the parent
         if(type(self.parent) == Label): 
             self.parent.configure(image=self.fames[self.currentFrame])
@@ -55,7 +57,19 @@ class Animate:
             frames.append(obj)
 
         return frames
-        
+
+    def toggleAnimation(self):
+
+        if hasattr(self, "loop"): # we need to check if the loop attribute is created as for a static image (1 frame) the loop will not be created
+            if self.is_enabled:
+                self.parent.after_cancel(self.loop) # cancel the loop
+                self.is_enabled = False
+            else:
+                self.loop = self.parent.after(self.delayMS, self.update)
+
+
+
+
 
     def __del__(self) -> None:
         if hasattr(self, "loop"): # we need to check if the loop attribute is created as for a static image (1 frame) the loop will not be created

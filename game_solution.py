@@ -70,9 +70,8 @@ class App():
 
     def onKeyPress(self, event: Event):
         #check if the boss key is pressed
-        if event.keysym_num == 'boss key not implemented':  
+        if event.keysym_num == self.settings.boss_key:  
             self.toggleBoss()
-            # when the frame approach is implemented change the frame to the bossFrame
 
         else:
             # pass it to the approprate frame
@@ -108,11 +107,15 @@ class MainMenu(Frame):
         self.title_image = Animate("assets/title/title.gif", title_label, scale=1.1)
         self.for_legal_image = Animate("assets/title/forLegal.gif", for_legal_label, scale=1.1)
 
+        arrow_start_y = for_legal_label.winfo_pointery() + for_legal_label.winfo_reqheight()
+        print(arrow_start_y)
+
+        
         # add current arrow
-        self.selection = 0 # this is where the arrow will be
+        self.selection = 0 # will dertermine where the arrow will be
 
         self.arrow = Label(self, image="", background="#000")
-        self.arrow.place(x=100, y=(90*self.selection +300))
+        self.arrow.place(x=100, y=(90*self.selection + arrow_start_y))
 
         self.arrowImage = Animate(fileLoc="assets/pacman-right/1.png", parent=self.arrow, scale=2.5)
 
@@ -208,7 +211,7 @@ class GameScreen(Frame):
         self.game_canvas = Canvas(self, background="#000")
         self.game_canvas.pack()
 
-        self.game = Game(self.game_canvas)
+        self.game = Game(self.game_canvas, controller.settings)
 
         self.drawGame()
 
@@ -260,9 +263,13 @@ class OptionScreen(Frame):
 
         self.controller = controller
 
+        self.settings =  controller.settings
+
         title_label = Label(self, image="", background="#000") # create the title label
         title_label.pack()
-        pass 
+
+        for option in self.settings.getKeyValues()
+
 
     def EventHandler(self, event: Event):
         pass
