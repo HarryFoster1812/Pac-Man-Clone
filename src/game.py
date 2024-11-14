@@ -3,14 +3,14 @@
 # create different pac man layouts based off a text file   
 
 from tkinter import *
-from ghosts import *
-import pacman
+from src.objects.ghosts import *
+import src.objects.pacman 
 
 class Game:
-    def __init__(self, root) -> None:
+    def __init__(self, canvas) -> None:
         self.isPaused = True
-        self.pacMan = PacMan()
-        self.ghosts = [Blinky() , Speedy(), Inky(), Clyde()]
+        #self.pacman = Pacman()
+        #self.ghosts = [Blinky() , Speedy(), Inky(), Clyde()]
         self.level = 0
         self.score = 0
         self.dotsCounter = 0
@@ -23,10 +23,10 @@ class Game:
     def toggleGame(self):
         pass
 
-    def 
+    def EventHandler(self, event):
+        pass
 
-
-
+"""
 # Notes while researching:
 # Pac man is concidered to be in a tile when his centre point is in the tile. Tile being 8x8 pixels (redundant in tkinter
 
@@ -82,4 +82,6 @@ class Game:
 # Orange - Again overly complex, Has two active modes, if pac man is farther than 8 tiles away then his target is his scattered target otherwise it is the same as RED
 
 
+# Need to add cheat codes
 
+"""

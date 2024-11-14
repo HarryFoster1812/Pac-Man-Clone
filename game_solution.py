@@ -3,7 +3,8 @@ from tkinter import *
 from PIL import Image, ImageTk
 from src.animate import Animate
 from src.leaderboard import Leaderboard
-
+from src.game import Game
+from src.settings import Settings
 
 ###################################
 # reformat so each page is its own frame and the app serves as the controller just allowing the individual frames to be switched
@@ -37,8 +38,10 @@ class App():
         self.main_frame.grid_rowconfigure(0, weight=1)
         self.main_frame.grid_columnconfigure(0, weight=1)
         
-        self.currentScreenNo = 0
-        self.previousScreenStack = []
+        self.current_screen_no = 0
+        self.previous_screen_stack = []
+
+        self.settings = Settings()
 
         self.frames = []
 
@@ -47,9 +50,9 @@ class App():
             frame.grid(row=0, column=0, sticky="nsew")
             self.frames.append(frame)
 
-        self.currentFrame = self.frames[0]
-        self.currentFrame.grid(row=0, column=0, sticky="nsew")
-        self.currentFrame.tkraise()
+        self.current_frame = self.frames[0]
+        self.current_frame.grid(row=0, column=0, sticky="nsew")
+        self.current_frame.tkraise()
     
     def updateGame(self):
         pass
@@ -59,11 +62,11 @@ class App():
         # have a 2d array of the dots for the board ? 
 
     def goToPreviousScreen(self):
-        last_screen = self.previousScreenStack.pop()
-        self.currentScreenNo = last_screen
+        last_screen = self.previous_screen_stack.pop()
+        self.current_screen_no = last_screen
 
-        self.currentFrame = self.frames[last_screen]
-        self.currentFrame.tkraise()
+        self.current_frame = self.frames[last_screen]
+        self.current_frame.tkraise()
 
     def onKeyPress(self, event: Event):
         #check if the boss key is pressed
@@ -73,20 +76,20 @@ class App():
 
         else:
             # pass it to the approprate frame
-            self.currentFrame.EventHandler(event)
+            self.current_frame.EventHandler(event)
 
     def switchFrame(self, frameNo):
-        self.previousScreenStack.append(self.currentScreenNo)
-        self.currentScreenNo = frameNo
-        self.currentFrame = self.frames[frameNo]
-        self.currentFrame.tkraise()
+        self.previous_screen_stack.append(self.current_screen_no)
+        self.current_screen_no = frameNo
+        self.current_frame = self.frames[frameNo]
+        self.current_frame.tkraise()
 
     def toggleBoss(self):
-        if self.currentScreen == 4:
+        if self.current_screen_no == 4:
             self.goToPreviousScreen()
 
         else:
-            self.previousScreenStack.append(self.currentScreen)
+            self.previous_screen_stack.append(self.current_screen_no)
             self.switchFrame("")
 
 class MainMenu(Frame):
@@ -95,15 +98,15 @@ class MainMenu(Frame):
 
         self.controller = controller
 
-        titleLabel = Label(self, image="", background="#000") # create the title label
-        titleLabel.pack()
+        title_label = Label(self, image="", background="#000") # create the title label
+        title_label.pack()
 
-        forLegalLabel = Label(self, image="", background="#000") # create the for legal label
-        forLegalLabel.pack()
+        for_legal_label = Label(self, image="", background="#000") # create the for legal label
+        for_legal_label.pack()
 
         # load the title image and animate it
-        self.title = Animate("assets/title/title.gif", titleLabel)
-        self.forLegal = Animate("assets/title/forLegal.gif", forLegalLabel)
+        self.title_image = Animate("assets/title/title.gif", title_label, scale=1.1)
+        self.for_legal_image = Animate("assets/title/forLegal.gif", for_legal_label, scale=1.1)
 
         # add current arrow
         self.selection = 0 # this is where the arrow will be
@@ -114,10 +117,10 @@ class MainMenu(Frame):
         self.arrowImage = Animate(fileLoc="assets/pacman-right/1.png", parent=self.arrow, scale=2.5)
 
         # play button
-        playButton = Button(self, text="Play", background="#000", fg="#FFF", command=lambda: controller.switchFrame(App.screenNums["NameScreen"]))
-        playButton.pack()
+        play_button = Button(self, text="Play", background="#000", fg="#FFF", command=lambda: controller.switchFrame(App.screenNums["NameScreen"]))
+        play_button.pack()
 
-        self.buttonHeight = playButton.winfo_reqheight()
+        self.buttonHeight = play_button.winfo_reqheight()
         # options
         Button(self, text="Options", background="#000", fg="#FFF", command=lambda: controller.switchFrame(App.screenNums["OptionScreen"])).pack()
         # leaderboard
@@ -154,8 +157,8 @@ class NameScreen(Frame):
 
         self.controller = controller
 
-        titleLabel = Label(self, image="", background="#000") # create the title label
-        titleLabel.pack()
+        title_label = Label(self, image="", background="#000") # create the title label
+        title_label.pack()
         
         Button(self, text="Back",command=lambda: controller.goToPreviousScreen()).pack()
         # add current highest score 
@@ -169,13 +172,13 @@ class NameScreen(Frame):
 
         # back button at the top
   
-    def nameButtonSubmit(self, textEntered):
-        if textEntered.strip() != "":
+    def nameButtonSubmit(self, text_entered):
+        if text_entered.strip() != "":
             # add new entry to scores
             # add name to entry
-            self.controller.switchFrame(App.screenNums["LevelScreen"])
+            self.controller.switchFrame(App.screenNums["GameScreen"])
         else:
-            Message(root, text="You need to enter a name").pack()
+            Message(self, text="You need to enter a name").pack()
     
     def EventHandler(self, event: Event):
         pass
@@ -186,8 +189,8 @@ class LevelScreen(Frame):
 
         self.controller = controller
 
-        titleLabel = Label(self, image="", background="#000") # create the title label
-        titleLabel.pack()
+        title_label = Label(self, image="", background="#000") # create the title label
+        title_label.pack()
         pass 
 
     def EventHandler(self, event: Event):
@@ -199,8 +202,30 @@ class GameScreen(Frame):
 
         self.controller = controller
 
-        titleLabel = Label(self, image="", background="#000") # create the title label
-        titleLabel.pack()
+        title_label = Label(self, image="", background="#000") # create the title label
+        title_label.pack()
+
+        self.game_canvas = Canvas(self, background="#000")
+        self.game_canvas.pack()
+
+        self.game = Game(self.game_canvas)
+
+        self.drawGame()
+
+    def drawGame(self):
+        Button(self.game_canvas, text = "test").grid(row=35, column=28)
+        # top level 
+        #1up       HIGHSCORE
+        #PLAYER      SCORE
+        #
+        #
+        #
+        #
+        #
+        #LIVES                      AVAILIBLE POWERUPS
+
+        # 28 x 36 total grid. 3 at the top, 2 at the bottom
+
         pass 
 
     def EventHandler(self, event: Event):
@@ -212,8 +237,8 @@ class LeaderboardScreen(Frame):
 
         self.controller = controller
 
-        titleLabel = Label(self, image="", background="#000") # create the title label
-        titleLabel.pack()
+        title_label = Label(self, image="", background="#000") # create the title label
+        title_label.pack()
 
         self.leaderboard = Leaderboard()
 
@@ -235,8 +260,8 @@ class OptionScreen(Frame):
 
         self.controller = controller
 
-        titleLabel = Label(self, image="", background="#000") # create the title label
-        titleLabel.pack()
+        title_label = Label(self, image="", background="#000") # create the title label
+        title_label.pack()
         pass 
 
     def EventHandler(self, event: Event):
@@ -248,8 +273,8 @@ class BossScreen(Frame):
 
         self.controller = controller
 
-        titleLabel = Label(self, image="", background="#000") # create the title label
-        titleLabel.pack()
+        title_label = Label(self, image="", background="#000") # create the title label
+        title_label.pack()
         pass 
 
     def EventHandler(self, event: Event):
@@ -257,7 +282,8 @@ class BossScreen(Frame):
 
 if __name__ == "__main__":
     root = Tk()
-    root.geometry("960x540")
+    root.geometry("896x1152")
     root.title = "Woka Woka"
+    root.resizable(width=False, height=False)
     app = App(root)
     root.mainloop()
