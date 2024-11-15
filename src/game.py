@@ -7,6 +7,7 @@ from src.objects.ghosts import *
 from src.objects.pacman import Pacman
 from src.objects.ghosts import Blinky, Speedy, Inky, Clyde
 from src.settings import Settings
+from src.maze import Maze
 
 class Game:
     def __init__(self, canvas: Canvas, settings: Settings) -> None:
@@ -17,7 +18,7 @@ class Game:
         self.score = 0
         self.dotsCounter = 0
         self.settings = settings
-        
+        self.maze = Maze("src/levels/main.txt")
         pass
 
     def tick(self):

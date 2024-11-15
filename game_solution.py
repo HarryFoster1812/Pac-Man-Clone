@@ -225,7 +225,9 @@ class GameScreen(Frame):
         self.drawGame()
 
     def drawGame(self):
-        Button(self.game_canvas, text = "test").grid(row=35, column=28)
+
+        
+
         # top level 
         #1up       HIGHSCORE
         #PLAYER      SCORE
@@ -250,7 +252,7 @@ class LeaderboardScreen(Frame):
         self.controller = controller
 
         title_label = Label(self, image="", background="#000") # create the title label
-        title_label.pack()
+        title_label.pack() 
 
         self.leaderboard = controller.leaderboard
 

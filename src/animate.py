@@ -4,8 +4,20 @@ import threading
 
 class Animate:
     
-    def __init__(self, fileLoc="", parent: Label | Canvas = None, x=None, y=None, scale:float = 1) -> None:
-        
+    def __init__(self, fileLoc="", parent: Label | Canvas = None, x=None, y=None, scale:float = 1, rotation: int = 0, flip:int = 0, frame: int=-1) -> None:
+
+        """
+        The constructor function for an image
+        :param fileLoc: The file location of the image
+        :param parent:
+        :param x:
+        :param y:
+        :param scale:
+        :param rotation:
+        :param flip:  
+        :param frame: -1 default, otherwise the frame is specified
+        """
+
         self.fames = Animate.getFrames(fileLoc, scale)
         self.parent = parent
         self.currentFrame = 0
@@ -13,17 +25,12 @@ class Animate:
 
         self.is_enabled = False
 
-        # add the image to the parent
-        if(type(self.parent) == Label): 
-            self.parent.configure(image=self.fames[self.currentFrame])
-
-        else:
-            self.parent.create_image(x, y, image=self.fames[self.currentFrame], anchor="ne")
-        
-
-        # check if the gif/image has more than one frame
-        if (len(self.fames) > 1):
+        # check if the gif/image has more than one frame and it is intended to be used as a gif
+        if (len(self.fames) > 1 and frame ==-1):
             self.loop =  None # set it to something
+
+        elif(frame != -1): # we need to get a specific frame
+            self.currentFrame = frame
 
     def update(self):
         self.currentFrame += 1 # increment the frame
@@ -34,6 +41,15 @@ class Animate:
 
         self.loop = self.parent.after(self.delayMS, self.update) # recall the loop
         
+        
+    def addParent(self, new_parent):
+        # add the image to the parent
+        self.parent = new_parent
+        if(type(self.parent) == Label): 
+            self.parent.configure(image=self.fames[self.currentFrame])
+
+        elif (type(self.parent) == Canvas):
+            self.parent.create_image(x, y, image=self.fames[self.currentFrame], anchor="ne")
         
 
     def getFrames(fileLoc, scale) -> list:
