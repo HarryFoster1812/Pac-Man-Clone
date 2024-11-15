@@ -6,6 +6,9 @@ from src.leaderboard import Leaderboard
 from src.game import Game
 from src.settings import Settings
 
+
+DEBUG = True
+
 class App():
 
     #mainCanvas = None
@@ -46,9 +49,13 @@ class App():
             frame.grid(row=0, column=0, sticky="nsew")
             self.frames.append(frame)
 
-        self.current_frame = self.frames[0]
+        self.current_frame = self.frames[3]
         self.current_frame.grid(row=0, column=0, sticky="nsew")
         self.current_frame.tkraise()
+
+        #self.current_frame = self.frames[0]
+        #self.current_frame.grid(row=0, column=0, sticky="nsew")
+        #self.current_frame.tkraise()
     
     def updateGame(self):
         pass
@@ -160,8 +167,7 @@ class MainMenu(Frame):
 
     def tkraise(self, aboveThis = None):
         self.toggleThreads()
-        return super().tkraise(aboveThis)
-    
+        return super().tkraise(aboveThis)   
 
 class NameScreen(Frame):
     def __init__(self, parent, controller):
@@ -218,16 +224,32 @@ class GameScreen(Frame):
         title_label.pack()
 
         self.game_canvas = Canvas(self, background="#000")
-        self.game_canvas.pack()
+        self.game_canvas.pack(fill="both", expand = True)
+
+        if (DEBUG):
+            for i in range(36):
+                for j in range(28):
+                    x_0 = j*32
+                    y_0 = i*32
+                    x_1 = (j+1)*32
+                    y_1 = (i+1)*32
+                    self.game_canvas.create_rectangle((x_0, y_0), (x_1, y_1), fill="#000", outline='#FFF')
+
+        self.game_canvas.update()
 
         self.game = Game(self.game_canvas, controller.settings)
 
         self.drawGame()
 
     def drawGame(self):
-
+        for i, row in enumerate(self.game.maze.mazeImages):
+            for j, image in enumerate(row):
+                if image != None:
+                    image.addParent(self.game_canvas, x=((j+1)*32), y=(i*32))
         
-
+        Pacman_pos = self.game.pacman.canvas_position
+        self.game.pacman.image.addParent(self.game_canvas, x=Pacman_pos[0], y=Pacman_pos[1])
+        
         # top level 
         #1up       HIGHSCORE
         #PLAYER      SCORE

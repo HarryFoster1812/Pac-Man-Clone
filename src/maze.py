@@ -37,17 +37,17 @@ class Maze:
         "d": None,                                   # junction without a dot
         "U": None,                                   # junction where ghost can not turn up and does not have a dot
         "u": "Dot.png",                              # junction where ghost can not turn up and has a dot
-        "0": "DoubleCorner.gif 1 0 0",               # double corner
-        "1": "DoubleWall.gif 1 0 0",                 # double wall
-        "2": "SingleCorner.gif 1 0 0",               # single corner
-        "3": "SingleWall.gif 1 0 0",                 # single wall
-        "4": "GhostHouseCorner.gif 1 0 0",           # Ghost house corner
-        "5": "GhostHouseWall.gif 1 0 0",             # ghost house wall
-        "=": "GhostHouseTrapDoor.gif 1 0 0",         # ghost house trapdoor
-        "6": "DoubleShortCorner.gif 1 0 0",          # double short corner 
-        "7": "NarrowDoubleCornerRight.gif 1 0 0",    # narrow double corner
-        "8": "NarrowDoubleCornerLeft.gif 1 0 0",     # narrow double corner 
-        "9": None,                                    # something to do with the walls
+        "0": "Apple.png", #"DoubleCorner.gif 1 0 0",               # double corner
+        "1": "Apple.png", #"DoubleWall.gif 1 0 0",                 # double wall
+        "2": "Apple.png", #"SingleCorner.gif 1 0 0",               # single corner
+        "3": "Apple.png", #"SingleWall.gif 1 0 0",                 # single wall
+        "4": "Apple.png", #"GhostHouseCorner.gif 1 0 0",           # Ghost house corner
+        "5": "Apple.png", #"GhostHouseWall.gif 1 0 0",             # ghost house wall
+        "=": "Apple.png", #"GhostHouseTrapDoor.gif 1 0 0",         # ghost house trapdoor
+        "6": "Apple.png", #"DoubleShortCorner.gif 1 0 0",          # double short corner 
+        "7": "Apple.png", #"NarrowDoubleCornerRight.gif 1 0 0",    # narrow double corner
+        "8": "Apple.png", #"NarrowDoubleCornerLeft.gif 1 0 0",     # narrow double corner 
+        "9": "Apple.png",                                    # something to do with the walls
         "n": None
     }
 
@@ -84,7 +84,7 @@ class Maze:
                 
                 else: # it has parameters so we need to split them and then pass them through
                     #path {frameNo} {rotation} {flip}
-                    self.maze.append(None)
+                    imageTemp.append(None)
                     """
                     param_image_path = imagePath.split(" ")[0]
                     param_frame      = int(imagePath.split(" ")[1])

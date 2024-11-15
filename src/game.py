@@ -12,7 +12,7 @@ from src.maze import Maze
 class Game:
     def __init__(self, canvas: Canvas, settings: Settings) -> None:
         self.isPaused = True
-        self.pacman = Pacman([0,0], [0,0])
+        self.pacman = Pacman([15*32,25.5*32])
         self.ghosts = [Blinky.Blinky() , Speedy.Speedy(), Inky.Inky(), Clyde.Clyde()]
         self.level = 0
         self.score = 0

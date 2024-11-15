@@ -9,8 +9,8 @@ class Animate:
         """
         The constructor function for an image
         :param fileLoc: The file location of the image
-        :param parent:
-        :param x:
+        :param parent: The object that the image will be added to
+        :param x: 
         :param y:
         :param scale:
         :param rotation:
@@ -42,9 +42,10 @@ class Animate:
         self.loop = self.parent.after(self.delayMS, self.update) # recall the loop
         
         
-    def addParent(self, new_parent):
+    def addParent(self, new_parent, x:int = 0, y:int = 0):
         # add the image to the parent
         self.parent = new_parent
+
         if(type(self.parent) == Label): 
             self.parent.configure(image=self.fames[self.currentFrame])
 
