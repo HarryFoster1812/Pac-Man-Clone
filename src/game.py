@@ -5,7 +5,7 @@
 from tkinter import *
 from src.objects.ghosts import *
 from src.objects.pacman import Pacman
-from src.objects.ghosts import Blinky, Speedy, Inky, Clyde
+from src.objects.ghosts import Blinky, Speedy, Inky, Clyde, Ghost
 from src.settings import Settings
 from src.maze import Maze
 
@@ -16,7 +16,8 @@ class Game:
         self.ghosts = [Blinky.Blinky() , Speedy.Speedy(), Inky.Inky(), Clyde.Clyde()]
         self.level = 0
         self.score = 0
-        self.dotsCounter = 0
+        self.lives = 3
+        self.dotsCounter = 0 # after 70 dots bonus will display, and then after 170 another bonus will display
         self.settings = settings
         self.maze = Maze("src/levels/main.txt")
         pass
@@ -27,6 +28,28 @@ class Game:
     def toggleGame(self):
         # set all of the entities speed modifier to 0
         # stop the animate threads
+        pass
+
+    def moveCharacters(self):
+        pass
+
+    def checkCollision(self):
+        for ghost in self.ghosts: 
+            if ghost.current_cell == self.pacman.current_cell:
+                match(self.ghost.state):
+                    case 0: self.deadPacMan() # default
+                    case 1: self.deadPacMan() # scatter
+                    case 2: self.ghostDead(ghost) # frightend
+
+    def deadPacMan(self):
+        # game pauses
+        # pacman changes to dead animation
+        # disable controllers
+        pass
+
+    def ghostDead(self, ghost:Ghost.Ghost):
+        # change ghost to dead state
+        # add points
         pass
 
     def EventHandler(self, event):

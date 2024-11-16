@@ -6,7 +6,7 @@ class Pacman:
         self.current_cell = [] # the co-ordinates of pacman in the cell
         self.direction = -1 # the current direction that pacman is travelling
         self.next_direction = 0 # this will be via user input 
-        self.speed = 10
+        self.speed = 5.05050508333 # pixels this is from 
         self.speed_modifier = 0.1 # float 0-1
         self.image = Animate("assets/PacManRight.gif") # need to fill this out
 

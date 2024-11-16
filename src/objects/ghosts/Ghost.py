@@ -12,7 +12,7 @@ class Ghost:
         self.decision = [] # the next square the ghost will move to
         self.direction = [] # [x, y] eg [1, 0] will be right, [0, -1] will be down
         self.is_active = True # this is applicable when the ghost is eaten or is in the ghost house
-        self.speed = 10 # the base pixel movement speed of the ghost  
+        self.speed = 5.05050508333 # the base pixel movement speed of the ghost  
         self.speed_modifier = 0.8 # this is applied during the different ghost modes
 
     def calculateTile() -> None:

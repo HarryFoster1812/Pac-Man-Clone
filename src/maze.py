@@ -32,7 +32,7 @@ class Maze:
         "X": None,                                   # No image to display
         ".": "Dot.png",                              # dot
         "+": "Dot.png",                              # junction 
-        "p": "PowerUp.png 1",                        # power-up
+        "p": "PowerUp.png",                        # power-up
         "-": None,                                   # tile with nothing
         "d": None,                                   # junction without a dot
         "U": None,                                   # junction where ghost can not turn up and does not have a dot
@@ -41,9 +41,9 @@ class Maze:
         "1": "Apple.png", #"DoubleWall.gif 1 0 0",                 # double wall
         "2": "Apple.png", #"SingleCorner.gif 1 0 0",               # single corner
         "3": "Apple.png", #"SingleWall.gif 1 0 0",                 # single wall
-        "4": "Apple.png", #"GhostHouseCorner.gif 1 0 0",           # Ghost house corner
+        "4": "GhostHouse/GhostHouseCorner.gif 1 0 0",           # Ghost house corner
         "5": "Apple.png", #"GhostHouseWall.gif 1 0 0",             # ghost house wall
-        "=": "Apple.png", #"GhostHouseTrapDoor.gif 1 0 0",         # ghost house trapdoor
+        "=": "GhostHouse/GhostHouseTrapdoor.png", #"GhostHouseTrapDoor.gif 1 0 0",         # ghost house trapdoor
         "6": "Apple.png", #"DoubleShortCorner.gif 1 0 0",          # double short corner 
         "7": "Apple.png", #"NarrowDoubleCornerRight.gif 1 0 0",    # narrow double corner
         "8": "Apple.png", #"NarrowDoubleCornerLeft.gif 1 0 0",     # narrow double corner 
@@ -69,7 +69,9 @@ class Maze:
             imageTemp = []
 
             line = line.split(" ")
+
             for element in line:
+                
                 typeOfCell = Maze.maze_dict[element]
                 tempType.append(typeOfCell)
                 

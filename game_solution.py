@@ -241,6 +241,8 @@ class GameScreen(Frame):
 
         self.drawGame()
 
+        self.after(17, self.update)
+
     def drawGame(self):
         for i, row in enumerate(self.game.maze.mazeImages):
             for j, image in enumerate(row):
@@ -264,8 +266,13 @@ class GameScreen(Frame):
 
         pass 
 
+    # 60 fps
+    def update(self):
+        self.game.tick()
+        self.after(17, self.update)
+
     def EventHandler(self, event: Event):
-        pass
+        self.game.EventHandler(event)
 
 class LeaderboardScreen(Frame):
     def __init__(self, parent, controller):
@@ -342,7 +349,7 @@ class BossScreen(Frame):
 
 if __name__ == "__main__":
     root = Tk()
-    root.geometry("896x1152")
+    root.geometry("896x1170")
     root.title = "Woka Woka"
     root.resizable(width=False, height=False)
     app = App(root)
