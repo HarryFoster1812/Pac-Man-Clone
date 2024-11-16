@@ -268,7 +268,20 @@ class GameScreen(Frame):
 
     # 60 fps
     def update(self):
-        self.game.tick()
+        if self.game.isPaused:
+            pass
+        else:
+            self.game.tick()
+            # draw pac man
+            pacman_pos = self.game.pacman.canvas_position
+            pacman_image_id = self.game.pacman.image.id
+            self.game_canvas.moveto(pacman_image_id, pacman_pos[0], pacman_pos[1])
+            # draw ghost
+            # remove any dots
+            # update score
+            # check for win
+            # if win then reset and change to level frame
+        
         self.after(17, self.update)
 
     def EventHandler(self, event: Event):

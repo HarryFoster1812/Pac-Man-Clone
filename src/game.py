@@ -12,23 +12,31 @@ from src.maze import Maze
 class Game:
     def __init__(self, canvas: Canvas, settings: Settings) -> None:
         self.isPaused = True
-        self.pacman = Pacman([15*32,25.5*32])
+        self.maze = Maze("src/levels/main.txt")
+        self.pacman = Pacman([15*32,25.5*32], self.maze)
         self.ghosts = [Blinky.Blinky() , Speedy.Speedy(), Inky.Inky(), Clyde.Clyde()]
         self.level = 0
+        self.reset = False
         self.score = 0
         self.lives = 3
         self.dotsCounter = 0 # after 70 dots bonus will display, and then after 170 another bonus will display
         self.settings = settings
-        self.maze = Maze("src/levels/main.txt")
         pass
 
     def tick(self):
-        pass
+        self.pacman.tick()
+        for ghost in self.ghosts:
+            ghost.tick()
 
     def toggleGame(self):
         # set all of the entities speed modifier to 0
         # stop the animate threads
-        pass
+        if self.isPaused:
+            # unpause
+            self.isPaused =  not self.isPaused
+        else:
+            self.isPaused = True
+            pass
 
     def moveCharacters(self):
         pass
@@ -53,12 +61,27 @@ class Game:
         pass
 
     def EventHandler(self, event):
-        match(event.keysym_num):
-            case self.settings.getKey("up_key"): pass # change the next direction to up for pacman
-            case self.settings.getKey("down_key"): pass # change the next direction 
-            case self.settings.getKey("right_key"): pass # change the next direction 
-            case self.settings.getKey("left_key"): pass # change the next direction
-            case self.settings.getKey("pause_key"): self.toggleGame() # pause the game
+        if self.isPaused:
+            self.toggleGame()
+        
+        if event.keysym_num == self.settings.getKey("up_key"): 
+            self.pacman.next_direction = [0, 1]
+            pass # change the next direction to up for pacman
+
+        elif event.keysym_num == self.settings.getKey("down_key"):
+            self.pacman.next_direction = [0, -1]
+            pass # change the next direction 
+        
+        elif event.keysym_num == self.settings.getKey("right_key"):
+            self.pacman.next_direction = [1, 0]
+            pass # change the next direction 
+        
+        elif event.keysym_num == self.settings.getKey("left_key"):
+            self.pacman.next_direction = [-1, 0]
+            pass # change the next direction
+        
+        elif event.keysym_num == self.settings.getKey("pause_key"):
+            self.toggleGame() # pause the game
 
 """
 # Notes while researching:

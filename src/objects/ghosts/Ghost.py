@@ -24,7 +24,7 @@ class Ghost:
     def makeNextDecision() -> None:
         pass
 
-    def tick():
+    def tick(self):
         pass
 
     def changeState(self, new_state):

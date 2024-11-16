@@ -7,7 +7,7 @@ class Animate:
     def __init__(self, fileLoc="", parent: Label | Canvas = None, x=None, y=None, scale:float = 1, rotation: int = 0, flip:int = 0, frame: int=-1) -> None:
 
         """
-        The constructor function for an image
+        The constructor function for an animated image
         :param fileLoc: The file location of the image
         :param parent: The object that the image will be added to
         :param x: 
@@ -50,7 +50,7 @@ class Animate:
             self.parent.configure(image=self.fames[self.currentFrame])
 
         elif (type(self.parent) == Canvas):
-            self.parent.create_image(x, y, image=self.fames[self.currentFrame], anchor="ne")
+            self.id = self.parent.create_image(x, y, image=self.fames[self.currentFrame], anchor="ne")
         
 
     def getFrames(fileLoc, scale) -> list:
