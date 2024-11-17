@@ -1,12 +1,8 @@
 import math
-from src.animate import Animate
 
 class Ghost:
 
-    def __init__(self) -> None:
-        self.pos = []  # contains the current position of the ghost
-        self.current_tile = [] # the tile which the ghost corresponds to
-        self.image = Animate() # the path/pillow image
+    def __init__(self, start_pos, maze) -> None:
         self.state = 0 # the current state of the ghost, 0 = default, 1 = scatter, 2 = fright, 3 = dead
         self.target = [] # the target square that the ghost its trying to get to
         self.decision = [] # the next square the ghost will move to
@@ -14,6 +10,21 @@ class Ghost:
         self.is_active = True # this is applicable when the ghost is eaten or is in the ghost house
         self.speed = 5.05050508333 # the base pixel movement speed of the ghost  
         self.speed_modifier = 0.8 # this is applied during the different ghost modes
+
+
+        self.canvas_position = [start_pos[0], start_pos[1]] # the x and y co-ordinates of pacman
+        self.target_position = []
+        self.current_cell = [] # the co-ordinates of pacman in the cell
+        self.next_cell = [0,0]
+        self.direction = [0,0] # the current direction that pacman is travelling
+        self.next_direction = [0,0] # this will be via user input 
+        self.speed = 5.05050508333 # pixels this is from 
+        self.speed_modifier = 0.9 # float 0-1
+        
+        self.tick_count = 0
+
+        self.maze = maze
+
 
     def calculateTile() -> None:
         pass

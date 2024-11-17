@@ -1,3 +1,3 @@
 class Wall:
-    def __init__(self, image_path):
+    def __init__(self):
         pass

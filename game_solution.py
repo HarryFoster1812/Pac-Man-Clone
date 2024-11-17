@@ -226,6 +226,8 @@ class GameScreen(Frame):
         self.game_canvas = Canvas(self, background="#000")
         self.game_canvas.pack(fill="both", expand = True)
 
+        self.game = Game(self.game_canvas, controller.settings)
+
         if (DEBUG):
             for i in range(36):
                 for j in range(28):
@@ -235,9 +237,11 @@ class GameScreen(Frame):
                     y_1 = (i+1)*32
                     self.game_canvas.create_rectangle((x_0, y_0), (x_1, y_1), fill="#000", outline='#FFF')
 
-        self.game_canvas.update()
+            rectanglex = self.game.pacman.canvas_position[0]
+            rectangley = self.game.pacman.canvas_position[1]
+            self.pacman_rectangle = self.game_canvas.create_rectangle((rectanglex,rectangley), (rectanglex+32,rectangley+32), fill="green")
 
-        self.game = Game(self.game_canvas, controller.settings)
+        self.game_canvas.update()
 
         self.drawGame()
 
@@ -252,6 +256,9 @@ class GameScreen(Frame):
         Pacman_pos = self.game.pacman.canvas_position
         self.game.pacman.image.addParent(self.game_canvas, x=Pacman_pos[0], y=Pacman_pos[1])
         
+        for ghost in self.game.ghosts:
+            ghost_pos = ghost.canvas_position
+            ghost.image.addParent(self.game_canvas, x=ghost_pos[0], y=ghost_pos[1])
         # top level 
         #1up       HIGHSCORE
         #PLAYER      SCORE
@@ -276,6 +283,11 @@ class GameScreen(Frame):
             pacman_pos = self.game.pacman.canvas_position
             pacman_image_id = self.game.pacman.image.id
             self.game_canvas.moveto(pacman_image_id, pacman_pos[0], pacman_pos[1])
+
+            if DEBUG:
+                rectanglex = self.game.pacman.current_cell[0]*32
+                rectangley = self.game.pacman.current_cell[1]*32
+                self.game_canvas.moveto(self.pacman_rectangle, rectanglex, rectangley)
             # draw ghost
             # remove any dots
             # update score

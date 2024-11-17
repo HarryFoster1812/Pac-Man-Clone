@@ -1,30 +1,34 @@
 from src.animate import Animate
+from src.objects.map_objects.wall import Wall 
+from src.objects.map_objects.moveable import Moveable 
+from src.objects.map_objects.powerup import Powerup 
+import copy
 
 class Maze:
 
     # define the objects that should be created for the maze
     # anything that is 0 represents somewhere that any character can not move to 
     maze_dict =  {
-        "X": 0,  # Out side the bounds of the game
-        ".": 1,  # dot
-        "+": 2,  # junction 
-        "p": 3,  # power-up
-        "-": 4,  # tile with nothing
-        "d": 5,  # junction without a dot
-        "U": 6,  # junction where ghost can not turn up and does not have a dot
-        "u": 6,  # junction where ghost can not turn up and has a dot
-        "0": 0,  # double corner
-        "1": 0,  # double wall
-        "2": 0,  # single corner
-        "3": 0,  # single wall
-        "4": 0,  # Ghost house corner
-        "5": 0,  # ghost house wall
-        "=": 4,  # ghost house trapdoor, this is 4 since the ghosts need to be able to move out of it
-        "6": 0,  # double short corner 
-        "7": 0,  # narrow double corner left
-        "8": 0,  # narrow double corner right
-        "9": 0,  # something to do with the walls
-        "n": 7   # teleport square
+        "X": None,  # Out side the bounds of the game
+        ".": Moveable,  # dot
+        "+": Moveable,  # junction 
+        "p": Powerup,  # power-up
+        "-": Moveable,  # tile with nothing
+        "d": Moveable,  # junction without a dot
+        "U": Moveable,  # junction where ghost can not turn up and does not have a dot
+        "u": Moveable,  # junction where ghost can not turn up and has a dot
+        "0": Wall,  # double corner
+        "1": Wall,  # double wall
+        "2": Wall,  # single corner
+        "3": Wall,  # single wall
+        "4": Wall,  # Ghost house corner
+        "5": Wall,  # ghost house wall
+        "=": Wall,  # ghost house trapdoor, this is 4 since the ghosts need to be able to move out of it
+        "6": Wall,  # double short corner 
+        "7": Wall,  # narrow double corner left
+        "8": Wall,  # narrow double corner right
+        "9": Wall,  # something to do with the walls
+        "n": Moveable   # teleport square
     }
 
     # any image path is created as follows "path {frameNo} {rotation} {flip}"
@@ -34,7 +38,7 @@ class Maze:
         "+": "Dot.png",                              # junction 
         "p": "PowerUp.png",                        # power-up
         "-": None,                                   # tile with nothing
-        "d": None,                                   # junction without a dot
+        "d": "Dot.png",                                   # junction without a dot
         "U": None,                                   # junction where ghost can not turn up and does not have a dot
         "u": "Dot.png",                              # junction where ghost can not turn up and has a dot
         "0": "Apple.png", #"DoubleCorner.gif 1 0 0",               # double corner
@@ -73,6 +77,9 @@ class Maze:
             for element in line:
                 
                 typeOfCell = Maze.maze_dict[element]
+                if typeOfCell != None:
+
+                    typeOfCell = typeOfCell()
                 tempType.append(typeOfCell)
                 
                 imagePath = Maze.maze_image_dict[element]
@@ -98,3 +105,12 @@ class Maze:
                     """
             self.maze.append(tempType)
             self.mazeImages.append(imageTemp)
+
+    def reset(self):
+        self.__init__()
+
+    def removeObject(self, x, y):
+        obj = self.maze[y][x]
+        self.maze[y][x] = None
+        del obj
+

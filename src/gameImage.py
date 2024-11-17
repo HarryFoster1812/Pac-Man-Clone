@@ -1,17 +1,27 @@
 from PIL import Image, ImageTk
 import copy
+from tkinter import Canvas
 
 class GameImage:
-    def __init__(self, image_path:str, scale:float=1, rotation: int = 0, flip:int = 0, frame: int=-1, calculateRotations:bool = False):
-        self.frames = GameImage.getFrames(image_path,scale)
-
+    def __init__(self, image_path:str, scale:float=1, rotation: int = 0, flip:int = 0, frame: int=-1, calculate_rotations:bool = False, load_ghost_variations = False):
         self.current_frame = 0
 
-        if calculateRotations:
-            self.frames0 = copy.deepcopy(self.frames)
-            self.frames90 = GameImage.rotateFrames(self.frames, 90)
-            self.frames180 = GameImage.rotateFrames(self.frames, 180)
-            self.frames270 = GameImage.rotateFrames(self.frames, 270)
+        if load_ghost_variations:
+            directions = ["GhostDown.gif", "GhostLeft.gif", "GhostRight.gif", "GhostUp.gif"]
+            self.down = GameImage.getFrames(image_path+directions[0],scale)
+            self.left = GameImage.getFrames(image_path+directions[1],scale)
+            self.right = GameImage.getFrames(image_path+directions[2],scale)
+            self.up = GameImage.getFrames(image_path+directions[3],scale)
+            self.frames = self.right
+        
+        else:
+            self.frames = GameImage.getFrames(image_path,scale)
+            self.isIdle = True
+            if calculate_rotations:
+                self.right = copy.copy(self.frames)
+                self.up = GameImage.rotateFrames(self.frames, 90)
+                self.left = GameImage.rotateFrames(self.frames, 180)
+                self.down = GameImage.rotateFrames(self.frames, 270)
 
     def getFrames(fileLoc:str, scale:float) -> list:
         # Open the image with PIL and convert to RGBA to preserve transparency
@@ -36,11 +46,15 @@ class GameImage:
         return frames
     
     def nextFrame(self):
-        self.current_frame += 1
-        self.current_frame %= len(self.frames)
+        if not self.isIdle:
+            self.current_frame += 1
+            self.current_frame %= len(self.frames)
+            self.parent.itemconfigure(self.id, image=self.frames[self.current_frame])
+            self.parent.update()
 
     def switchFrameSet(self, frameList: list):
         self.frames = frameList
+        self.nextFrame()
         pass
 
     def rotateFrames(frames:list, theta: int) -> list:
@@ -52,3 +66,15 @@ class GameImage:
             temp.append(frame)
 
         return temp
+    
+    def enableIdle(self):
+        self.current_frame = -1
+        self.nextFrame()
+        self.isIdle = True
+
+    def disableIdle(self):
+        self.isIdle = False
+
+    def addParent(self, parent: Canvas, x, y):
+        self.parent = parent
+        self.id = self.parent.create_image(x, y, image=self.frames[self.current_frame], anchor="nw")

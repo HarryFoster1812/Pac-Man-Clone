@@ -5,7 +5,7 @@
 from tkinter import *
 from src.objects.ghosts import *
 from src.objects.pacman import Pacman
-from src.objects.ghosts import Blinky, Speedy, Inky, Clyde, Ghost
+from src.objects.ghosts import Blinky, Inky, Clyde, Ghost, Pinky
 from src.settings import Settings
 from src.maze import Maze
 
@@ -13,8 +13,11 @@ class Game:
     def __init__(self, canvas: Canvas, settings: Settings) -> None:
         self.isPaused = True
         self.maze = Maze("src/levels/main.txt")
-        self.pacman = Pacman([15*32,25.5*32], self.maze)
-        self.ghosts = [Blinky.Blinky() , Speedy.Speedy(), Inky.Inky(), Clyde.Clyde()]
+        self.pacman = Pacman([416,816], self.maze)
+        self.ghosts = [Blinky.Blinky([418, 436], self.maze), 
+                       Inky.Inky([352, 528], self.maze), 
+                       Pinky.Pinky([416,528], self.maze), 
+                       Clyde.Clyde([480, 528], self.maze)]
         self.level = 0
         self.reset = False
         self.score = 0
@@ -65,20 +68,16 @@ class Game:
             self.toggleGame()
         
         if event.keysym_num == self.settings.getKey("up_key"): 
-            self.pacman.next_direction = [0, 1]
-            pass # change the next direction to up for pacman
+            self.pacman.next_direction = [0, -1]
 
         elif event.keysym_num == self.settings.getKey("down_key"):
-            self.pacman.next_direction = [0, -1]
-            pass # change the next direction 
+            self.pacman.next_direction = [0, 1]
         
         elif event.keysym_num == self.settings.getKey("right_key"):
             self.pacman.next_direction = [1, 0]
-            pass # change the next direction 
         
         elif event.keysym_num == self.settings.getKey("left_key"):
             self.pacman.next_direction = [-1, 0]
-            pass # change the next direction
         
         elif event.keysym_num == self.settings.getKey("pause_key"):
             self.toggleGame() # pause the game
