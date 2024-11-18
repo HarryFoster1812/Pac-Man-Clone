@@ -290,14 +290,17 @@ class GameScreen(Frame):
             pacman_pos = self.game.pacman.canvas_position
             pacman_image_id = self.game.pacman.image.id
             self.game_canvas.moveto(pacman_image_id, pacman_pos[0], pacman_pos[1])
+            
+            # draw ghost
+            for ghost in self.game.ghosts:
+                self.game_canvas.moveto(ghost.image.id, ghost.canvas_position[0], ghost.canvas_position[1])
 
             if DEBUG:
                 rectanglex = self.game.pacman.current_cell[0]*32
                 rectangley = self.game.pacman.current_cell[1]*32
                 self.game_canvas.moveto(self.pacman_rectangle, rectanglex, rectangley)
-            # draw ghost
-            # remove any dots
-            # update score
+            
+            
             # check for win
             # if win then reset and change to level frame
         

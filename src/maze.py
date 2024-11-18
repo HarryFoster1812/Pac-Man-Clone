@@ -49,14 +49,15 @@ class Maze:
         '┲': [Wall, ["other/DoubleLongCorner.gif",          4]], 
         '┱': [Wall, ["other/DoubleLongCorner.gif",          5]], 
 
-        '.': [Moveable, [True, False, True]], # dot
-        'p': [Powerup], # powerup
-        '+': [Moveable, [True, True, True]], # junction without a dot
-        'd': [Moveable, [False, True, True]], # 
-        'U': [Moveable, [False, True, False]], # junction where ghost can not turn up and does not have a dot
-        'u': [Moveable, [True, True, False]], # junction where ghost can not turn up and has a dot
-        '-': [Moveable, [False, False, True]], 
-        'n': [Moveable, [False, False, False]], 
+        '.': [Moveable, [True, False, True, False]], # dot
+        'p': [Moveable, [False, False, True, True]], # powerup
+        'P': [Moveable, [False, True, True, True]], # powerup that is junction
+        '+': [Moveable, [True, True, True, False]], # junction without a dot
+        'd': [Moveable, [False, True, True, False]], # 
+        'U': [Moveable, [False, True, False, False]], # junction where ghost can not turn up and does not have a dot
+        'u': [Moveable, [True, True, False, False]], # junction where ghost can not turn up and has a dot
+        '-': [Moveable, [False, False, True, False]], 
+        'n': [Moveable, [False, False, False, False]], 
         'X': [None], 
         }
 
@@ -96,7 +97,7 @@ class Maze:
                         
                         else:
                             arglist = typeOfCell[1]
-                            obj = typeOfCell[0](arglist[0], arglist[1], arglist[2])
+                            obj = typeOfCell[0](arglist[0], arglist[1], arglist[2], arglist[3])
                         
 
                 else:

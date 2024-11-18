@@ -30,8 +30,18 @@ class Game:
 
     def tick(self):
         self.pacman.tick()
+        
         for ghost in self.ghosts:
             ghost.tick()
+
+
+        pacman_cell_loc = self.pacman.current_cell
+        pacman_cell_loc = [int(index) for index in pacman_cell_loc]
+        pacman_cell = self.maze.maze[pacman_cell_loc[1]][pacman_cell_loc[0]]
+        if pacman_cell.has_dot:
+            self.score += 1
+            pacman_cell.removeDot()
+        # update score
 
     def toggleGame(self):
         # set all of the entities speed modifier to 0

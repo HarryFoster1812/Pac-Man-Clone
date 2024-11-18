@@ -22,9 +22,9 @@ class Pacman:
     def tick(self):
         direction_has_changed = False
 
-        print("Current position:", self.canvas_position)
         self.calculateCurrentCell()    
-        print("Current cell:", self.current_cell)
+        #print("Current position:", self.canvas_position)
+        #print("Current cell:", self.current_cell)
         # calcualte target position
         # if target position is reached then check if direction can be changed
         self.next_cell[0] = self.current_cell[0]
@@ -34,8 +34,8 @@ class Pacman:
         self.next_cell[1] += self.direction[1]
 
         self.calculateTargetPos()
-        print("Target Position:", self.target_position)
-        print("Target cell:", self.next_cell, end="\n\n")
+        #print("Target Position:", self.target_position)
+        #print("Target cell:", self.next_cell, end="\n\n")
         
         next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
         
