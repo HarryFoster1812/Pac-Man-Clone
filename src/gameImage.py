@@ -5,6 +5,7 @@ from tkinter import Canvas
 class GameImage:
     def __init__(self, image_path:str, scale:float=1, rotation: int = 0, flip:int = 0, frame: int=-1, calculate_rotations:bool = False, load_ghost_variations = False):
         self.current_frame = 0
+        self.isIdle = True
 
         if load_ghost_variations:
             directions = ["GhostDown.gif", "GhostLeft.gif", "GhostRight.gif", "GhostUp.gif"]
@@ -15,9 +16,7 @@ class GameImage:
             self.frames = self.right
         
         else:
-            self.frames = GameImage.getFrames(image_path,scale)
-            self.isIdle = True
-            
+            self.frames = GameImage.getFrames(image_path,scale)            
             if frame != -1:
                 self.current_frame = 0
                 self.frames = [self.frames[frame]] # get rid of the other frames since we dont need them

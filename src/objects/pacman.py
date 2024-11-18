@@ -49,8 +49,7 @@ class Pacman:
         else:
             self.snapPosition()
 
-        # update position
-        # if the current cell is a junction then
+        # check if we can change the direction of pacman
         direction_has_changed = self.checkChangeDirection()
 
         # update frame (based on current direction)
@@ -62,9 +61,6 @@ class Pacman:
                 case [-1,0]: self.updateFrame(self.image.left)
         else:
             self.updateFrame()
-        
-    def reachedTargetPos(self):
-        pass
 
     def calculateTargetPos(self):
         x = self.next_cell[0]*32 -16

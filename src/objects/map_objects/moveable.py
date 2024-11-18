@@ -1,7 +1,7 @@
 from src.gameImage import GameImage 
 
 class Moveable:
-    def __init__(self, has_dot=True, is_junction=False, can_move_up=True):
+    def __init__(self, has_dot, is_junction, can_move_up):
         if has_dot:
             self.image = GameImage("assets/Dot.png")
         

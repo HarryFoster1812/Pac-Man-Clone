@@ -14,10 +14,12 @@ class Game:
         self.isPaused = True
         self.maze = Maze("src/levels/main.txt")
         self.pacman = Pacman([416,816], self.maze)
-        self.ghosts = [Blinky.Blinky([418, 436], self.maze), 
-                       Inky.Inky([352, 528], self.maze), 
-                       Pinky.Pinky([416,528], self.maze), 
-                       Clyde.Clyde([480, 528], self.maze)]
+        self.ghosts = [
+            Blinky.Blinky([418, 436], self.maze, self.pacman), 
+            Inky.Inky    ([352, 528], self.maze, self.pacman), 
+            Pinky.Pinky  ([416, 528], self.maze, self.pacman), 
+            Clyde.Clyde  ([480, 528], self.maze, self.pacman)
+                       ]
         self.level = 0
         self.reset = False
         self.score = 0

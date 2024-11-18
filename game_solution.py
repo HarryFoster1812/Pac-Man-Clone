@@ -7,7 +7,7 @@ from src.game import Game
 from src.settings import Settings
 
 
-DEBUG = False
+DEBUG = True
 
 class App():
 
@@ -242,6 +242,11 @@ class GameScreen(Frame):
             rectanglex = self.game.pacman.canvas_position[0]
             rectangley = self.game.pacman.canvas_position[1]
             self.pacman_rectangle = self.game_canvas.create_rectangle((rectanglex,rectangley), (rectanglex+32,rectangley+32), fill="green")
+
+            for ghost in self.game.ghosts:
+                ghost_temp_rectangle_x = ghost.scatter_cell[0]*32
+                ghost_temp_rectangle_y = ghost.scatter_cell[1]*32
+                self.game_canvas.create_rectangle((ghost_temp_rectangle_x,ghost_temp_rectangle_y), (ghost_temp_rectangle_x+32,ghost_temp_rectangle_y+32), fill=ghost.colour)
 
         self.game_canvas.update()
 
