@@ -17,6 +17,11 @@ class GameImage:
         else:
             self.frames = GameImage.getFrames(image_path,scale)
             self.isIdle = True
+            
+            if frame != -1:
+                self.current_frame = 0
+                self.frames = [self.frames[frame]] # get rid of the other frames since we dont need them
+
             if calculate_rotations:
                 self.right = copy.copy(self.frames)
                 self.up = GameImage.rotateFrames(self.frames, 90)

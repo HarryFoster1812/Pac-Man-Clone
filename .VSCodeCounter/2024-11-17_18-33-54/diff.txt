@@ -1,0 +1,47 @@
+Date : 2024-11-17 18:33:54
+Directory : /home/harryfoster/git/comp16321-labs_r49769hf
+Total : 16 files,  235 codes, 23 comments, 71 blanks, all 329 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Python   |         16 |        235 |         23 |         71 |        329 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                              | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                 |         16 |        235 |         23 |         71 |        329 |
+| . (Files)                                                                         |          1 |         20 |          7 |          5 |         32 |
+| src                                                                               |         15 |        215 |         16 |         66 |        297 |
+| src (Files)                                                                       |          3 |        103 |         10 |         29 |        142 |
+| src/objects                                                                       |         12 |        112 |          6 |         37 |        155 |
+| src/objects (Files)                                                               |          2 |         80 |          2 |         26 |        108 |
+| src/objects/ghosts                                                                |          6 |         14 |          4 |          8 |         26 |
+| src/objects/map_objects                                                           |          4 |         18 |          0 |          3 |         21 |
++-----------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                          | language | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| /home/harryfoster/git/comp16321-labs_r49769hf/game_solution.py                    | Python   |         20 |          7 |          5 |         32 |
+| /home/harryfoster/git/comp16321-labs_r49769hf/src/game.py                         | Python   |         30 |          6 |          9 |         45 |
+| /home/harryfoster/git/comp16321-labs_r49769hf/src/gameImage.py                    | Python   |         61 |          4 |         15 |         80 |
+| /home/harryfoster/git/comp16321-labs_r49769hf/src/maze.py                         | Python   |         12 |          0 |          5 |         17 |
+| /home/harryfoster/git/comp16321-labs_r49769hf/src/objects/ghosts/Blinky.py        | Python   |          2 |          1 |          0 |          3 |
+| /home/harryfoster/git/comp16321-labs_r49769hf/src/objects/ghosts/Clyde.py         | Python   |          2 |          1 |          1 |          4 |
+| /home/harryfoster/git/comp16321-labs_r49769hf/src/objects/ghosts/Ghost.py         | Python   |          6 |          0 |          5 |         11 |
+| /home/harryfoster/git/comp16321-labs_r49769hf/src/objects/ghosts/Inky.py          | Python   |          2 |          1 |          1 |          4 |
+| /home/harryfoster/git/comp16321-labs_r49769hf/src/objects/ghosts/Pinky.py         | Python   |          6 |          1 |          2 |          9 |
+| /home/harryfoster/git/comp16321-labs_r49769hf/src/objects/ghosts/Speedy.py        | Python   |         -4 |          0 |         -1 |         -5 |
+| /home/harryfoster/git/comp16321-labs_r49769hf/src/objects/map_objects/dot.py      | Python   |          3 |          0 |          0 |          3 |
+| /home/harryfoster/git/comp16321-labs_r49769hf/src/objects/map_objects/moveable.py | Python   |          8 |          0 |          2 |         10 |
+| /home/harryfoster/git/comp16321-labs_r49769hf/src/objects/map_objects/powerup.py  | Python   |          4 |          0 |          1 |          5 |
+| /home/harryfoster/git/comp16321-labs_r49769hf/src/objects/map_objects/wall.py     | Python   |          3 |          0 |          0 |          3 |
+| /home/harryfoster/git/comp16321-labs_r49769hf/src/objects/pacman.py               | Python   |         80 |          2 |         27 |        109 |
+| /home/harryfoster/git/comp16321-labs_r49769hf/src/objects/wall.py                 | Python   |          0 |          0 |         -1 |         -1 |
+| Total                                                                             |          |        235 |         23 |         71 |        329 |
++-----------------------------------------------------------------------------------+----------+------------+------------+------------+------------+

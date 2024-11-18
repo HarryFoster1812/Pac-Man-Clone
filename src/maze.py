@@ -7,60 +7,64 @@ import copy
 class Maze:
 
     # define the objects that should be created for the maze
-    # anything that is 0 represents somewhere that any character can not move to 
-    maze_dict =  {
-        "X": None,  # Out side the bounds of the game
-        ".": Moveable,  # dot
-        "+": Moveable,  # junction 
-        "p": Powerup,  # power-up
-        "-": Moveable,  # tile with nothing
-        "d": Moveable,  # junction without a dot
-        "U": Moveable,  # junction where ghost can not turn up and does not have a dot
-        "u": Moveable,  # junction where ghost can not turn up and has a dot
-        "0": Wall,  # double corner
-        "1": Wall,  # double wall
-        "2": Wall,  # single corner
-        "3": Wall,  # single wall
-        "4": Wall,  # Ghost house corner
-        "5": Wall,  # ghost house wall
-        "=": Wall,  # ghost house trapdoor, this is 4 since the ghosts need to be able to move out of it
-        "6": Wall,  # double short corner 
-        "7": Wall,  # narrow double corner left
-        "8": Wall,  # narrow double corner right
-        "9": Wall,  # something to do with the walls
-        "n": Moveable   # teleport square
-    }
+    # each value is [Class, [args]]
+    maze_dict = {
+        '┅': [Wall, ["other/Wall.gif",                      0]], # Bottom outer wall
+        '━': [Wall, ["other/Wall.gif",                      1]], # top outer wall 
+        '┃': [Wall, ["other/Wall.gif",                      2]], # Left outer wall
+        '┇': [Wall, ["other/Wall.gif",                      3]], # Right outer wall
+        
+        '╚': [Wall, ["other/DoubleCorner.gif",              0]], 
+        '╔': [Wall, ["other/DoubleCorner.gif",              1]], # outer double corner
+        '╝': [Wall, ["other/DoubleCorner.gif",              2]], 
+        '╗': [Wall, ["other/DoubleCorner.gif",              3]], 
+        
+        '┄': [Wall, ["other/InnerWall.gif",                 0]], # bottom inner wall 
+        '─': [Wall, ["other/InnerWall.gif",                 1]], # top inner wall
+        '│': [Wall, ["other/InnerWall.gif",                 2]], 
+        '┆': [Wall, ["other/InnerWall.gif",                 3]], 
+        
+        '┘': [Wall, ["other/InnerCorner.gif",               0]], 
+        '┐': [Wall, ["other/InnerCorner.gif",               1]], 
+        '└': [Wall, ["other/InnerCorner.gif",               2]], 
+        '┌': [Wall, ["other/InnerCorner.gif",               3]], # short single corner
+        
+        '╮': [Wall, ["other/InnerLongCorner.gif",           0]], # long inner corner
+        '╯': [Wall, ["other/InnerLongCorner.gif",           1]], 
+        '╭': [Wall, ["other/InnerLongCorner.gif",           2]], 
+        '╰': [Wall, ["other/InnerLongCorner.gif",           3]], 
+        
+        '╒': [Wall, ["GhostHouse/GhostHouseCorner.gif",     0]], 
+        '╘': [Wall, ["GhostHouse/GhostHouseCorner.gif",     1]], 
+        '╕': [Wall, ["GhostHouse/GhostHouseCorner.gif",     2]], 
+        '╛': [Wall, ["GhostHouse/GhostHouseCorner.gif",     3]], 
+        '=': [Wall, ["GhostHouse/GhostHouseTrapdoor.png",   0]], # trapdoor (ghost can move through only on exit)
+        '╼': [Wall, ["GhostHouse/GhostHouseEnd.gif",        0]], 
+        '╾': [Wall, ["GhostHouse/GhostHouseEnd.gif",        1]], 
+        
+        '┢': [Wall, ["other/DoubleLongCorner.gif",          0]], 
+        '┡': [Wall, ["other/DoubleLongCorner.gif",          1]], # long outer corner
+        '┪': [Wall, ["other/DoubleLongCorner.gif",          2]], 
+        '┩': [Wall, ["other/DoubleLongCorner.gif",          3]], 
+        '┲': [Wall, ["other/DoubleLongCorner.gif",          4]], 
+        '┱': [Wall, ["other/DoubleLongCorner.gif",          5]], 
 
-    # any image path is created as follows "path {frameNo} {rotation} {flip}"
-    maze_image_dict = {
-        "X": None,                                   # No image to display
-        ".": "Dot.png",                              # dot
-        "+": "Dot.png",                              # junction 
-        "p": "PowerUp.png",                        # power-up
-        "-": None,                                   # tile with nothing
-        "d": "Dot.png",                                   # junction without a dot
-        "U": None,                                   # junction where ghost can not turn up and does not have a dot
-        "u": "Dot.png",                              # junction where ghost can not turn up and has a dot
-        "0": "Apple.png", #"DoubleCorner.gif 1 0 0",               # double corner
-        "1": "Apple.png", #"DoubleWall.gif 1 0 0",                 # double wall
-        "2": "Apple.png", #"SingleCorner.gif 1 0 0",               # single corner
-        "3": "Apple.png", #"SingleWall.gif 1 0 0",                 # single wall
-        "4": "GhostHouse/GhostHouseCorner.gif 1 0 0",           # Ghost house corner
-        "5": "Apple.png", #"GhostHouseWall.gif 1 0 0",             # ghost house wall
-        "=": "GhostHouse/GhostHouseTrapdoor.png", #"GhostHouseTrapDoor.gif 1 0 0",         # ghost house trapdoor
-        "6": "Apple.png", #"DoubleShortCorner.gif 1 0 0",          # double short corner 
-        "7": "Apple.png", #"NarrowDoubleCornerRight.gif 1 0 0",    # narrow double corner
-        "8": "Apple.png", #"NarrowDoubleCornerLeft.gif 1 0 0",     # narrow double corner 
-        "9": "Apple.png",                                    # something to do with the walls
-        "n": None
-    }
+        '.': [Moveable], # dot
+        'p': [Powerup], # powerup
+        '+': [Moveable], # junction without a dot
+        'd': [Moveable], # 
+        'U': [Moveable], # junction where ghost can not turn up and does not have a dot
+        'u': [Moveable], # junction where ghost can not turn up and has a dot
+        '-': [Moveable], 
+        'n': [Moveable], 
+        'X': [None], 
+        }
 
     def __init__(self, file_location: str):
         with open(file_location, "r") as maze_file:
             maze_file = [line.rstrip("\n") for line in maze_file.readlines()]
 
         self.maze = []
-        self.mazeImages = []
         self.staticImages = [] # all of the walls, and the dots
         self.animatedImages = [] # powerUps
 
@@ -70,42 +74,29 @@ class Maze:
         for line in maze_file:
             
             tempType = []
-            imageTemp = []
 
             line = line.split(" ")
 
             for element in line:
-                
+
                 typeOfCell = Maze.maze_dict[element]
-                if typeOfCell != None:
 
-                    typeOfCell = typeOfCell()
-                tempType.append(typeOfCell)
-                
-                imagePath = Maze.maze_image_dict[element]
-                if (imagePath == None):
-                    imageTemp.append(None)
-                
-                elif (len(imagePath.split(" ")) == 1): # check if it has any parameters
-                    image = Animate(assetsPath + imagePath)
-                    self.staticImages.append(image)
-                    imageTemp.append(image)
-                
-                else: # it has parameters so we need to split them and then pass them through
-                    #path {frameNo} {rotation} {flip}
-                    imageTemp.append(None)
-                    """
-                    param_image_path = imagePath.split(" ")[0]
-                    param_frame      = int(imagePath.split(" ")[1])
-                    param_rotation   = int(imagePath.split(" ")[2])
-                    param_flip       = int(imagePath.split(" ")[3])
+                if typeOfCell[0] != None:
+                    # check if any args are given
+                    if len(typeOfCell) == 1:
+                        obj = typeOfCell[0]()
 
-                    image = Animate(assetsPath + param_image_path, frame=param_frame, flip=param_flip, rotation=param_rotation) 
-                    imageTemp.append(image)
-                    """
+                    else: # args are given, need to extract args from [1]
+                        arglist = typeOfCell[1]
+                        if typeOfCell[0] is Wall:
+                            obj = typeOfCell[0]( assetsPath + arglist[0], arglist[1])
+                else:
+                    obj = None
+
+                tempType.append(obj)
+                
             self.maze.append(tempType)
-            self.mazeImages.append(imageTemp)
-
+#
     def reset(self):
         self.__init__()
 

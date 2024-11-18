@@ -7,7 +7,7 @@ from src.game import Game
 from src.settings import Settings
 
 
-DEBUG = True
+DEBUG = False
 
 class App():
 
@@ -49,7 +49,7 @@ class App():
             frame.grid(row=0, column=0, sticky="nsew")
             self.frames.append(frame)
 
-        self.current_frame = self.frames[3]
+        self.current_frame = self.frames[0]
         self.current_frame.grid(row=0, column=0, sticky="nsew")
         self.current_frame.tkraise()
 
@@ -84,8 +84,10 @@ class App():
         if self.current_screen_no == App.screenNums["MainMenu"]: # if we switch to a different screen then pause the threads
             self.frames[App.screenNums["MainMenu"]].toggleThreads()
 
+        # if we are on the boss screen then we dont add it to the stack
         if self.current_screen_no != App.screenNums["BossScreen"]:
             self.previous_screen_stack.append(self.current_screen_no)
+
         self.current_screen_no = frameNo
         self.current_frame = self.frames[frameNo]
         self.current_frame.tkraise()
@@ -248,10 +250,10 @@ class GameScreen(Frame):
         self.after(17, self.update)
 
     def drawGame(self):
-        for i, row in enumerate(self.game.maze.mazeImages):
-            for j, image in enumerate(row):
-                if image != None:
-                    image.addParent(self.game_canvas, x=((j+1)*32), y=(i*32))
+        for i, row in enumerate(self.game.maze.maze):
+            for j, cell in enumerate(row):
+                if cell != None and hasattr(cell, "image"):
+                    cell.image.addParent(self.game_canvas, x=((j)*32), y=(i*32))
         
         Pacman_pos = self.game.pacman.canvas_position
         self.game.pacman.image.addParent(self.game_canvas, x=Pacman_pos[0], y=Pacman_pos[1])

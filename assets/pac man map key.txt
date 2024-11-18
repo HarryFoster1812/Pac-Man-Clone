@@ -1,0 +1,46 @@
+key:
+━ : top
+┅ : bottom
+┃ : left
+┇ : right
+
+─ : inner top
+┄ : inner bottom
+│ : inner left
+┆ : inner right
+
+inner short corner
+┐
+└ 
+┘
+┌
+
+double corner
+╔ 
+╚
+╗ 
+╝
+
+double long corner
+┡ 
+┢
+┩
+┪
+
+┲
+┱
+
+ghost house corner
+
+╒ 
+╕ 
+╘ 
+╛
+╾ 
+╼
+
+inner long corner
+╭	
+╰
+╮
+╯
