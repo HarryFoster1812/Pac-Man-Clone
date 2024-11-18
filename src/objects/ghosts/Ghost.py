@@ -1,5 +1,6 @@
 import math
 from src.objects.pacman import Pacman
+from src.gameImage import GameImage
 
 class Ghost:
 
@@ -8,7 +9,8 @@ class Ghost:
         self.target = [] # the target square that the ghost its trying to get to
         self.direction = [] # [x, y] eg [1, 0] will be right, [0, -1] will be down
         self.next_direction = [] # the next square the ghost will move to
-        self.is_active = True # this is applicable when the ghost is eaten or is in the ghost house
+        self.is_in_house = True # this is applicable when the ghost is eaten or is in the ghost house
+        self.is_dead = False
         self.speed = 5.05050508333 # the base pixel movement speed of the ghost  
         self.speed_modifier = 0.8 # this is applied during the different ghost modes
 
@@ -20,6 +22,10 @@ class Ghost:
         self.next_cell = [0,0]
         
         self.tick_count = 0
+
+        self.dead_image = GameImage("assets/Ghosts/GhostEyes.gif")
+        self.frightend_image = GameImage("assets/Ghosts/FrightendGhost.gif")
+        self.white_frightend_image = GameImage("assets/Ghosts/WhiteFrightendGhost.gif")
 
         self.maze = maze
 
@@ -50,7 +56,7 @@ class Ghost:
                 self.direction *= -1
                 self.speed_modifier = 0.4
 
-    def pythagoras(pos1, pos2) -> float:
+    def pythagoras(pos1: list, pos2:list) -> float:
         a = (pos1[0] - pos2[0])**2
         b = (pos1[1] - pos2[1])**2
         return math.sqrt(a + b) 

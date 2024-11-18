@@ -49,7 +49,7 @@ class App():
             frame.grid(row=0, column=0, sticky="nsew")
             self.frames.append(frame)
 
-        self.current_frame = self.frames[0]
+        self.current_frame = self.frames[3]
         self.current_frame.grid(row=0, column=0, sticky="nsew")
         self.current_frame.tkraise()
 

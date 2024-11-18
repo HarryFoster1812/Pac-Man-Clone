@@ -49,16 +49,18 @@ class Maze:
         '┲': [Wall, ["other/DoubleLongCorner.gif",          4]], 
         '┱': [Wall, ["other/DoubleLongCorner.gif",          5]], 
 
-        '.': [Moveable], # dot
+        '.': [Moveable, [True, False, True]], # dot
         'p': [Powerup], # powerup
-        '+': [Moveable], # junction without a dot
-        'd': [Moveable], # 
-        'U': [Moveable], # junction where ghost can not turn up and does not have a dot
-        'u': [Moveable], # junction where ghost can not turn up and has a dot
-        '-': [Moveable], 
-        'n': [Moveable], 
+        '+': [Moveable, [True, True, True]], # junction without a dot
+        'd': [Moveable, [False, True, True]], # 
+        'U': [Moveable, [False, True, False]], # junction where ghost can not turn up and does not have a dot
+        'u': [Moveable, [True, True, False]], # junction where ghost can not turn up and has a dot
+        '-': [Moveable, [False, False, True]], 
+        'n': [Moveable, [False, False, False]], 
         'X': [None], 
         }
+
+        # has dot, is junction, can move up
 
     def __init__(self, file_location: str):
         with open(file_location, "r") as maze_file:
@@ -84,12 +86,19 @@ class Maze:
                 if typeOfCell[0] != None:
                     # check if any args are given
                     if len(typeOfCell) == 1:
+
                         obj = typeOfCell[0]()
 
                     else: # args are given, need to extract args from [1]
-                        arglist = typeOfCell[1]
                         if typeOfCell[0] is Wall:
+                            arglist = typeOfCell[1]
                             obj = typeOfCell[0]( assetsPath + arglist[0], arglist[1])
+                        
+                        else:
+                            arglist = typeOfCell[1]
+                            obj = typeOfCell[0](arglist[0], arglist[1], arglist[2])
+                        
+
                 else:
                     obj = None
 

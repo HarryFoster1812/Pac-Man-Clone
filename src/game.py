@@ -116,10 +116,10 @@ class Game:
 # Ghost Algorithm
 # Once they reach a new tile they will look ahead and make a decision on what to do next
 # Ghost can never reverse their direction 
-# The exeption is that when they change modes they are forced to reverse as soon as they enter the next tile
-# And the exeption to this exeption is when they leave frightened mode
+# The exception is that when they change modes they are forced to reverse as soon as they enter the next tile
+# And the exception to this exception is when they leave frightened mode
 # Obviously they will pick the path that is the shortest straight line distance
-# An exeption to the decision making is in the four center blocks where they can not go upwards (unless chosen randomly or on forced reversed)
+# An exception to the decision making is in the four center blocks where they can not go upwards (unless chosen randomly or on forced reversed)
 
 # In scatter mode:
 # Pink   - Top left
@@ -128,7 +128,7 @@ class Game:
 # Blue   - Bottom right
 
 # Escape from the ghost house
-# Red - Spawns ouside the ghost house
+# Red - Spawns outside the ghost house
 # Pink - immediately
 # Blue - After 30 dots eaten
 # over 1/3 of dots eaten

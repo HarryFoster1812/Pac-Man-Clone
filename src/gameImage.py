@@ -82,3 +82,8 @@ class GameImage:
     def addParent(self, parent: Canvas, x, y):
         self.parent = parent
         self.id = self.parent.create_image(x, y, image=self.frames[self.current_frame], anchor="nw")
+
+    def setFrame(self, frame_index):
+        self.current_frame = frame_index -1
+        self.nextFrame()
+        self.isIdle = True
