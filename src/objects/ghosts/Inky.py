@@ -8,11 +8,12 @@ class Inky(Ghost):
         self.image = GameImage("assets/Ghosts/Cyan/Cyan", load_ghost_variations=True)
         self.scatter_cell = [27,35]
         self.colour = "cyan"
-        self.direction = [0, 0]
+        self.direction = [0, -1]
         self.next_direction = [0,-1]
         self.calculateCurrentCell()
         self.next_cell = self.current_cell
-        self.is_in_house = True
+        self.state = GhostState.IN_GHOST_HOUSE
+        self.ghost_house_target = start_pos
 
     def calculateTarget(self):
         match(self.state):

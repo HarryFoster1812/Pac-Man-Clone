@@ -13,7 +13,7 @@ class GameImage:
             self.left = GameImage.getFrames(image_path+directions[1],scale)
             self.right = GameImage.getFrames(image_path+directions[2],scale)
             self.up = GameImage.getFrames(image_path+directions[3],scale)
-            self.frames = self.right
+            self.frames = self.left[:]
         
         else:
             self.frames = GameImage.getFrames(image_path,scale)            
@@ -57,7 +57,8 @@ class GameImage:
             self.parent.update()
 
     def switchFrameSet(self, frameList: list):
-        self.frames = frameList
+        self.isIdle = False
+        self.frames = frameList[:]
         self.nextFrame()
         pass
 

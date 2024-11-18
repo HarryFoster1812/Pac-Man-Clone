@@ -106,7 +106,7 @@ class Maze:
                 tempType.append(obj)
                 
             self.maze.append(tempType)
-#
+            
     def reset(self):
         self.__init__()
 

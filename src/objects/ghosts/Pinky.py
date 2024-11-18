@@ -9,12 +9,15 @@ class Pinky(Ghost):
         self.image = GameImage("assets/Ghosts/Pink/Pink", load_ghost_variations=True) # need to fill this out
         self.scatter_cell = [2,0]
         self.colour = "pink"
-        self.direction = [0, 0]
-        self.next_direction = [0,-1]
+        self.direction = [0, 1]
+        self.next_direction = [0,1]
         self.calculateCurrentCell()
         self.next_cell = self.current_cell
-        self.is_in_house = True
-        self.leaving_house = True
+        self.state = GhostState.IN_GHOST_HOUSE
+        self.ghost_house_target = start_pos
+
+    def reset(self):
+        self.canvas_position = []
 
     def calculateTarget(self):
         match(self.state):

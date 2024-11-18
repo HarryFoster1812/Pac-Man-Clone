@@ -10,26 +10,37 @@ from src.settings import Settings
 from src.maze import Maze
 
 class Game:
+
+    level_based_speed = {}
+
     def __init__(self, canvas: Canvas, settings: Settings) -> None:
         self.isPaused = True
         self.maze = Maze("src/levels/main.txt")
         self.pacman = Pacman([416,816], self.maze)
         self.ghosts = [
             Blinky.Blinky([418, 436], self.maze, self.pacman), 
-            Inky.Inky    ([352, 528], self.maze, self.pacman), 
             Pinky.Pinky  ([416, 528], self.maze, self.pacman), 
+            Inky.Inky    ([352, 528], self.maze, self.pacman), 
             Clyde.Clyde  ([480, 528], self.maze, self.pacman)
                        ]
+        
+        self.next_ghost_to_release = 1
         self.level = 0
         self.reset = False
         self.score = 0
         self.lives = 3
         self.dotsCounter = 0 # after 70 dots bonus will display, and then after 170 another bonus will display
         self.settings = settings
+
+        self.pacman_frame_halt = 0
         pass
 
     def tick(self):
-        self.pacman.tick()
+        if self.pacman_frame_halt > 0: # if pac man eats a dot he is then halted for one frame
+            self.pacman_frame_halt -= 1
+        
+        else:
+            self.pacman.tick()
         
         for ghost in self.ghosts:
             ghost.tick()
@@ -40,8 +51,18 @@ class Game:
         pacman_cell = self.maze.maze[pacman_cell_loc[1]][pacman_cell_loc[0]]
         if pacman_cell.has_dot:
             self.score += 1
-            pacman_cell.removeDot()
-        # update score
+            pacman_cell.removeImage()
+            self.dotsCounter += 1
+            self.ghosts[self.next_ghost_to_release].incrementDotCount
+            self.pacman_frame_halt = 1
+        
+        elif pacman_cell.is_powerup:
+            #change states of the ghosts
+            # change other stuff
+            # activate something else
+            pacman_cell.removeImage()
+            self.pacman_frame_halt = 3
+            pass
 
     def toggleGame(self):
         # set all of the entities speed modifier to 0
@@ -55,6 +76,10 @@ class Game:
 
     def moveCharacters(self):
         pass
+
+    def checkForGhostHouseRelease(self):
+        if self.ghosts[self.next_ghost_to_release].state == Ghost.GhostState.IN_GHOST_HOUSE:
+            pass
 
     def checkCollision(self):
         for ghost in self.ghosts: 
@@ -129,12 +154,11 @@ class Game:
 # The exception is that when they change modes they are forced to reverse as soon as they enter the next tile
 # And the exception to this exception is when they leave frightened mode
 # Obviously they will pick the path that is the shortest straight line distance
-# An exception to the decision making is in the four center blocks where they can not go upwards (unless chosen randomly or on forced reversed)
 
 # In scatter mode:
 # Pink   - Top left
 # Red    - Top right
-# Yellow - Bottom Left
+# Orange - Bottom Left
 # Blue   - Bottom right
 
 # Escape from the ghost house
@@ -143,12 +167,19 @@ class Game:
 # Blue - After 30 dots eaten
 # over 1/3 of dots eaten
 
+# on a life lost the dot counter is set to global and reset as follows
+# Pink   - 7
+# Cyan - 17
+# Orange - 32
+
 # In chase mode
 # Red - Pac Man Square
 # Pink - Four tiles ahead of pac man location (and orientation). Maybe implement the original bug as a feature? (when pac man is facing upwards the target would be 4 tiles up and 4 tiles to the left)
 # Blue - Overly complex, Two tiles ahead of pac man then double the vector from Red to this target and that is the assigned tile
 # Orange - Again overly complex, Has two active modes, if pac man is farther than 8 tiles away then his target is his scattered target otherwise it is the same as RED
 
+
+# This is for the ghost house force leave The game begins with an initial timer limit of four seconds, but lowers to it to three seconds starting with level five.
 
 # Need to add cheat codes
 

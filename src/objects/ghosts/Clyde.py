@@ -8,17 +8,18 @@ class Clyde(Ghost):
         self.image = GameImage("assets/Ghosts/Orange/Orange", load_ghost_variations=True) # need to fill this out
         self.scatter_cell = [0,35]
         self.colour = "orange"
-        self.direction = [0, 0]
+        self.direction = [0, -1]
         self.next_direction = [0,1]
         self.calculateCurrentCell()
         self.next_cell = self.current_cell
-        self.is_in_house = True
+        self.state = GhostState.IN_GHOST_HOUSE
+        self.ghost_house_target = start_pos
 
     def calculateTarget(self):
         match(self.state):
             case GhostState.CHASE:
                 distance = Ghost.pythagoras(self.current_cell, self.pacman.current_cell)
-                if distance < 5:
+                if distance <= 8:
                     self.target = self.pacman.current_cell
                 else:
                     self.target = self.scatter_cell

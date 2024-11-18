@@ -1,0 +1,14 @@
+"filename", "language", "Python", "comment", "blank", "total"
+"/home/r49769hf/git/comp16321-labs_r49769hf/game_solution.py", "Python", 2, -2, 3, 3
+"/home/r49769hf/git/comp16321-labs_r49769hf/src/game.py", "Python", 15, 3, 6, 24
+"/home/r49769hf/git/comp16321-labs_r49769hf/src/gameImage.py", "Python", 5, 0, 1, 6
+"/home/r49769hf/git/comp16321-labs_r49769hf/src/maze.py", "Python", 4, 0, 3, 7
+"/home/r49769hf/git/comp16321-labs_r49769hf/src/objects/ghosts/Blinky.py", "Python", -73, -17, -29, -119
+"/home/r49769hf/git/comp16321-labs_r49769hf/src/objects/ghosts/Clyde.py", "Python", 18, 0, 2, 20
+"/home/r49769hf/git/comp16321-labs_r49769hf/src/objects/ghosts/Ghost.py", "Python", 156, 29, 51, 236
+"/home/r49769hf/git/comp16321-labs_r49769hf/src/objects/ghosts/Inky.py", "Python", 14, 0, 0, 14
+"/home/r49769hf/git/comp16321-labs_r49769hf/src/objects/ghosts/Pinky.py", "Python", 24, 0, 3, 27
+"/home/r49769hf/git/comp16321-labs_r49769hf/src/objects/map_objects/moveable.py", "Python", 7, 0, 3, 10
+"/home/r49769hf/git/comp16321-labs_r49769hf/src/objects/map_objects/powerup.py", "Python", 4, 1, 1, 6
+"/home/r49769hf/git/comp16321-labs_r49769hf/src/objects/pacman.py", "Python", -4, 4, 0, 0
+"Total", "-", 172, 18, 44, 234

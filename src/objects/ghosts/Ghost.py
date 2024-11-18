@@ -28,8 +28,11 @@ class Ghost:
         self.is_dead = False
         self.speed = 5.05050508333 # the base pixel movement speed of the ghost  
         self.speed_modifier = 0.3 # this is applied during the different ghost modes
+        self.ghost_house_target = []
 
         self.pacman = pacman
+        self.dot_counter = 0
+        self.dot_limit = 0
 
         self.canvas_position = [start_pos[0], start_pos[1]] # the x and y co-ordinates of pacman
         self.target_position = []
@@ -39,12 +42,46 @@ class Ghost:
         self.tick_count = 0
 
         self.dead_image = GameImage("assets/Ghosts/GhostEyes.gif")
-        self.frightend_image = GameImage("assets/Ghosts/FrightendGhost.gif")
-        self.white_frightend_image = GameImage("assets/Ghosts/WhiteFrightendGhost.gif")
+        self.frightened_image = GameImage("assets/Ghosts/FrightendGhost.gif")
+        self.white_frightened_image = GameImage("assets/Ghosts/WhiteFrightendGhost.gif")
 
         self.maze = maze
 
     def tick(self):
+        
+        if self.state == GhostState.IN_GHOST_HOUSE:
+            self.canvas_position [0] += self.direction[0]*self.speed*self.speed_modifier
+            self.canvas_position [1] += self.direction[1]*self.speed*self.speed_modifier
+
+            self.calculateCurrentCell()    
+            # calculate target position
+            self.calculateTargetPos()
+            self.calculateNextCell()
+            print("Target Position:", self.target_position)
+            print("Target cell:", self.next_cell, end="\n\n")
+        
+            next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
+
+            if isinstance(next_cell, Wall):
+                # snap ghost to the correct placement next to the wall
+                self.direction = [component*-1 for component in self.direction]
+                self.checkFrameSwitch(True)
+
+            return
+        
+        elif self.state == GhostState.MOVING_OUT_OF_GHOST_HOUSE:
+            #wait until ghost hits wall from in house state
+            # move to correct x
+            # move to correct y
+            return
+        
+        elif self.state == GhostState.MOVING_INTO_GHOST_HOUSE:
+            return
+        
+        if self.state == GhostState.DEAD and self.current_cell == self.target:
+            self.changeState(GhostState.MOVING_INTO_GHOST_HOUSE)
+            return
+
         direction_has_changed = False
         
         self.calculateTarget()
@@ -55,8 +92,9 @@ class Ghost:
         # check if current cell is next cell and center is past cell center (based on direction)
         if self.current_cell == self.next_cell:
             # assign direction to next_direction
-            direction_has_changed = True if self.direction != self.next_direction else False 
-            self.direction = self.next_direction
+            if self.direction != self.next_direction:
+                self.direction = self.next_direction
+                direction_has_changed = True
             # if it is then recalculate next cell
             self.calculateNextCell()
             temp_next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
@@ -65,18 +103,16 @@ class Ghost:
             if isinstance(temp_next_cell, Moveable) and temp_next_cell.is_juction:
                     self.calculateNextDirection(temp_next_cell)
         
-        print("Direction:", self.direction)
+        print("GHOST Direction:", self.direction)
 
         # move ghost in direction
         self.canvas_position [0] += self.direction[0]*self.speed*self.speed_modifier
         self.canvas_position [1] += self.direction[1]*self.speed*self.speed_modifier
-        # snap ghost to correct placement
-
         
-        print("BLINKY Current position:", self.canvas_position)
+        print("GHOST Current position:", self.canvas_position)
         self.calculateCurrentCell()    
-        print("BLINKY Current cell:", self.current_cell)
-        # calcualte target position
+        print("GHOST Current cell:", self.current_cell)
+        # calculate target position
         
         self.calculateTargetPos()
         print("Target Position:", self.target_position)
@@ -85,19 +121,25 @@ class Ghost:
         next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
         
         if isinstance(next_cell, Wall):
+            # snap ghost to the correct placement next to the wall
             self.next_cell = self.current_cell
             self.calculateTargetPos()
             self.canvas_position = self.target_position
 
         else:
+            # snap ghost to correct placement
             self.snapPosition()
-
-        # check if we can change the direction of the ghost
-        direction_has_changed = self.checkChangeDirection()
 
         # update frame (based on current direction)
         self.checkFrameSwitch(direction_has_changed)
 
+    def setDotLimit(self, limit):
+        self.dot_limit = limit
+
+    def incrementDotCounter(self):
+        self.dot_counter += 1
+        if self.dot_counter >= self.dot_limit:
+            self.changeState(GhostState.MOVING_OUT_OF_GHOST_HOUSE)
 
     def changeState(self, new_state):
 
@@ -111,6 +153,9 @@ class Ghost:
 
             case GhostState.FRIGHTENED: 
                 self.speed_modifier = 0.4
+            case GhostState.DEAD:
+                self.speed_modifier = 1
+                self.toggleDead()
 
     
     def calculateNextCell(self):
@@ -140,23 +185,6 @@ class Ghost:
         if self.direction != [0, 0]:  # Only snap if we're moving
             self.canvas_position = next_position
 
-    def checkChangeDirection(self) -> bool:
-        if self.direction != self.next_direction:
-            # check if we can change direction 
-            current_cell_x = self.current_cell[0]
-            current_cell_y = self.current_cell[1]
-
-            current_cell_x += self.next_direction[0]
-            current_cell_y += self.next_direction[1]
-
-            next_cell = self.maze.maze[int(current_cell_y)][int(current_cell_x)]
-
-            if isinstance(next_cell, Wall):
-                return False
-                    
-        # the user has not entered a new direction to travel in
-        else:
-            return False
 
     def checkFrameSwitch(self, direction_has_changed):
         if direction_has_changed:
@@ -186,9 +214,9 @@ class Ghost:
         if self.tick_count == 0:
             self.image.nextFrame()
 
-    def calculateNextDirection(self, juction_cell):
-        # if it is then calcualte next direction
-        decisions = self.calcualteValidDecisions(juction_cell, self.state, self.direction)
+    def calculateNextDirection(self, junction_cell):
+        # if it is then calculate next direction
+        decisions = self.calculateValidDecisions(junction_cell, self.state, self.direction)
         
         # in fright mode the ghost make decisions randomly 
         if self.state == GhostState.FRIGHTENED:
@@ -209,7 +237,7 @@ class Ghost:
         else:
             self.next_direction = decisions[0]
 
-    def calcualteValidDecisions(self, junction_cell: Moveable, ghost_state: int, current_direction: list):
+    def calculateValidDecisions(self, junction_cell: Moveable, ghost_state: int, current_direction: list):
         possible = [[1,0], [-1, 0], [0, 1], [0, -1]]
         opposite_direction = [direction*-1 for direction in current_direction]
         possible.remove(opposite_direction) # the ghost can not move in the opposite direction 

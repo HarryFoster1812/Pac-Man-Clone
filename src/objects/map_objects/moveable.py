@@ -11,7 +11,9 @@ class Moveable:
         self.has_dot = has_dot
         self.is_juction = is_junction
         self.can_move_up = can_move_up # this is only used for the ghosts since on specific tiles they can not move up
+        self.is_powerup = is_powerup
 
-    def removeDot(self):
+    def removeImage(self):
         self.has_dot = False
+        self.is_powerup = False
         del self.image
