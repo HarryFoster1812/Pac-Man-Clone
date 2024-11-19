@@ -203,6 +203,21 @@ class Game:
 
 # This is for the ghost house force leave The game begins with an initial timer limit of four seconds, but lowers to it to three seconds starting with level five.
 
-# Need to add cheat codes
+
+TO DO:
+
+Fix dead ghosts not moving back to ghost house
+Add ghost moving back into ghost house
+Add game timer to allow the switching of States
+Add level based values (speed modifiers)
+Add death
+Add teleport squares
+Add reset level / redraw after death
+Add game over / save score
+
+Need to add cheat codes
+maybe press a button for the colours to switch
+maybe add a mrs pac man cheat code
+
 
 """
