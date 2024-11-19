@@ -35,6 +35,8 @@ class Game:
 
         self.pacman_frame_halt = 0
 
+        self.levelInfo = None
+
     def tick(self):
         if self.pacman_frame_halt > 0: # if pac man eats a dot he is then halted for one frame
             self.pacman_frame_halt -= 1
@@ -107,6 +109,7 @@ class Game:
 
     def deadPacMan(self):
         # game pauses
+        self.info_pause = True
         print("PACMAN DEAD")
         # pacman changes to dead animation
         # disable controllers
@@ -206,6 +209,8 @@ Add ghost moving back into ghost house
 Add teleport squares
 
 TO DO:
+
+NEED TO ADD A PAUSE SCREEN
 
 Add game timer to allow the switching of States
 Add level based values (speed modifiers)

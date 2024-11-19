@@ -48,7 +48,7 @@ class App():
             frame.grid(row=0, column=0, sticky="nsew")
             self.frames.append(frame)
 
-        self.current_frame = self.frames[3]
+        self.current_frame = self.frames[0]
         self.current_frame.grid(row=0, column=0, sticky="nsew")
         self.current_frame.tkraise()
 
@@ -185,7 +185,7 @@ class NameScreen(Frame):
         Label(self, text="Enter Name").pack()
         # add input box for the user name
         name_entry = Entry(self, font="Helvetica 11 bold",bg="white")
-        name_entry.place(x=0, y=0)
+        name_entry.pack()
         # add submit button
         Button(self, text="Play!",command=lambda: self.nameButtonSubmit(name_entry.get())).pack()
 
