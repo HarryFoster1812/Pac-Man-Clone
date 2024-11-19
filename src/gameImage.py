@@ -87,4 +87,8 @@ class GameImage:
     def setFrame(self, frame_index):
         self.current_frame = frame_index -1
         self.nextFrame()
+
+    def setFrameStatic(self, frame_index):
+        self.current_frame = frame_index -1
+        self.nextFrame()
         self.isIdle = True

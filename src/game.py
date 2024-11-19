@@ -18,12 +18,15 @@ class Game:
         self.maze = Maze("src/levels/main.txt")
         self.pacman = Pacman([416,816], self.maze)
         self.ghosts = [
-            Blinky.Blinky([418, 436], self.maze, self.pacman), 
+            Blinky.Blinky([416, 436], self.maze, self.pacman), 
             Pinky.Pinky  ([416, 528], self.maze, self.pacman), 
             Inky.Inky    ([352, 528], self.maze, self.pacman), 
             Clyde.Clyde  ([480, 528], self.maze, self.pacman)
                        ]
         
+        self.ghosts[2].setDotLimit(30)
+        self.ghosts[3].setDotLimit(60)
+
         self.next_ghost_to_release = 1
         self.level = 0
         self.reset = False
@@ -49,20 +52,30 @@ class Game:
         pacman_cell_loc = self.pacman.current_cell
         pacman_cell_loc = [int(index) for index in pacman_cell_loc]
         pacman_cell = self.maze.maze[pacman_cell_loc[1]][pacman_cell_loc[0]]
+        
         if pacman_cell.has_dot:
             self.score += 1
             pacman_cell.removeImage()
-            self.dotsCounter += 1
-            self.ghosts[self.next_ghost_to_release].incrementDotCount
+
+            self.dotsCounter += 1            
+            self.checkForGhostHouseRelease()
             self.pacman_frame_halt = 1
         
         elif pacman_cell.is_powerup:
             #change states of the ghosts
-            # change other stuff
-            # activate something else
+            for ghost in self.ghosts:
+                if ghost.state == Ghost.GhostState.CHASE or ghost.state == Ghost.GhostState.SCATTER:
+                    ghost.changeState(Ghost.GhostState.FRIGHTENED)
+                elif ghost.state == Ghost.GhostState.DEAD:
+                    pass
+                else:
+                    ghost.toggleFrightened()
+                    
+
             pacman_cell.removeImage()
             self.pacman_frame_halt = 3
-            pass
+        
+        self.checkCollisions()
 
     def toggleGame(self):
         # set all of the entities speed modifier to 0
@@ -74,28 +87,37 @@ class Game:
             self.isPaused = True
             pass
 
-    def moveCharacters(self):
-        pass
-
     def checkForGhostHouseRelease(self):
-        if self.ghosts[self.next_ghost_to_release].state == Ghost.GhostState.IN_GHOST_HOUSE:
-            pass
+        if self.next_ghost_to_release > 3:
+            return
+        
+        self.ghosts[self.next_ghost_to_release].incrementDotCounter()
 
-    def checkCollision(self):
+        if self.ghosts[self.next_ghost_to_release].state != Ghost.GhostState.IN_GHOST_HOUSE:
+            self.next_ghost_to_release += 1
+
+    def checkCollisions(self):
         for ghost in self.ghosts: 
             if ghost.current_cell == self.pacman.current_cell:
-                match(self.ghost.state):
-                    case 0: self.deadPacMan() # default
-                    case 1: self.deadPacMan() # scatter
-                    case 2: self.ghostDead(ghost) # frightend
+                if ghost.is_frightened:
+                    self.ghostDead(ghost)
+                else:
+                    match(ghost.state):
+                        case Ghost.GhostState.FRIGHTENED: self.ghostDead(ghost) # frightend
+                        case Ghost.GhostState.DEAD: pass
+                        case Ghost.GhostState.MOVING_INTO_GHOST_HOUSE: pass
+                        case _: self.deadPacMan() # scatter
 
     def deadPacMan(self):
         # game pauses
+        print("PACMAN DEAD")
         # pacman changes to dead animation
         # disable controllers
         pass
 
     def ghostDead(self, ghost:Ghost.Ghost):
+        print("GHOST DEAD")
+        ghost.changeState(Ghost.GhostState.DEAD)
         # change ghost to dead state
         # add points
         pass

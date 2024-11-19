@@ -251,8 +251,8 @@ class GameScreen(Frame):
         self.game_canvas.update()
 
         self.drawGame()
-
-        self.after(17, self.update)
+        self.ms_delay = 17 #17
+        self.after(self.ms_delay, self.update)
 
     def drawGame(self):
         for i, row in enumerate(self.game.maze.maze):
@@ -304,7 +304,7 @@ class GameScreen(Frame):
             # check for win
             # if win then reset and change to level frame
         
-        self.after(17, self.update)
+        self.after(self.ms_delay, self.update)
 
     def EventHandler(self, event: Event):
         self.game.EventHandler(event)

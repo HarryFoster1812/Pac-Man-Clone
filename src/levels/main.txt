@@ -15,7 +15,7 @@ X X X X X ┃ . ┆ ╭ ─ ─ ┘ . └ ┘ . └ ─ ─ ╮ │ . ┇ X X X 
 X X X X X ┃ . ┆ │ d - - U - - U - - d ┆ │ . ┇ X X X X X
 X X X X X ┃ . ┆ │ - ╒ ┅ ╼ = = ╾ ┅ ╕ - ┆ │ . ┇ X X X X X
 ━ ━ ━ ━ ━ ┘ . └ ┘ - ┇ X X X X X X ┃ - └ ┘ . └ ━ ━ ━ ━ ━
-n - - - - - + - - d ┇ X X X X X X ┃ d . . + - - - - - n
+n - - - - - + - - d ┇ X X X X X X ┃ d - - + - - - - - n
 ┅ ┅ ┅ ┅ ┅ ┐ . ┌ ┐ - ┇ X X X X X X ┃ - ┌ ┐ . ┌ ┅ ┅ ┅ ┅ ┅
 X X X X X ┃ . ┆ │ - ╘ ━ ━ ━ ━ ━ ━ ╛ - ┆ │ . ┇ X X X X X
 X X X X X ┃ . ┆ │ d - - - - - - - - d ┆ │ . ┇ X X X X X
