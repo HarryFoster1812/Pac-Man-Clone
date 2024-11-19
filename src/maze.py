@@ -59,9 +59,9 @@ class Maze:
         '-': [Moveable, [False, False, True,  False, False]], 
         'n': [Moveable, [False, False, False, False, True]], 
         'X': [None], 
-        }
+    }
 
-        # has dot, is junction, can move up
+        # has dot, is junction, can move up, is powerup , is teleport
 
     def __init__(self, file_location: str):
         with open(file_location, "r") as maze_file:
@@ -111,7 +111,7 @@ class Maze:
     def reset(self):
         self.__init__()
 
-    def getOtherTeleportSquareLocation(self, square):
+    def getOtherTeleportSquareLocation(self, square:Moveable):
         index_of_current_sqaure = self.teleport_squares.index(square)
         if index_of_current_sqaure == 0:
             other_sqaure = self.teleport_squares[1]
@@ -123,6 +123,8 @@ class Maze:
                 if cell == other_sqaure:
                     return [j,i]
 
+    def get_level_info(self, level):
+        pass
 
     def removeObject(self, x, y):
         obj = self.maze[y][x]

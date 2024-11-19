@@ -18,7 +18,7 @@ class Animate:
         :param frame: -1 default, otherwise the frame is specified
         """
 
-        self.fames = Animate.getFrames(fileLoc, scale)
+        self.fames = self.getFrames(fileLoc, scale)
         self.parent = parent
         self.currentFrame = 0
         self.delayMS = 1000//len(self.fames)
@@ -40,8 +40,8 @@ class Animate:
             self.parent.configure(image=self.fames[self.currentFrame])
 
         self.loop = self.parent.after(self.delayMS, self.update) # recall the loop
-        
-        
+
+
     def addParent(self, new_parent, x:int = 0, y:int = 0):
         # add the image to the parent
         self.parent = new_parent
@@ -53,7 +53,7 @@ class Animate:
             self.id = self.parent.create_image(x, y, image=self.fames[self.currentFrame], anchor="ne")
         
 
-    def getFrames(fileLoc, scale) -> list:
+    def getFrames(self, fileLoc, scale) -> list:
         # Open the image with PIL and convert to RGBA to preserve transparency
         info = Image.open(fileLoc)
         framesNo = info.n_frames

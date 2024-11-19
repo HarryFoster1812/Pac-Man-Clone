@@ -1,10 +1,10 @@
+import random
 import math
+from enum import Enum
 from src.objects.pacman import Pacman
 from src.gameImage import GameImage
 from src.objects.map_objects.moveable import Moveable
 from src.objects.map_objects.wall import Wall
-from enum import Enum
-import random
 
 class GhostState(Enum):
     CHASE = 0
@@ -19,7 +19,7 @@ class Ghost:
 
 
     def __init__(self, start_pos, maze, pacman: Pacman) -> None:
-        self.state = GhostState.CHASE # the current state of the ghost, 0 = default, 1 = scatter, 2 = fright, 3 = dead
+        self.state = GhostState.SCATTER # the current state of the ghost, 0 = default, 1 = scatter, 2 = fright, 3 = dead
         self.target = [] # the target square that the ghost its trying to get to
         self.direction = [] # [x, y] eg [1, 0] will be right, [0, -1] will be down
         self.next_direction = [] # the next square the ghost will move to
@@ -38,8 +38,10 @@ class Ghost:
         self.target_position = []
         self.current_cell = [] # the co-ordinates of pacman in the cell
         self.next_cell = [0,0]
-        
+       
         self.tick_count = 0
+
+        self.image=None
 
         self.dead_image = GameImage("assets/Ghosts/GhostEyes.gif")
         self.frightened_image = GameImage("assets/Ghosts/FrightendGhost.gif")
@@ -83,14 +85,14 @@ class Ghost:
             
             # move to correct x
             #check if moved to 416 or past (based on direction)
-            if Ghost.checkMovedPassed(416, self.direction[0], self.canvas_position[0]):
+            if self.checkMovedPassed(416, self.direction[0], self.canvas_position[0]):
                 self.canvas_position[0] = 416
                 self.direction = [0, -1]
                 self.checkFrameSwitch(True)
 
             
             # move to correct y
-            if self.direction == [0,-1] and Ghost.checkMovedPassed(436, self.direction[1], self.canvas_position[1]):
+            if self.direction == [0,-1] and self.checkMovedPassed(436, self.direction[1], self.canvas_position[1]):
                 if self.is_frightened:
                     self.changeState(GhostState.FRIGHTENED)
                 else:
@@ -112,14 +114,12 @@ class Ghost:
             #wait until ghost hits wall from in house state
             self.calculateCurrentCell()
             self.calculateNextCell()
-            
+            print("DIRECTION: ",self.direction)
             # move to correct x
             #check if moved to 416 or past (based on direction)
-            if Ghost.checkMovedPassed(self.ghost_house_target[1], 1, self.canvas_position[1]):
+            if self.checkMovedPassed(self.ghost_house_target[1], 1, self.canvas_position[1]):
                 print("HAS MOVED PASSED Y",self.canvas_position)
                 self.canvas_position[1] = self.ghost_house_target[1]
-                self.direction = [0, -1]
-
                 # set direction to move x
                 if (self.ghost_house_target[0] - self.canvas_position[0]) > 0:
                     self.direction = [1, 0] # we need to move right
@@ -129,12 +129,11 @@ class Ghost:
 
             
             # move to correct y
-            if self.direction[0] != 0 and Ghost.checkMovedPassed(self.ghost_house_target[0], self.direction[0], self.canvas_position[0]):
+            if self.direction[0] != 0 and self.checkMovedPassed(self.ghost_house_target[0], self.direction[0], self.canvas_position[0]):
                 print("REACHED TARGET SWITCHING TO MOVING OUT",self.canvas_position)
                 self.changeState(GhostState.MOVING_OUT_OF_GHOST_HOUSE)
-                self.direction = [-1, 0]
-                self.next_direction = [-1, 0]
-                self.canvas_position[1] = 436
+                self.direction = [0, 1]
+                self.next_direction = [0, 1]
                 self.checkFrameSwitch(True)
                 self.calculateNextCell()
             
@@ -154,21 +153,36 @@ class Ghost:
         self.calculateTarget()
         
         # calculate current cell
-        self.calculateCurrentCell()    
+        self.calculateCurrentCell()
 
-        # check if current cell is next cell and center is past cell center (based on direction)
+        # check if current cell is next cell
         if self.current_cell == self.next_cell:
             # assign direction to next_direction
             if self.direction != self.next_direction:
                 self.direction = self.next_direction
                 direction_has_changed = True
-            # if it is then recalculate next cell
-            self.calculateNextCell()
-            temp_next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
-           
-            # check if next cell is junction
-            if isinstance(temp_next_cell, Moveable) and temp_next_cell.is_juction:
-                    self.calculateNextDirection(temp_next_cell)
+            
+            # get out current cell
+            temp_current_cell = self.maze.maze[int(self.current_cell[1])][int(self.current_cell[0])]
+
+            # check if we have hit a teleport square
+            if isinstance(temp_current_cell, Moveable) and temp_current_cell.is_teleport:
+                # get the index of the other teleport square
+                index_other_cell = self.maze.getOtherTeleportSquareLocation(temp_current_cell)
+                # change co-ordinates
+                index_next_square_after_teleport = [index_other_cell[0] + self.next_direction[0], index_other_cell[1]+self.next_direction[1]]  
+                self.canvas_position[0] = index_next_square_after_teleport[0]*32 -16
+                self.canvas_position[1] = index_next_square_after_teleport[1]*32 -16
+                self.calculateCurrentCell()
+                self.calculateNextCell()
+            
+            else:
+                self.calculateNextCell()
+                temp_next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
+                # check if next cell is junction
+                if isinstance(temp_next_cell, Moveable) and temp_next_cell.is_juction:
+                        self.calculateNextDirection(temp_next_cell)
+            
         
         #print("GHOST Direction:", self.direction)
 
@@ -296,10 +310,10 @@ class Ghost:
         if self.tick_count == 0:
             self.image.nextFrame()
 
-    def checkMovedPassed(target_pos: int, direction: int, current_pos) -> bool:
+    def checkMovedPassed(self, target_pos: int, direction: int, current_pos) -> bool:
         
         if current_pos == target_pos:
-            return True
+            return False
         # is is not equal so check if component positive and the target position is behind it
         elif direction > 0 and target_pos < current_pos:
             return True
@@ -322,7 +336,7 @@ class Ghost:
                 junction_cell_plus_direction = self.next_cell[:]
                 junction_cell_plus_direction[0] += direction[0]
                 junction_cell_plus_direction[1] += direction[1]
-                distance = Ghost.pythagoras(self.target, junction_cell_plus_direction)
+                distance = self.pythagoras(self.target, junction_cell_plus_direction)
                 distances.append(distance)
             # find the shortest one
             shortest_distance = min(distances)
@@ -347,12 +361,9 @@ class Ghost:
         possible_copy = possible[:]
 
         # loop over each direction get the cell and check if its traversable
-        for i in range(len(possible_copy)):
-            
+        for direction in possible_copy:
             # copy next cell
             junction_location = self.next_cell[:]
-            
-            direction = possible_copy[i]
 
             junction_location[0] += direction[0]
             junction_location[1] += direction[1]
@@ -362,7 +373,7 @@ class Ghost:
 
             # get the cell from the maze
             cell_next_to_juction = self.maze.maze[junction_location[1]][junction_location[0]]
-            
+
             # check if is not traversable
             if not isinstance(cell_next_to_juction, Moveable):
                 possible.remove(direction)
@@ -374,7 +385,7 @@ class Ghost:
         y = (self.canvas_position[1] + 32)//32
         
         self.current_cell = [x,y]
-            
+      
     def enableDead(self):
         self.is_dead = True
         self.checkFrameSwitch(True)
@@ -400,7 +411,7 @@ class Ghost:
     def calculateTarget(self):
         pass
 
-    def pythagoras(pos1: list, pos2:list) -> float:
+    def pythagoras(self, pos1: list, pos2:list) -> float:
         a = (pos1[0] - pos2[0])**2
         b = (pos1[1] - pos2[1])**2
         return math.sqrt(a + b) 

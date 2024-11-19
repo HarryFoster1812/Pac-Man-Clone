@@ -4,9 +4,14 @@ class Moveable:
     def __init__(self, has_dot, is_junction, can_move_up, is_powerup, is_teleport):
         if has_dot:
             self.image = GameImage("assets/Dot.png")
+            self.points = 10
         
         elif is_powerup:
             self.image = GameImage("assets/PowerUp.png")
+            self.points = 50
+        
+        else:
+            self.points = 0
 
         self.has_dot = has_dot
         self.is_juction = is_junction
@@ -17,4 +22,5 @@ class Moveable:
     def removeImage(self):
         self.has_dot = False
         self.is_powerup = False
+        self.points = 0
         del self.image

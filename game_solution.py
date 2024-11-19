@@ -24,13 +24,13 @@ class App():
         "BossScreen"       : 6
     }
 
-
     def __init__(self, root: Tk) -> None:
         #self.mainCanvas = Canvas(root, bg="#000", )
-        root.bind("<Key>", self.onKeyPress) # bind the canvas so when a key is pressed it runs onKeyPress
+        self.root = root
+        self.root.bind("<Key>", self.onKeyPress) # bind the canvas so when a key is pressed it runs onKeyPress
 
         # set up the main menu screen
-        self.main_frame = Frame(root, highlightthickness=0)
+        self.main_frame = Frame(self.root, highlightthickness=0)
         self.main_frame.pack(side="top", fill="both", expand = True)
         self.main_frame.grid_rowconfigure(0, weight=1)
         self.main_frame.grid_columnconfigure(0, weight=1)
@@ -125,7 +125,7 @@ class MainMenu(Frame):
         self.arrow = Label(self, image="", background="#000")
         self.arrow.place(x=100, y=(90*self.selection + arrow_start_y))
 
-        self.arrowImage = Animate(fileLoc="assets/pacman-right/1.png", parent=self.arrow, scale=2.5)
+        self.arrow_image = Animate(fileLoc="assets/pacman-right/1.png", parent=self.arrow, scale=2.5)
 
         # play button
         play_button = Button(self, text="Play", background="#000", fg="#FFF", command=lambda: controller.switchFrame(App.screenNums["NameScreen"]))
@@ -137,7 +137,7 @@ class MainMenu(Frame):
         # leaderboard
         Button(self, text="Leaderboard", background="#000", fg="#FFF", command=lambda: controller.switchFrame(App.screenNums["LeaderboardScreen"])).pack()
         # exit
-        Button(self, text="Exit", background="#000", fg="#FFF", command=lambda: root.quit()).pack()
+        Button(self, text="Exit", background="#000", fg="#FFF", command=lambda: self.controller.root.quit()).pack()
 
     def changeArrowSelection(self, direction: bool):  # direction False: up, True: down
         if(direction and self.selection < 3):
@@ -160,7 +160,7 @@ class MainMenu(Frame):
                 case 0: self.controller.switchFrame(App.screenNums["NameScreen"]) # name screen
                 case 1: self.controller.switchFrame(App.screenNums["OptionScreen"]) # options
                 case 2: self.controller.switchFrame(App.screenNums["LeaderboardScreen"]) # leaderboard
-                case 3: root.quit() # exit
+                case 3: self.controller.root.quit() # exit
 
     def toggleThreads(self):
         self.title_image.toggleAnimation()
@@ -227,7 +227,7 @@ class GameScreen(Frame):
         self.game_canvas = Canvas(self, background="#000")
         self.game_canvas.pack(fill="both", expand = True)
 
-        self.game = Game(self.game_canvas, controller.settings)
+        self.game = Game(self.game_canvas, controller.settings, controller.root)
 
         if (DEBUG):
             for i in range(36):
@@ -381,9 +381,10 @@ class BossScreen(Frame):
         pass
 
 if __name__ == "__main__":
-    root = Tk()
-    root.geometry("896x1170")
-    root.title = "Woka Woka"
-    root.resizable(width=False, height=False)
-    app = App(root)
-    root.mainloop()
+    main = Tk()
+    main.geometry("896x1170")
+    main.title = "Woka Woka"
+    main.resizable(width=False, height=False)
+    app = App(main)
+    main.mainloop()
+    

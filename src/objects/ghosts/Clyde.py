@@ -18,7 +18,7 @@ class Clyde(Ghost):
     def calculateTarget(self):
         match(self.state):
             case GhostState.CHASE:
-                distance = Ghost.pythagoras(self.current_cell, self.pacman.current_cell)
+                distance = self.pythagoras(self.current_cell, self.pacman.current_cell)
                 if distance <= 8:
                     self.target = self.pacman.current_cell
                 else:

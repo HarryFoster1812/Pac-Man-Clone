@@ -3,7 +3,7 @@
 # create different pac man layouts based off a text file   
 
 from tkinter import *
-from src.objects.ghosts import *
+import time
 from src.objects.pacman import Pacman
 from src.objects.ghosts import Blinky, Inky, Clyde, Ghost, Pinky
 from src.settings import Settings
@@ -11,10 +11,9 @@ from src.maze import Maze
 
 class Game:
 
-    level_based_speed = {}
-
-    def __init__(self, canvas: Canvas, settings: Settings) -> None:
-        self.isPaused = True
+    def __init__(self, canvas: Canvas, settings: Settings, root:Tk) -> None:
+        self.isPaused = True # this is when the user pauses the game
+        self.info_pause = False # this is when the game is paused to show the score or when pac man is dead
         self.maze = Maze("src/levels/main.txt")
         self.pacman = Pacman([416,816], self.maze)
         self.ghosts = [
@@ -29,22 +28,21 @@ class Game:
 
         self.next_ghost_to_release = 1
         self.level = 0
-        self.reset = False
         self.score = 0
         self.lives = 3
         self.dotsCounter = 0 # after 70 dots bonus will display, and then after 170 another bonus will display
         self.settings = settings
 
         self.pacman_frame_halt = 0
-        pass
 
     def tick(self):
         if self.pacman_frame_halt > 0: # if pac man eats a dot he is then halted for one frame
             self.pacman_frame_halt -= 1
-        
+
         else:
             self.pacman.tick()
-        
+
+
         for ghost in self.ghosts:
             ghost.tick()
 
@@ -52,15 +50,15 @@ class Game:
         pacman_cell_loc = self.pacman.current_cell
         pacman_cell_loc = [int(index) for index in pacman_cell_loc]
         pacman_cell = self.maze.maze[pacman_cell_loc[1]][pacman_cell_loc[0]]
-        
+
         if pacman_cell.has_dot:
-            self.score += 1
+            self.score += pacman_cell.points
             pacman_cell.removeImage()
 
             self.dotsCounter += 1            
             self.checkForGhostHouseRelease()
             self.pacman_frame_halt = 1
-        
+
         elif pacman_cell.is_powerup:
             #change states of the ghosts
             for ghost in self.ghosts:
@@ -70,11 +68,10 @@ class Game:
                     pass
                 else:
                     ghost.enableFrightened()
-                    
 
             pacman_cell.removeImage()
             self.pacman_frame_halt = 3
-        
+
         self.checkCollisions()
 
     def toggleGame(self):
@@ -120,13 +117,12 @@ class Game:
         ghost.changeState(Ghost.GhostState.DEAD)
         # change ghost to dead state
         # add points
-        pass
 
     def EventHandler(self, event):
         if self.isPaused:
             self.toggleGame()
         
-        if event.keysym_num == self.settings.getKey("up_key"): 
+        if event.keysym_num == self.settings.getKey("up_key"):
             self.pacman.next_direction = [0, -1]
 
         elif event.keysym_num == self.settings.getKey("down_key"):
@@ -206,18 +202,20 @@ class Game:
 
 DONE (From the list being created way too late in the project)
 Fix dead ghosts not moving back to ghost house DONE
+Add ghost moving back into ghost house
+Add teleport squares
 
 TO DO:
 
-Add ghost moving back into ghost house
 Add game timer to allow the switching of States
 Add level based values (speed modifiers)
 Add death
-Add teleport squares
+Add consumeables
 Add reset level / redraw after death
 Add game over / save score
-Make it look nicer
 Populate the boss screen
+Add save / load game
+Make it look nicer
 
 Need to add cheat codes
 maybe press a button for the colours to switch

@@ -22,10 +22,10 @@ class Pacman:
     def tick(self):
         direction_has_changed = False
 
-        self.calculateCurrentCell()    
+        self.calculateCurrentCell()
         #print("Current position:", self.canvas_position)
         #print("Current cell:", self.current_cell)
-        # calcualte target position
+        # calculate target position
         # if target position is reached then check if direction can be changed
         self.next_cell[0] = self.current_cell[0]
         self.next_cell[1] = self.current_cell[1]
@@ -50,24 +50,22 @@ class Pacman:
             elif isinstance(current_cell, Moveable) and current_cell.is_teleport:
                 # find the other teleport square
                 index_other_cell = self.maze.getOtherTeleportSquareLocation(current_cell)
-                # change coordiantes
-                self.canvas_position[0] = index_other_cell[0]*32 -16
-                self.canvas_position[1] = index_other_cell[1]*32 -16
-                # reverse direction
-                self.next_direction = [component*-1 for component in self.direction] 
+                # change co-ordinates
+                index_next_square_after_teleport = [index_other_cell[0] + self.next_direction[0], index_other_cell[1]+self.next_direction[1]]  
+                self.canvas_position[0] = index_next_square_after_teleport[0]*32 -16
+                self.canvas_position[1] = index_next_square_after_teleport[1]*32 -16
 
             else:
                 self.snapPosition()
         
         except:
-                # find the other teleport square
-                index_other_cell = self.maze.getOtherTeleportSquareLocation(current_cell)
-                # change coordiantes
-                self.canvas_position[0] = index_other_cell[0]*32 -16
-                self.canvas_position[1] = index_other_cell[1]*32 -16
-                # reverse direction
-                self.next_direction = [component*-1 for component in self.direction] 
+             # find the other teleport square
+            index_other_cell = self.maze.getOtherTeleportSquareLocation(current_cell)
 
+            # change coordiantes
+            index_next_square_after_teleport = [index_other_cell[0] + self.next_direction[0], index_other_cell[1]+self.next_direction[1]]  
+            self.canvas_position[0] = index_next_square_after_teleport[0]*32 -16
+            self.canvas_position[1] = index_next_square_after_teleport[1]*32 -16
 
         # check if we can change the direction of pacman
         direction_has_changed = self.checkChangeDirection()
