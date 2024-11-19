@@ -32,6 +32,9 @@ class Animate:
         elif(frame != -1): # we need to get a specific frame
             self.currentFrame = frame
 
+        if parent is not None:
+            self.addParent(parent)
+
     def update(self):
         self.currentFrame += 1 # increment the frame
         self.currentFrame %= len(self.fames) # prevent a index error

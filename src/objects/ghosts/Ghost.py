@@ -33,6 +33,7 @@ class Ghost:
         self.pacman = pacman
         self.dot_counter = 0
         self.dot_limit = 0
+        self.colour = ""
 
         self.canvas_position = [start_pos[0], start_pos[1]] # the x and y co-ordinates of pacman
         self.target_position = []
@@ -48,6 +49,8 @@ class Ghost:
         self.white_frightened_image = GameImage("assets/Ghosts/WhiteFrightendGhost.gif")
 
         self.maze = maze
+
+        self.level_info = self.maze.get_level_info(0)
 
     def tick(self):
         
@@ -82,7 +85,10 @@ class Ghost:
                 else:
                     self.direction = [-1, 0] # we need to move left
                 self.checkFrameSwitch(True)
-            
+
+            if self.direction == [0, 1] and  self.canvas_position[0] == 416:
+                self.direction = [0, -1]
+
             # move to correct x
             #check if moved to 416 or past (based on direction)
             if self.checkMovedPassed(416, self.direction[0], self.canvas_position[0]):
@@ -106,6 +112,8 @@ class Ghost:
                 return
             
             #move ghost
+            print("SPEED:", self.speed_modifier)
+            print("SPEED:", self.speed)
             self.canvas_position [0] += self.direction[0]*self.speed*self.speed_modifier
             self.canvas_position [1] += self.direction[1]*self.speed*self.speed_modifier
             return
@@ -408,10 +416,26 @@ class Ghost:
         self.checkFrameSwitch(True) # this will change the frame
         # set target square
 
-    def calculateTarget(self):
+    def calculateTarget(self): # this is a virtual method
         pass
 
     def pythagoras(self, pos1: list, pos2:list) -> float:
         a = (pos1[0] - pos2[0])**2
         b = (pos1[1] - pos2[1])**2
         return math.sqrt(a + b) 
+    
+    def reset(self, level,startpos):
+        self.canvas_position = startpos
+        
+        self.level_info = self.maze.get_level_info(level)
+        self.is_dead = False
+        self.is_frightened = False
+        
+        if self.colour == "red":
+            self.state = GhostState.CHASE
+            self.direction = [-1, 0]
+
+        if self.dot_counter > self.dot_limit:
+            self.state = GhostState.MOVING_OUT_OF_GHOST_HOUSE
+
+        

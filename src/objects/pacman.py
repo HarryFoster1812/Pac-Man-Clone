@@ -12,7 +12,7 @@ class Pacman:
         self.direction = [0,0] # the current direction that pacman is travelling
         self.next_direction = [0,0] # this will be via user input 
         self.speed = 5.05050508333 # pixels this is from 
-        self.speed_modifier = 0.9 # float 0-1
+        self.speed_modifier = 2 # float 0-1
         
         self.image = GameImage("assets/PacManRight.gif", calculate_rotations=True) # need to fill this out
         self.tick_count = 0

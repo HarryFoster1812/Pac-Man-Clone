@@ -1,10 +1,11 @@
-from tkinter import Frame, Tk, Canvas, Event, Button, Label, Entry, Message
-#from tkinter.ttk import * # add styles ?
+from tkinter import Frame, Tk, Canvas, Event, Button, Label, Entry, Message, filedialog
+import threading
+import pickle
 from src.animate import Animate
 from src.leaderboard import Leaderboard
 from src.game import Game
 from src.settings import Settings
-
+from src.player import Player
 
 DEBUG = True
 
@@ -35,18 +36,26 @@ class App():
         self.main_frame.grid_rowconfigure(0, weight=1)
         self.main_frame.grid_columnconfigure(0, weight=1)
         
+        self.loading_thread = None
+
         self.current_screen_no = 0
         self.previous_screen_stack = []
 
         self.settings = Settings()
         self.leaderboard = Leaderboard()
 
+        self.player = Player()
+
         self.frames = []
 
         for F in (MainMenu, NameScreen, LevelScreen, GameScreen, LeaderboardScreen, OptionScreen, BossScreen):
-            frame = F(self.main_frame, self)
-            frame.grid(row=0, column=0, sticky="nsew")
-            self.frames.append(frame)
+            
+            if F is GameScreen:
+                self.loading_thread = threading.Thread(target=self.instantiate_game_screen())
+            else:
+                frame = F(self.main_frame, self)
+                frame.grid(row=0, column=0, sticky="nsew")
+                self.frames.append(frame)
 
         self.current_frame = self.frames[0]
         self.current_frame.grid(row=0, column=0, sticky="nsew")
@@ -55,17 +64,18 @@ class App():
         #self.current_frame = self.frames[0]
         #self.current_frame.grid(row=0, column=0, sticky="nsew")
         #self.current_frame.tkraise()
-    
-    def updateGame(self):
-        pass
-        # self.game.tick()
-        # loop over each entity and update positions
-        # check the last interaction and remove the appropriate dots?
-        # have a 2d array of the dots for the board ? 
 
     def goToPreviousScreen(self):
         last_screen = self.previous_screen_stack.pop()
         self.switchFrame(last_screen)
+
+    def instantiate_game_screen(self):
+        print("THREAD STARTED")
+        frame = GameScreen(self.main_frame, self)
+        print("FRAME LOADED")
+        frame.grid(row=0, column=0, sticky="nsew")
+        self.frames.insert(3,frame)
+        print("FRAME INSERTED")
 
     def onKeyPress(self, event: Event):
         #check if the boss key is pressed
@@ -99,6 +109,9 @@ class App():
         else:
             self.switchFrame( App.screenNums["BossScreen"] )
 
+    def handle_load_save_game(self, fileLoc):
+        file =  pickle.load(fileLoc)
+
 class MainMenu(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg="#000")
@@ -128,11 +141,14 @@ class MainMenu(Frame):
         self.arrow_image = Animate(fileLoc="assets/pacman-right/1.png", parent=self.arrow, scale=2.5)
 
         # play button
-        play_button = Button(self, text="Play", background="#000", fg="#FFF", command=lambda: controller.switchFrame(App.screenNums["NameScreen"]))
+        play_button = Button(self, text="New Game", background="#000", fg="#FFF", command=lambda: controller.switchFrame(App.screenNums["NameScreen"]))
         play_button.pack()
 
         self.buttonHeight = play_button.winfo_reqheight()
         # options
+
+        Button(self, text="Load Game", background="#000", fg="#FFF", command=self.open_file_explorer).pack()
+
         Button(self, text="Options", background="#000", fg="#FFF", command=lambda: controller.switchFrame(App.screenNums["OptionScreen"])).pack()
         # leaderboard
         Button(self, text="Leaderboard", background="#000", fg="#FFF", command=lambda: controller.switchFrame(App.screenNums["LeaderboardScreen"])).pack()
@@ -146,7 +162,18 @@ class MainMenu(Frame):
 
         elif(not direction and self.selection > 0):
             self.selection -= 1
-            self.arrow.place(x=100, y=(self.buttonHeight * self.selection +300))     
+            self.arrow.place(x=100, y=(self.buttonHeight * self.selection +300))
+
+    def open_file_explorer(self):
+        filename = filedialog.askopenfilename(initialdir = "/",
+                                          title = "Select a File",
+                                          filetypes = (("Text files",
+                                                        "*.txt*"),
+                                                       ("all files",
+                                                        "*.*")))
+      
+        # Change label contents
+        self.controller.handle_load_save_game(filename) 
 
     def EventHandler(self, event: Event):
         if event.keysym_num == 65364: # down arrow
@@ -178,9 +205,11 @@ class NameScreen(Frame):
 
         title_label = Label(self, image="", background="#000") # create the title label
         title_label.pack()
+
+        self.current_player = controller.player
         
-        Button(self, text="Back",command=lambda: controller.goToPreviousScreen()).pack()
         # add current highest score 
+        Button(self, text="Back",command=lambda: controller.goToPreviousScreen()).pack()
         
         Label(self, text="Enter Name").pack()
         # add input box for the user name
@@ -193,8 +222,9 @@ class NameScreen(Frame):
   
     def nameButtonSubmit(self, text_entered):
         if text_entered.strip() != "":
-            # add new entry to scores
-            # add name to entry
+            
+            self.current_player.name = text_entered.strip() 
+            
             self.controller.switchFrame(App.screenNums["GameScreen"])
         else:
             Message(self, text="You need to enter a name").pack()
@@ -227,7 +257,11 @@ class GameScreen(Frame):
         self.game_canvas = Canvas(self, background="#000")
         self.game_canvas.pack(fill="both", expand = True)
 
-        self.game = Game(self.game_canvas, controller.settings, controller.root)
+
+        self.current_player = controller.player
+        self.game = Game(self.game_canvas, controller.settings, controller.root, controller.player)
+
+        self.high_score = self.controller.leaderboard.get_high_score()
 
         if (DEBUG):
             for i in range(36):
@@ -249,11 +283,26 @@ class GameScreen(Frame):
 
         self.game_canvas.update()
 
-        self.drawGame()
         self.ms_delay = 17 #17
-        self.after(self.ms_delay, self.update)
+
 
     def drawGame(self):
+        self.game_canvas.children.clear()
+        # player Name label
+        Label(self.game_canvas, text=self.current_player.name).place(x=0, y=0)
+        self.player_score_label = Label(self.game_canvas, text=self.current_player.score)
+        self.player_score_label.place(x=0, y=32)
+
+        Label(self.game_canvas, text="High Score").place(x=32, y=0)
+        self.high_score_label = Label(self.game_canvas, text=self.high_score)
+        self.high_score_label.place(x=32, y=32)
+
+        Label(self.game_canvas, text="Level").place(x=32, y=0)
+        self.high_score_label = Label(self.game_canvas, text=self.game.level)
+        self.high_score_label.place(x=32, y=32)
+
+
+
         for i, row in enumerate(self.game.maze.maze):
             for j, cell in enumerate(row):
                 if cell != None and hasattr(cell, "image"):
@@ -265,15 +314,16 @@ class GameScreen(Frame):
         for ghost in self.game.ghosts:
             ghost_pos = ghost.canvas_position
             ghost.image.addParent(self.game_canvas, x=ghost_pos[0], y=ghost_pos[1])
+        
         # top level 
-        #1up       HIGHSCORE
-        #PLAYER      SCORE
+        #PLAYERNAME       HIGHSCORE     LEVEL
+        #SCORE              SCORE         NO
         #
         #
         #
         #
         #
-        #LIVES                      AVAILIBLE POWERUPS
+        #LIVES                      
 
         # 28 x 36 total grid. 3 at the top, 2 at the bottom
  
@@ -300,9 +350,27 @@ class GameScreen(Frame):
             
             
             # check for win
+            if self.current_player.score > self.high_score:
+                self.high_score = self.current_player.score
+            
+            self.high_score_label.configure(text=self.high_score)
+            self.player_score_label.configure(text=self.current_player.score)
             # if win then reset and change to level frame
+            if self.game.dotsCounter == 244:
+                # reset the game
+                self.controller.switchFrame(App.screenNums["LoadingScreen"])
+                
         
         self.after(self.ms_delay, self.update)
+    
+    def next_level(self):
+        self.game.next_level()
+        self.drawGame()
+
+    def tkraise(self, aboveThis = None):
+        self.drawGame()
+        self.after(self.ms_delay, self.update)
+        return super().tkraise(aboveThis)
 
     def EventHandler(self, event: Event):
         self.game.EventHandler(event)

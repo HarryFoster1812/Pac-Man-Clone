@@ -8,10 +8,11 @@ from src.objects.pacman import Pacman
 from src.objects.ghosts import Blinky, Inky, Clyde, Ghost, Pinky
 from src.settings import Settings
 from src.maze import Maze
+from src.player import Player
 
 class Game:
 
-    def __init__(self, canvas: Canvas, settings: Settings, root:Tk) -> None:
+    def __init__(self, canvas: Canvas, settings: Settings, root:Tk, player: Player) -> None:
         self.isPaused = True # this is when the user pauses the game
         self.info_pause = False # this is when the game is paused to show the score or when pac man is dead
         self.maze = Maze("src/levels/main.txt")
@@ -26,9 +27,10 @@ class Game:
         self.ghosts[2].setDotLimit(30)
         self.ghosts[3].setDotLimit(60)
 
+        self.player = player
+
         self.next_ghost_to_release = 1
         self.level = 0
-        self.score = 0
         self.lives = 3
         self.dotsCounter = 0 # after 70 dots bonus will display, and then after 170 another bonus will display
         self.settings = settings
@@ -36,6 +38,18 @@ class Game:
         self.pacman_frame_halt = 0
 
         self.levelInfo = None
+
+
+    def next_level(self):
+        self.maze.reset()
+        self.dotsCounter = 0
+        self.pacman.reset(maze)
+
+        # set ghost dot limit
+        
+        for ghost in self.ghosts:
+            ghost.reset(maze)
+        
 
     def tick(self):
         if self.pacman_frame_halt > 0: # if pac man eats a dot he is then halted for one frame
@@ -54,7 +68,7 @@ class Game:
         pacman_cell = self.maze.maze[pacman_cell_loc[1]][pacman_cell_loc[0]]
 
         if pacman_cell.has_dot:
-            self.score += pacman_cell.points
+            self.player.score += pacman_cell.points
             pacman_cell.removeImage()
 
             self.dotsCounter += 1            
@@ -63,11 +77,16 @@ class Game:
 
         elif pacman_cell.is_powerup:
             #change states of the ghosts
+            self.player.score += pacman_cell.points
+            self.dotsCounter += 1            
+
             for ghost in self.ghosts:
                 if ghost.state == Ghost.GhostState.CHASE or ghost.state == Ghost.GhostState.SCATTER:
                     ghost.changeState(Ghost.GhostState.FRIGHTENED)
+                
                 elif ghost.state == Ghost.GhostState.DEAD:
                     pass
+                
                 else:
                     ghost.enableFrightened()
 
@@ -211,6 +230,7 @@ Add teleport squares
 TO DO:
 
 NEED TO ADD A PAUSE SCREEN
+Add save / load game
 
 Add game timer to allow the switching of States
 Add level based values (speed modifiers)
@@ -219,12 +239,11 @@ Add consumeables
 Add reset level / redraw after death
 Add game over / save score
 Populate the boss screen
-Add save / load game
 Make it look nicer
 
 Need to add cheat codes
-maybe press a button for the colours to switch
 maybe add a mrs pac man cheat code
-
-
+add another life
+reset the ghosts
+release all of the ghosts
 """

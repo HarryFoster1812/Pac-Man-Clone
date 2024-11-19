@@ -21,3 +21,6 @@ class Leaderboard:
 
     def sortScores(self):
         pass
+
+    def get_high_score(self):
+        return self.scores[0][1]
