@@ -12,6 +12,7 @@ class Blinky(Ghost):
         self.next_direction = [-1,0]
         self.calculateCurrentCell()
         self.next_cell = self.current_cell
+        self.ghost_house_target = [416, 528]
 
     def calculateTarget(self):
         match(self.state):

@@ -28,6 +28,7 @@ class Ghost:
         self.speed = 5.05050508333 # the base pixel movement speed of the ghost  
         self.speed_modifier = 0.5 # this is applied during the different ghost modes
         self.ghost_house_target = []
+        self.ouside_ghost_house = [14,14]
 
         self.pacman = pacman
         self.dot_counter = 0
@@ -71,8 +72,6 @@ class Ghost:
             self.calculateCurrentCell()
             self.calculateNextCell()
             next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
-            print("GHOST POSITION",self.canvas_position)
-            print("GHOST DIRECTION",self.direction)
 
             if isinstance(next_cell, Wall) and self.canvas_position[0] != 416:
                 # calculate which direction will get the ghost to 416
@@ -85,7 +84,6 @@ class Ghost:
             # move to correct x
             #check if moved to 416 or past (based on direction)
             if Ghost.checkMovedPassed(416, self.direction[0], self.canvas_position[0]):
-                print("HAS MOVED PASSED X",self.canvas_position)
                 self.canvas_position[0] = 416
                 self.direction = [0, -1]
                 self.checkFrameSwitch(True)
@@ -93,8 +91,10 @@ class Ghost:
             
             # move to correct y
             if self.direction == [0,-1] and Ghost.checkMovedPassed(436, self.direction[1], self.canvas_position[1]):
-                print("REACHED TARGET SWITCHING TO CHASE",self.canvas_position)
-                self.changeState(GhostState.CHASE)
+                if self.is_frightened:
+                    self.changeState(GhostState.FRIGHTENED)
+                else:
+                    self.changeState(GhostState.CHASE)
                 self.direction = [-1, 0]
                 self.next_direction = [-1, 0]
                 self.canvas_position[1] = 436
@@ -109,10 +109,44 @@ class Ghost:
             return
         
         elif self.state == GhostState.MOVING_INTO_GHOST_HOUSE:
+            #wait until ghost hits wall from in house state
+            self.calculateCurrentCell()
+            self.calculateNextCell()
+            
+            # move to correct x
+            #check if moved to 416 or past (based on direction)
+            if Ghost.checkMovedPassed(self.ghost_house_target[1], 1, self.canvas_position[1]):
+                print("HAS MOVED PASSED Y",self.canvas_position)
+                self.canvas_position[1] = self.ghost_house_target[1]
+                self.direction = [0, -1]
+
+                # set direction to move x
+                if (self.ghost_house_target[0] - self.canvas_position[0]) > 0:
+                    self.direction = [1, 0] # we need to move right
+                else:
+                    self.direction = [-1, 0] # we need to move left
+                self.checkFrameSwitch(True)
+
+            
+            # move to correct y
+            if self.direction[0] != 0 and Ghost.checkMovedPassed(self.ghost_house_target[0], self.direction[0], self.canvas_position[0]):
+                print("REACHED TARGET SWITCHING TO MOVING OUT",self.canvas_position)
+                self.changeState(GhostState.MOVING_OUT_OF_GHOST_HOUSE)
+                self.direction = [-1, 0]
+                self.next_direction = [-1, 0]
+                self.canvas_position[1] = 436
+                self.checkFrameSwitch(True)
+                self.calculateNextCell()
+            
+            #move ghost
+            self.canvas_position [0] += self.direction[0]*self.speed*self.speed_modifier
+            self.canvas_position [1] += self.direction[1]*self.speed*self.speed_modifier
             return
         
         if self.state == GhostState.DEAD and self.current_cell == self.target:
             self.changeState(GhostState.MOVING_INTO_GHOST_HOUSE)
+            self.direction = [0, 1] # make the ghost move down
+            self.canvas_position = [416, 436]
             return
 
         direction_has_changed = False
@@ -185,14 +219,17 @@ class Ghost:
                 self.speed_modifier = 0.6
 
             case GhostState.FRIGHTENED: 
-                self.toggleFrightened()
+                self.enableFrightened()
                 self.speed_modifier = 0.4
                 self.image.switchFrameSet(self.frightened_image.frames)
             
             case GhostState.DEAD:
                 self.speed_modifier = 1
-                self.toggleFrightened()
-                self.toggleDead()
+                self.disableFrightened()
+                self.enableDead()
+
+            case GhostState.MOVING_OUT_OF_GHOST_HOUSE:
+                self.disableDead()
     
     def calculateNextCell(self):
         self.next_cell[0] = self.current_cell[0]
@@ -225,18 +262,18 @@ class Ghost:
         if direction_has_changed:
             if self.is_dead:
                 match(self.direction):
-                        case [0,1] : 
-                            self.updateFrame(self.dead_image.frames)
-                            self.image.setFrameStatic(0)
-                        case [0,-1]: 
-                            self.updateFrame(self.dead_image.frames)
-                            self.image.setFrameStatic(1)
-                        case [1,0] : 
-                            self.updateFrame(self.dead_image.frames)
-                            self.image.setFrameStatic(2)
-                        case [-1,0]: 
-                            self.updateFrame(self.dead_image.frames)
-                            self.image.setFrameStatic(3)
+                    case [0,1] : 
+                        self.updateFrame(self.dead_image.frames)
+                        self.image.setFrameStatic(0)
+                    case [0,-1]: 
+                        self.updateFrame(self.dead_image.frames)
+                        self.image.setFrameStatic(1)
+                    case [1,0] : 
+                        self.updateFrame(self.dead_image.frames)
+                        self.image.setFrameStatic(2)
+                    case [-1,0]: 
+                        self.updateFrame(self.dead_image.frames)
+                        self.image.setFrameStatic(3)
                             
             elif self.is_frightened:
                 self.updateFrame(self.frightened_image.frames)
@@ -253,7 +290,7 @@ class Ghost:
     def updateFrame(self, change_frame_set = None):
         self.tick_count += 1
         self.tick_count %= 5
-        if change_frame_set != None:
+        if change_frame_set is not None:
             self.image.switchFrameSet(change_frame_set)
         
         if self.tick_count == 0:
@@ -337,31 +374,28 @@ class Ghost:
         y = (self.canvas_position[1] + 32)//32
         
         self.current_cell = [x,y]
+            
+    def enableDead(self):
+        self.is_dead = True
+        self.checkFrameSwitch(True)
+        # set target square to outside ghostHouse
+        self.target = self.ouside_ghost_house
 
-    def toggleDead(self):
-        if self.is_dead:
-            self.is_dead = False
-            # change ghost image
-            self.target = []
-            self.checkFrameSwitch(True) # this will change the frame
-            # set target square
+    def disableDead(self):
+        self.is_dead = False
+        # change ghost image
+        self.checkFrameSwitch(True) # this will change the frame
 
-        else:
-            self.is_dead = True
-            self.checkFrameSwitch(True)
-            # set target square to outside ghostHouse
+    def enableFrightened(self):
+        self.is_frightened = True
+        self.checkFrameSwitch(True)
+        # set target square to outside ghostHouse
 
-    def toggleFrightened(self):
-        if self.is_frightened:
-            self.is_frightened = False
-            # change ghost image
-            self.checkFrameSwitch(True) # this will change the frame
-            # set target square
-
-        else:
-            self.is_frightened = True
-            self.checkFrameSwitch(True)
-            # set target square to outside ghostHouse
+    def disableFrightened(self):
+        self.is_frightened = False
+        # change ghost image
+        self.checkFrameSwitch(True) # this will change the frame
+        # set target square
 
     def calculateTarget(self):
         pass

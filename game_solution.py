@@ -1,6 +1,5 @@
-from tkinter import *
+from tkinter import Frame, Tk, Canvas, Event, Button, Label, Entry, Message
 #from tkinter.ttk import * # add styles ?
-from PIL import Image, ImageTk
 from src.animate import Animate
 from src.leaderboard import Leaderboard
 from src.game import Game
@@ -28,7 +27,7 @@ class App():
 
     def __init__(self, root: Tk) -> None:
         #self.mainCanvas = Canvas(root, bg="#000", )
-        root.bind("<Key>", self.onKeyPress) # bind the canvas so when a key is pressed it runs onKeyPress 
+        root.bind("<Key>", self.onKeyPress) # bind the canvas so when a key is pressed it runs onKeyPress
 
         # set up the main menu screen
         self.main_frame = Frame(root, highlightthickness=0)
@@ -277,8 +276,7 @@ class GameScreen(Frame):
         #LIVES                      AVAILIBLE POWERUPS
 
         # 28 x 36 total grid. 3 at the top, 2 at the bottom
-
-        pass 
+ 
 
     # 60 fps
     def update(self):
@@ -377,7 +375,7 @@ class BossScreen(Frame):
 
         title_label = Label(self, image="", background="#000") # create the title label
         title_label.pack()
-        pass 
+         
 
     def EventHandler(self, event: Event):
         pass

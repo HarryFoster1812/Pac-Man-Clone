@@ -34,20 +34,40 @@ class Pacman:
         self.next_cell[1] += self.direction[1]
 
         self.calculateTargetPos()
+        current_cell = self.maze.maze[int(self.current_cell[1])][int(self.current_cell[0])]
         #print("Target Position:", self.target_position)
         #print("Target cell:", self.next_cell, end="\n\n")
-        
-        next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
-        
-        if isinstance(next_cell, Wall):
-            self.next_cell = self.current_cell
-            self.calculateTargetPos()
-            self.canvas_position = self.target_position
-            self.direction = [0,0]
-            self.enableIdle()
+        try:
+            next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
 
-        else:
-            self.snapPosition()
+            if isinstance(next_cell, Wall):
+                self.next_cell = self.current_cell
+                self.calculateTargetPos()
+                self.canvas_position = self.target_position
+                self.direction = [0,0]
+                self.enableIdle()
+
+            elif isinstance(current_cell, Moveable) and current_cell.is_teleport:
+                # find the other teleport square
+                index_other_cell = self.maze.getOtherTeleportSquareLocation(current_cell)
+                # change coordiantes
+                self.canvas_position[0] = index_other_cell[0]*32 -16
+                self.canvas_position[1] = index_other_cell[1]*32 -16
+                # reverse direction
+                self.next_direction = [component*-1 for component in self.direction] 
+
+            else:
+                self.snapPosition()
+        
+        except:
+                # find the other teleport square
+                index_other_cell = self.maze.getOtherTeleportSquareLocation(current_cell)
+                # change coordiantes
+                self.canvas_position[0] = index_other_cell[0]*32 -16
+                self.canvas_position[1] = index_other_cell[1]*32 -16
+                # reverse direction
+                self.next_direction = [component*-1 for component in self.direction] 
+
 
         # check if we can change the direction of pacman
         direction_has_changed = self.checkChangeDirection()

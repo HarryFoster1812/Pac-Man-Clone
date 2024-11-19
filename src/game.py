@@ -69,7 +69,7 @@ class Game:
                 elif ghost.state == Ghost.GhostState.DEAD:
                     pass
                 else:
-                    ghost.toggleFrightened()
+                    ghost.enableFrightened()
                     
 
             pacman_cell.removeImage()
@@ -204,9 +204,11 @@ class Game:
 # This is for the ghost house force leave The game begins with an initial timer limit of four seconds, but lowers to it to three seconds starting with level five.
 
 
+DONE (From the list being created way too late in the project)
+Fix dead ghosts not moving back to ghost house DONE
+
 TO DO:
 
-Fix dead ghosts not moving back to ghost house
 Add ghost moving back into ghost house
 Add game timer to allow the switching of States
 Add level based values (speed modifiers)
@@ -214,6 +216,8 @@ Add death
 Add teleport squares
 Add reset level / redraw after death
 Add game over / save score
+Make it look nicer
+Populate the boss screen
 
 Need to add cheat codes
 maybe press a button for the colours to switch

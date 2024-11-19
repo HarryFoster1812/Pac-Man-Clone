@@ -49,15 +49,15 @@ class Maze:
         '┲': [Wall, ["other/DoubleLongCorner.gif",          4]], 
         '┱': [Wall, ["other/DoubleLongCorner.gif",          5]], 
 
-        '.': [Moveable, [True, False, True, False]], # dot
-        'p': [Moveable, [False, False, True, True]], # powerup
-        'P': [Moveable, [False, True, True, True]], # powerup that is junction
-        '+': [Moveable, [True, True, True, False]], # junction without a dot
-        'd': [Moveable, [False, True, True, False]], # 
-        'U': [Moveable, [False, True, False, False]], # junction where ghost can not turn up and does not have a dot
-        'u': [Moveable, [True, True, False, False]], # junction where ghost can not turn up and has a dot
-        '-': [Moveable, [False, False, True, False]], 
-        'n': [Moveable, [False, False, False, False]], 
+        '.': [Moveable, [True,  False, True,  False, False]], # dot
+        'p': [Moveable, [False, False, True,  True , False]], # powerup
+        'P': [Moveable, [False, True,  True,  True , False]], # powerup that is junction
+        '+': [Moveable, [True,  True,  True,  False, False]], # junction without a dot
+        'd': [Moveable, [False, True,  True,  False, False]], # 
+        'U': [Moveable, [False, True,  False, False, False]], # junction where ghost can not turn up and does not have a dot
+        'u': [Moveable, [True,  True,  False, False, False]], # junction where ghost can not turn up and has a dot
+        '-': [Moveable, [False, False, True,  False, False]], 
+        'n': [Moveable, [False, False, False, False, True]], 
         'X': [None], 
         }
 
@@ -68,8 +68,7 @@ class Maze:
             maze_file = [line.rstrip("\n") for line in maze_file.readlines()]
 
         self.maze = []
-        self.staticImages = [] # all of the walls, and the dots
-        self.animatedImages = [] # powerUps
+        self.teleport_squares = [] 
 
         assetsPath = "assets/"
 
@@ -97,11 +96,13 @@ class Maze:
                         
                         else:
                             arglist = typeOfCell[1]
-                            obj = typeOfCell[0](arglist[0], arglist[1], arglist[2], arglist[3])
-                        
+                            obj = typeOfCell[0](arglist[0], arglist[1], arglist[2], arglist[3], arglist[4])
 
                 else:
                     obj = None
+
+                if isinstance(obj, Moveable) and obj.is_teleport:
+                    self.teleport_squares.append(obj) 
 
                 tempType.append(obj)
                 
@@ -109,6 +110,19 @@ class Maze:
             
     def reset(self):
         self.__init__()
+
+    def getOtherTeleportSquareLocation(self, square):
+        index_of_current_sqaure = self.teleport_squares.index(square)
+        if index_of_current_sqaure == 0:
+            other_sqaure = self.teleport_squares[1]
+        else:
+            other_sqaure = self.teleport_squares[0]
+
+        for i, line in enumerate(self.maze):
+            for j, cell in enumerate(line):
+                if cell == other_sqaure:
+                    return [j,i]
+
 
     def removeObject(self, x, y):
         obj = self.maze[y][x]

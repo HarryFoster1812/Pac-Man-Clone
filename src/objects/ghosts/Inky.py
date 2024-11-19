@@ -19,6 +19,7 @@ class Inky(Ghost):
         match(self.state):
             case GhostState.CHASE:
                 self.target = self.pacman.current_cell
+                # need to do cell calulation based off pink
                 
             case GhostState.SCATTER:
                 self.target = self.scatter_cell
