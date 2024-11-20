@@ -7,9 +7,10 @@ class Pacman:
     def __init__(self, start_pos: list, maze: Maze) -> None:
         self.canvas_position = [start_pos[0], start_pos[1]] # the x and y co-ordinates of pacman
         self.target_position = []
+        self.calculateCurrentCell()
         self.current_cell = [] # the co-ordinates of pacman in the cell
         self.next_cell = [0,0]
-        self.direction = [0,0] # the current direction that pacman is travelling
+        self.direction = [0,0] # the current direction that pacman is traveling
         self.next_direction = [0,0] # this will be via user input 
         self.speed = 5.05050508333 # pixels this is from 
         self.speed_modifier = 2 # float 0-1
@@ -37,6 +38,8 @@ class Pacman:
         current_cell = self.maze.maze[int(self.current_cell[1])][int(self.current_cell[0])]
         #print("Target Position:", self.target_position)
         #print("Target cell:", self.next_cell, end="\n\n")
+        #print("Direction:", self.direction, end="\n\n")
+        #print("Next Direction:", self.next_direction, end="\n\n")
         try:
             next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
 
@@ -54,6 +57,7 @@ class Pacman:
                 index_next_square_after_teleport = [index_other_cell[0] + self.next_direction[0], index_other_cell[1]+self.next_direction[1]]  
                 self.canvas_position[0] = index_next_square_after_teleport[0]*32 -16
                 self.canvas_position[1] = index_next_square_after_teleport[1]*32 -16
+                return
 
             else:
                 self.snapPosition()
@@ -66,6 +70,7 @@ class Pacman:
             index_next_square_after_teleport = [index_other_cell[0] + self.next_direction[0], index_other_cell[1]+self.next_direction[1]]  
             self.canvas_position[0] = index_next_square_after_teleport[0]*32 -16
             self.canvas_position[1] = index_next_square_after_teleport[1]*32 -16
+            return
 
         # check if we can change the direction of pacman
         direction_has_changed = self.checkChangeDirection()

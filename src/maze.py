@@ -1,8 +1,7 @@
-from src.animate import Animate
 from src.objects.map_objects.wall import Wall 
 from src.objects.map_objects.moveable import Moveable 
-from src.objects.map_objects.powerup import Powerup 
-import copy
+from src.objects.ghosts.ghost_state import GhostState 
+import math
 
 class Maze:
 
@@ -61,7 +60,110 @@ class Maze:
         'X': [None], 
     }
 
-        # has dot, is junction, can move up, is powerup , is teleport
+     # has dot, is junction, can move up, is powerup , is teleport
+
+    level_info = [
+        {
+            "pacmanSpeed" : 0.8,
+	    	"ghostSpeed" : 0.75,
+	    	"frightPacManSpeed" : 0.9,
+	    	"frightGhostSpeed" : 0.5,
+	    	"frightFrames" : 6*60,
+	    	"frightFlashStart" : 5*2*5,
+	    	"modes" : [[GhostState.SCATTER, 7*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 7*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, math.inf]]
+	    }, 
+    
+	    {
+	    	"pacmanSpeed" : 0.9,
+	    	"ghostSpeed" : 0.85,
+	    	"frightPacManSpeed" : 0.95,
+	    	"frightGhostSpeed" : 0.55,
+	    	"frightFrames" : 5*60,
+	    	"frightFlashStart" : 5*2*5,
+	    	"modes" : [[GhostState.SCATTER, 7*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 7*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1033*60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
+	    }, 
+    
+	    {
+	    	"pacmanSpeed" : 0.9,
+	    	"ghostSpeed" : 0.85,
+	    	"frightPacManSpeed" : 0.95,
+	    	"frightGhostSpeed" : 0.55,
+	    	"frightFrames" : 4*60,
+	    	"frightFlashStart" : 5*2*5,
+	    	"modes" : [[GhostState.SCATTER, 7*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 7*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1033*60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
+	    } ,
+    
+	    {
+	    	"pacmanSpeed" : 0.9,
+	    	"ghostSpeed" : 0.85,
+	    	"frightPacManSpeed" : 0.95,
+	    	"frightGhostSpeed" : 0.55,
+	    	"frightFrames" : 3*60,
+	    	"frightFlashStart" : 5*2*5,
+	    	"modes" : [[GhostState.SCATTER, 7*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 7*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1033*60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
+	    },
+    
+    
+	    {
+	    	"pacmanSpeed" : 1,
+	    	"ghostSpeed" : 0.95,
+	    	"frightPacManSpeed" : 1,
+	    	"frightGhostSpeed" : 0.6,
+	    	"frightFrames" : 2*60,
+	    	"frightFlash" : 5*2*5,
+	    	"modes" : [[GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1037*60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
+	    },
+    
+	    {
+	    	"pacmanSpeed" : 1,
+	    	"ghostSpeed" : 0.95,
+	    	"frightPacManSpeed" : 1,
+	    	"frightGhostSpeed" : 0.6,
+	    	"frightFrames" : 2*60,
+	    	"frightFlash" : 5*2*5,
+	    	"modes" : [[GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1037*60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
+	    },
+    
+	    {
+	    	"pacmanSpeed" : 1,
+	    	"ghostSpeed" : 0.95,
+	    	"frightPacManSpeed" : 1,
+	    	"frightGhostSpeed" : 0.6,
+	    	"frightFrames" : 2*60,
+	    	"frightFlash" : 5*2*5,
+	    	"modes" : [[GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1037*60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
+	    },
+    
+	    {
+	    	"pacmanSpeed" : 1,
+	    	"ghostSpeed" : 0.95,
+	    	"frightPacManSpeed" : 1,
+	    	"frightGhostSpeed" : 0.6,
+	    	"frightFrames" : 2*60,
+	    	"frightFlash" : 5*2*5,
+	    	"modes" : [[GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1037], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
+	    },
+    
+	    {
+	    	"pacmanSpeed" : 1,
+	    	"ghostSpeed" : 0.95,
+	    	"frightPacManSpeed" : 1,
+	    	"frightGhostSpeed" : 0.6,
+	    	"frightFrames" : 1*60,
+	    	"frightFlash" : 5*2*3,
+	    	"modes" : [[GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1037], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
+	    },
+    
+	    {
+	    	"pacmanSpeed" : 1,
+	    	"ghostSpeed" : 0.95,
+	    	"frightPacManSpeed" : 1,
+	    	"frightGhostSpeed" : 0.6,
+	    	"frightFrames" : 3*60,
+	    	"frightFlash" : 5*2*5,
+	    	"modes" : [[GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1037], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
+	    }
+    ]
 
     def __init__(self, file_location: str):
         with open(file_location, "r") as maze_file:
@@ -126,15 +228,12 @@ class Maze:
                     return [j,i]
 
     def get_level_info(self, level):
-        pass
+        if level > 10:
+            return Maze.level_info[10]
+        
+        return Maze.level_info[level]
 
     def removeObject(self, x, y):
         obj = self.maze[y][x]
         self.maze[y][x] = None
         del obj
-
-"""
-LEVEL INFO 
-
-
-"""

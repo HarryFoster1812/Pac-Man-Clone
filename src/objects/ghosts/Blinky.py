@@ -1,4 +1,5 @@
-from src.objects.ghosts.Ghost import Ghost, GhostState
+from src.objects.ghosts.Ghost import Ghost
+from src.objects.ghosts.ghost_state import GhostState
 from src.gameImage import GameImage
 
 # Red

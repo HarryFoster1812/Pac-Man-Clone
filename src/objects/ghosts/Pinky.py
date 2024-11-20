@@ -1,6 +1,7 @@
-from src.objects.ghosts.Ghost import Ghost, GhostState
+from src.objects.ghosts.Ghost import Ghost
 from src.gameImage import GameImage
-from enum import Enum
+from src.objects.ghosts.ghost_state import GhostState
+
 
 # Pink
 class Pinky(Ghost):

@@ -9,25 +9,25 @@ class GameImage:
 
         if load_ghost_variations:
             directions = ["GhostDown.gif", "GhostLeft.gif", "GhostRight.gif", "GhostUp.gif"]
-            self.down = GameImage.getFrames(image_path+directions[0],scale)
-            self.left = GameImage.getFrames(image_path+directions[1],scale)
-            self.right = GameImage.getFrames(image_path+directions[2],scale)
-            self.up = GameImage.getFrames(image_path+directions[3],scale)
+            self.down = self.getFrames(image_path+directions[0],scale)
+            self.left = self.getFrames(image_path+directions[1],scale)
+            self.right = self.getFrames(image_path+directions[2],scale)
+            self.up = self.getFrames(image_path+directions[3],scale)
             self.frames = self.left[:]
         
         else:
-            self.frames = GameImage.getFrames(image_path,scale)            
+            self.frames = self.getFrames(image_path,scale)            
             if frame != -1:
                 self.current_frame = 0
                 self.frames = [self.frames[frame]] # get rid of the other frames since we dont need them
 
             if calculate_rotations:
                 self.right = copy.copy(self.frames)
-                self.up = GameImage.rotateFrames(self.frames, 90)
-                self.left = GameImage.rotateFrames(self.frames, 180)
-                self.down = GameImage.rotateFrames(self.frames, 270)
+                self.up = self.rotateFrames(self.frames, 90)
+                self.left = self.rotateFrames(self.frames, 180)
+                self.down = self.rotateFrames(self.frames, 270)
 
-    def getFrames(fileLoc:str, scale:float) -> list:
+    def getFrames(self, fileLoc:str, scale:float) -> list:
         # Open the image with PIL and convert to RGBA to preserve transparency
         info = Image.open(fileLoc)
         framesNo = info.n_frames
@@ -62,7 +62,7 @@ class GameImage:
         self.nextFrame()
         pass
 
-    def rotateFrames(frames:list, theta: int) -> list:
+    def rotateFrames(self, frames:list, theta: int) -> list:
         temp = []
         for frame in frames:
             frame = ImageTk.getimage(frame)
@@ -83,6 +83,10 @@ class GameImage:
     def addParent(self, parent: Canvas, x, y):
         self.parent = parent
         self.id = self.parent.create_image(x, y, image=self.frames[self.current_frame], anchor="nw")
+
+    def remove_parent(self):
+        self.parent = None
+        self.id = None
 
     def setFrame(self, frame_index):
         self.current_frame = frame_index -1

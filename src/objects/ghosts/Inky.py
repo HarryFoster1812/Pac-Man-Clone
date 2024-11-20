@@ -1,5 +1,7 @@
-from src.objects.ghosts.Ghost import Ghost, GhostState
+from src.objects.ghosts.Ghost import Ghost
 from src.gameImage import GameImage
+from src.objects.ghosts.ghost_state import GhostState
+
 
 # Cyan
 class Inky(Ghost):

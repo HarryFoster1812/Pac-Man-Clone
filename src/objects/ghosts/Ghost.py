@@ -1,19 +1,10 @@
 import random
 import math
-from enum import Enum
 from src.objects.pacman import Pacman
 from src.gameImage import GameImage
 from src.objects.map_objects.moveable import Moveable
 from src.objects.map_objects.wall import Wall
-
-class GhostState(Enum):
-    CHASE = 0
-    SCATTER = 1
-    FRIGHTENED = 2
-    DEAD = 3
-    IN_GHOST_HOUSE = 4
-    MOVING_INTO_GHOST_HOUSE = 5
-    MOVING_OUT_OF_GHOST_HOUSE = 6
+from src.objects.ghosts.ghost_state import GhostState
 
 class Ghost:
 
@@ -26,7 +17,7 @@ class Ghost:
         self.is_dead = False
         self.is_frightened = False
         self.speed = 5.05050508333 # the base pixel movement speed of the ghost  
-        self.speed_modifier = 0.5 # this is applied during the different ghost modes
+        self.speed_modifier = 0.75 # this is applied during the different ghost modes
         self.ghost_house_target = []
         self.ouside_ghost_house = [14,14]
 
@@ -74,7 +65,7 @@ class Ghost:
         
         elif self.state == GhostState.MOVING_OUT_OF_GHOST_HOUSE:
             #wait until ghost hits wall from in house state
-            print("TRYING TO MOVE OUT", self.colour)
+            #print("TRYING TO MOVE OUT", self.colour)
             self.calculateCurrentCell()
             self.calculateNextCell()
             next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
@@ -113,8 +104,8 @@ class Ghost:
                 return
             
             #move ghost
-            print("SPEED:", self.speed_modifier)
-            print("SPEED:", self.speed)
+            #print("SPEED:", self.speed_modifier)
+            #print("SPEED:", self.speed)
             self.canvas_position [0] += self.direction[0]*self.speed*self.speed_modifier
             self.canvas_position [1] += self.direction[1]*self.speed*self.speed_modifier
             return
@@ -123,11 +114,11 @@ class Ghost:
             #wait until ghost hits wall from in house state
             self.calculateCurrentCell()
             self.calculateNextCell()
-            print("DIRECTION: ",self.direction)
+            #print("DIRECTION: ",self.direction)
             # move to correct x
             #check if moved to 416 or past (based on direction)
             if self.checkMovedPassed(self.ghost_house_target[1], 1, self.canvas_position[1]):
-                print("HAS MOVED PASSED Y",self.canvas_position)
+                #print("HAS MOVED PASSED Y",self.canvas_position)
                 self.canvas_position[1] = self.ghost_house_target[1]
                 # set direction to move x
                 if (self.ghost_house_target[0] - self.canvas_position[0]) > 0:
@@ -139,7 +130,7 @@ class Ghost:
             
             # move to correct y
             if self.direction[0] != 0 and self.checkMovedPassed(self.ghost_house_target[0], self.direction[0], self.canvas_position[0]):
-                print("REACHED TARGET SWITCHING TO MOVING OUT",self.canvas_position)
+                #print("REACHED TARGET SWITCHING TO MOVING OUT",self.canvas_position)
                 self.changeState(GhostState.MOVING_OUT_OF_GHOST_HOUSE)
                 self.direction = [0, 1]
                 self.next_direction = [0, 1]
@@ -234,16 +225,17 @@ class Ghost:
     def changeState(self, new_state):
         self.state = new_state
         self.next_direction = [component*-1 for component in self.direction]
+
         match (new_state):
             case GhostState.CHASE: 
-                self.speed_modifier = 0.6
+                self.speed_modifier = self.level_info["ghostSpeed"]
                 
             case GhostState.SCATTER: 
-                self.speed_modifier = 0.6
+                self.speed_modifier = self.level_info["ghostSpeed"]
 
             case GhostState.FRIGHTENED: 
                 self.enableFrightened()
-                self.speed_modifier = 0.4
+                self.speed_modifier = self.level_info["frightGhostSpeed"]
                 self.image.switchFrameSet(self.frightened_image.frames)
             
             case GhostState.DEAD:
@@ -297,9 +289,10 @@ class Ghost:
                     case [-1,0]: 
                         self.updateFrame(self.dead_image.frames)
                         self.image.setFrameStatic(3)
-                            
+
             elif self.is_frightened:
-                self.updateFrame(self.frightened_image.frames)
+                pass # the frame set should be updated so no need to change it                
+            
             else:
                 match(self.direction):
                     case [0,1] : self.updateFrame(self.image.down)
@@ -408,7 +401,7 @@ class Ghost:
 
     def enableFrightened(self):
         self.is_frightened = True
-        self.checkFrameSwitch(True)
+        self.updateFrame(self.frightened_image.frames)
         # set target square to outside ghostHouse
 
     def disableFrightened(self):
@@ -427,6 +420,7 @@ class Ghost:
     
     def reset(self, level, maze,startpos):
         self.canvas_position = startpos
+        self.maze = maze
         self.level_info = self.maze.get_level_info(level)
         self.is_dead = False
         self.is_frightened = False
@@ -438,5 +432,3 @@ class Ghost:
 
         if self.colour == "red": # this is needed since blinky does not have a dot limit
             self.state = GhostState.CHASE
-
-
