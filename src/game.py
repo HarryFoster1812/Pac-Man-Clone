@@ -316,14 +316,13 @@ DONE (From the list being created way too late in the project)
 Fix dead ghosts not moving back to ghost house DONE
 Add ghost moving back into ghost house
 Add teleport squares
+NEED TO ADD A PAUSE SCREEN
+Add game timer to allow the switching of States
+Add level based values (speed modifiers)
 
 TO DO:
 
-NEED TO ADD A PAUSE SCREEN
 Add save / load game
-
-Add game timer to allow the switching of States
-Add level based values (speed modifiers)
 Add death
 Add reset level / redraw after death
 Add game over / save score
