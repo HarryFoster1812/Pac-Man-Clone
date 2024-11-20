@@ -39,7 +39,7 @@ class Ghost:
         self.target_position = []
         self.current_cell = [] # the co-ordinates of pacman in the cell
         self.next_cell = [0,0]
-       
+
         self.tick_count = 0
 
         self.image=None
@@ -74,6 +74,7 @@ class Ghost:
         
         elif self.state == GhostState.MOVING_OUT_OF_GHOST_HOUSE:
             #wait until ghost hits wall from in house state
+            print("TRYING TO MOVE OUT", self.colour)
             self.calculateCurrentCell()
             self.calculateNextCell()
             next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
@@ -424,18 +425,18 @@ class Ghost:
         b = (pos1[1] - pos2[1])**2
         return math.sqrt(a + b) 
     
-    def reset(self, level,startpos):
+    def reset(self, level, maze,startpos):
         self.canvas_position = startpos
-        
         self.level_info = self.maze.get_level_info(level)
         self.is_dead = False
         self.is_frightened = False
-        
-        if self.colour == "red":
-            self.state = GhostState.CHASE
-            self.direction = [-1, 0]
 
-        if self.dot_counter > self.dot_limit:
+        if self.dot_counter >= self.dot_limit:
             self.state = GhostState.MOVING_OUT_OF_GHOST_HOUSE
+        else:
+            self.state = GhostState.IN_GHOST_HOUSE        
 
-        
+        if self.colour == "red": # this is needed since blinky does not have a dot limit
+            self.state = GhostState.CHASE
+
+

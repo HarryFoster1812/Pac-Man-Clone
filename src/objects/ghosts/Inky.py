@@ -3,7 +3,7 @@ from src.gameImage import GameImage
 
 # Cyan
 class Inky(Ghost):
-    def __init__(self, start_pos, maze, pacman):
+    def __init__(self, start_pos, maze, pacman, blinky):
         super(Inky, self).__init__(start_pos, maze, pacman)
         self.image = GameImage("assets/Ghosts/Cyan/Cyan", load_ghost_variations=True)
         self.scatter_cell = [27,35]
@@ -14,6 +14,15 @@ class Inky(Ghost):
         self.next_cell = self.current_cell
         self.state = GhostState.IN_GHOST_HOUSE
         self.ghost_house_target = start_pos
+        self.blinky = blinky
+
+    def reset(self, level, maze, startpos):
+        super().reset(level, maze, startpos)
+        self.image = GameImage("assets/Ghosts/Cyan/Cyan", load_ghost_variations=True)
+        self.direction = [0, -1]
+        self.next_direction = [0,-1]
+        self.calculateCurrentCell()
+        self.next_cell = self.current_cell
 
     def calculateTarget(self):
         match(self.state):

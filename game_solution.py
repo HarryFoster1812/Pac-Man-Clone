@@ -48,22 +48,15 @@ class App():
 
         self.frames = []
 
-        for F in (MainMenu, NameScreen, LevelScreen, GameScreen, LeaderboardScreen, OptionScreen, BossScreen):
-            
-            if F is GameScreen:
-                self.loading_thread = threading.Thread(target=self.instantiate_game_screen())
-            else:
-                frame = F(self.main_frame, self)
-                frame.grid(row=0, column=0, sticky="nsew")
-                self.frames.append(frame)
+        # i copied the level screen twice so that if the boss key is pressed it will still have the correct index
+        for F in (MainMenu, NameScreen, LevelScreen, LevelScreen, LeaderboardScreen, OptionScreen, BossScreen):
+            frame = F(self.main_frame, self)
+            frame.grid(row=0, column=0, sticky="nsew")
+            self.frames.append(frame)
 
         self.current_frame = self.frames[0]
         self.current_frame.grid(row=0, column=0, sticky="nsew")
         self.current_frame.tkraise()
-
-        #self.current_frame = self.frames[0]
-        #self.current_frame.grid(row=0, column=0, sticky="nsew")
-        #self.current_frame.tkraise()
 
     def goToPreviousScreen(self):
         last_screen = self.previous_screen_stack.pop()
@@ -74,8 +67,10 @@ class App():
         frame = GameScreen(self.main_frame, self)
         print("FRAME LOADED")
         frame.grid(row=0, column=0, sticky="nsew")
-        self.frames.insert(3,frame)
+        self.frames[3] = frame
         print("FRAME INSERTED")
+        # switch to game screen
+        self.switchFrame(App.screenNums["GameScreen"])
 
     def onKeyPress(self, event: Event):
         #check if the boss key is pressed
@@ -107,6 +102,11 @@ class App():
             self.goToPreviousScreen()
 
         else:
+            if isinstance(self.current_frame, GameScreen):
+                self.current_frame.game.isPaused = True # pause the game
+                print("PAUSING GAME AND SWITCHING TO BOSS SCREEN")
+                self.current_frame.pause_update_thread()
+
             self.switchFrame( App.screenNums["BossScreen"] )
 
     def handle_load_save_game(self, fileLoc):
@@ -225,7 +225,7 @@ class NameScreen(Frame):
             
             self.current_player.name = text_entered.strip() 
             
-            self.controller.switchFrame(App.screenNums["GameScreen"])
+            self.controller.switchFrame(App.screenNums["LevelScreen"])
         else:
             Message(self, text="You need to enter a name").pack()
     
@@ -238,9 +238,20 @@ class LevelScreen(Frame):
 
         self.controller = controller
 
-        title_label = Label(self, image="", background="#000") # create the title label
-        title_label.pack()
-        pass 
+        title_label = Label(self, text="LOADING LEVEL", background="#000", fg="#FFF") # create the title label
+        title_label.pack() 
+
+    def check_game_screen(self):
+        # check if game screen is instanciated in app
+        if isinstance(self.controller.frames[3], GameScreen):
+            # load new level
+            self.controller.loading_thread = threading.Thread(target=self.controller.frames[3].next_level())
+        else:
+            self.controller.loading_thread = threading.Thread(target=self.controller.instantiate_game_screen())
+
+    def tkraise(self, aboveThis = None):
+        self.after(10, self.check_game_screen)
+        return super().tkraise(aboveThis)
 
     def EventHandler(self, event: Event):
         pass
@@ -250,6 +261,8 @@ class GameScreen(Frame):
         Frame.__init__(self, parent, bg="#000")
 
         self.controller = controller
+
+        self.thread_id = ""
 
         title_label = Label(self, image="", background="#000") # create the title label
         title_label.pack()
@@ -262,6 +275,24 @@ class GameScreen(Frame):
         self.game = Game(self.game_canvas, controller.settings, controller.root, controller.player)
 
         self.high_score = self.controller.leaderboard.get_high_score()
+
+        self.game_canvas.update()
+        self.ms_delay = 17 #17
+
+    def drawGame(self):
+        # player Name label
+        self.game_canvas.delete("all")
+        Label(self.game_canvas, text=self.current_player.name).place(x=0, y=0)
+        self.player_score_label = Label(self.game_canvas, text=self.current_player.score)
+        self.player_score_label.place(x=0, y=32)
+
+        Label(self.game_canvas, text="High Score").place(x=32, y=0)
+        self.high_score_label = Label(self.game_canvas, text=self.high_score)
+        self.high_score_label.place(x=32, y=32)
+
+        Label(self.game_canvas, text="Level").place(x=32, y=0)
+        self.high_score_label = Label(self.game_canvas, text=self.game.level)
+        self.high_score_label.place(x=32, y=32)
 
         if (DEBUG):
             for i in range(36):
@@ -280,27 +311,6 @@ class GameScreen(Frame):
                 ghost_temp_rectangle_x = ghost.scatter_cell[0]*32
                 ghost_temp_rectangle_y = ghost.scatter_cell[1]*32
                 self.game_canvas.create_rectangle((ghost_temp_rectangle_x,ghost_temp_rectangle_y), (ghost_temp_rectangle_x+32,ghost_temp_rectangle_y+32), fill=ghost.colour)
-
-        self.game_canvas.update()
-
-        self.ms_delay = 17 #17
-
-
-    def drawGame(self):
-        self.game_canvas.children.clear()
-        # player Name label
-        Label(self.game_canvas, text=self.current_player.name).place(x=0, y=0)
-        self.player_score_label = Label(self.game_canvas, text=self.current_player.score)
-        self.player_score_label.place(x=0, y=32)
-
-        Label(self.game_canvas, text="High Score").place(x=32, y=0)
-        self.high_score_label = Label(self.game_canvas, text=self.high_score)
-        self.high_score_label.place(x=32, y=32)
-
-        Label(self.game_canvas, text="Level").place(x=32, y=0)
-        self.high_score_label = Label(self.game_canvas, text=self.game.level)
-        self.high_score_label.place(x=32, y=32)
-
 
 
         for i, row in enumerate(self.game.maze.maze):
@@ -326,7 +336,6 @@ class GameScreen(Frame):
         #LIVES                      
 
         # 28 x 36 total grid. 3 at the top, 2 at the bottom
- 
 
     # 60 fps
     def update(self):
@@ -356,24 +365,52 @@ class GameScreen(Frame):
             self.high_score_label.configure(text=self.high_score)
             self.player_score_label.configure(text=self.current_player.score)
             # if win then reset and change to level frame
-            if self.game.dotsCounter == 244:
+            if self.game.dotsCounter == 250:
                 # reset the game
-                self.controller.switchFrame(App.screenNums["LoadingScreen"])
+                self.game.isPaused = True
+                self.controller.switchFrame(App.screenNums["LevelScreen"])
+
+            if self.game.lives == -1:
+                self.gameOver()
                 
         
-        self.after(self.ms_delay, self.update)
-    
+        self.thread_id = self.after(self.ms_delay, self.update)
+
+    def pause_update_thread(self):
+        self.after_cancel(self.thread_id)
+
     def next_level(self):
+        self.pause_update_thread()
         self.game.next_level()
-        self.drawGame()
+        self.ms_delay = 200
+        self.controller.switchFrame(App.screenNums["GameScreen"])
+
 
     def tkraise(self, aboveThis = None):
         self.drawGame()
-        self.after(self.ms_delay, self.update)
+        self.thread_id = self.after(self.ms_delay, self.update)
         return super().tkraise(aboveThis)
 
     def EventHandler(self, event: Event):
         self.game.EventHandler(event)
+
+class PauseMenu(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent, bg="#000")
+
+        self.controller = controller
+
+        # resume button
+        # save button
+        # settings ?
+        # quit button
+
+        title_label = Label(self, image="", background="#000") # create the title label
+        title_label.pack()
+         
+
+    def EventHandler(self, event: Event):
+        pass
 
 class LeaderboardScreen(Frame):
     def __init__(self, parent, controller):

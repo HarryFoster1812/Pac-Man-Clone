@@ -70,6 +70,8 @@ class Maze:
         self.maze = []
         self.teleport_squares = [] 
 
+        self.file_loc = file_location 
+
         assetsPath = "assets/"
 
         # parse each line
@@ -109,7 +111,7 @@ class Maze:
             self.maze.append(tempType)
             
     def reset(self):
-        self.__init__()
+        self.__init__(self.file_loc)
 
     def getOtherTeleportSquareLocation(self, square:Moveable):
         index_of_current_sqaure = self.teleport_squares.index(square)
@@ -131,3 +133,8 @@ class Maze:
         self.maze[y][x] = None
         del obj
 
+"""
+LEVEL INFO 
+
+
+"""

@@ -85,6 +85,10 @@ class Pacman:
         y = self.next_cell[1]*32 -16
         self.target_position = [x,y]
 
+    def reset(self, level, maze):
+        self.__init__([416,816], maze)
+        self.calculateCurrentCell()
+
     def snapPosition(self):
         next_position = [
                 self.canvas_position[0] + self.speed * self.speed_modifier * self.direction[0],

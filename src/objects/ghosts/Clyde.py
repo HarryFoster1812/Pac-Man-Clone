@@ -15,6 +15,15 @@ class Clyde(Ghost):
         self.state = GhostState.IN_GHOST_HOUSE
         self.ghost_house_target = start_pos
 
+
+    def reset(self, level, maze, startpos):
+        super().reset(level, maze, startpos)
+        self.image = GameImage("assets/Ghosts/Orange/Orange", load_ghost_variations=True)
+        self.direction = [0, -1]
+        self.next_direction = [0,-1]
+        self.calculateCurrentCell()
+        self.next_cell = self.current_cell
+
     def calculateTarget(self):
         match(self.state):
             case GhostState.CHASE:

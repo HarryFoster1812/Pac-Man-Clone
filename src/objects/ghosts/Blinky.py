@@ -14,6 +14,15 @@ class Blinky(Ghost):
         self.next_cell = self.current_cell
         self.ghost_house_target = [416, 528]
 
+    def reset(self, level, maze, startpos):
+        super().reset(level, maze, startpos)
+        self.image = GameImage("assets/Ghosts/Red/Red", load_ghost_variations=True)
+        self.direction = [0, 0]
+        self.next_direction = [-1,0]
+        self.calculateCurrentCell()
+        self.next_cell = self.current_cell
+
+
     def calculateTarget(self):
         match(self.state):
             case GhostState.CHASE:
