@@ -237,3 +237,6 @@ class Maze:
         obj = self.maze[y][x]
         self.maze[y][x] = None
         del obj
+
+    def serialise(self) -> dict:
+        pass

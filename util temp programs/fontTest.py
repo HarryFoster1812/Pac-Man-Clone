@@ -12,7 +12,7 @@ def populate(frame):
     listnumber = 1
     for i, item in enumerate(fonts):
         label = "listlabel" + str(listnumber)
-        label = Label(frame,text=item,font=(item, 16))
+        label = Label(frame,text=item,font=(item, 20))
         label.grid(row=i)
         label.bind("<Button-1>",lambda e,item=item:copy_to_clipboard(item))
         listnumber += 1

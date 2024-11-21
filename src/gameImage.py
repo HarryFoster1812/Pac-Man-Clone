@@ -6,6 +6,13 @@ class GameImage:
     def __init__(self, image_path:str, scale:float=1, rotation: int = 0, flip:int = 0, frame: int=-1, calculate_rotations:bool = False, load_ghost_variations = False):
         self.current_frame = 0
         self.isIdle = True
+        self.image_path = image_path
+        self.rotation = rotation
+        self.scale = scale
+        self.flip = flip
+        self.frame = frame
+        self.calulate_rotations = calculate_rotations
+        self.load_ghost_variations = load_ghost_variations
 
         if load_ghost_variations:
             directions = ["GhostDown.gif", "GhostLeft.gif", "GhostRight.gif", "GhostUp.gif"]
@@ -95,3 +102,6 @@ class GameImage:
         self.current_frame = frame_index -1
         self.nextFrame()
         self.isIdle = True
+
+    def serialise(self) -> dict:
+        pass

@@ -8,6 +8,7 @@ from src.objects.ghosts.ghost_state import GhostState
 
 class Ghost:
 
+    SPEED = 5.05050508333 # the base pixel movement Ghost.SPEED of the ghost  
 
     def __init__(self, start_pos, maze, pacman: Pacman) -> None:
         self.state = GhostState.SCATTER # the current state of the ghost, 0 = default, 1 = scatter, 2 = fright, 3 = dead
@@ -16,7 +17,6 @@ class Ghost:
         self.next_direction = [] # the next square the ghost will move to
         self.is_dead = False
         self.is_frightened = False
-        self.speed = 5.05050508333 # the base pixel movement speed of the ghost  
         self.speed_modifier = 0.75 # this is applied during the different ghost modes
         self.ghost_house_target = []
         self.ouside_ghost_house = [14,14]
@@ -46,8 +46,8 @@ class Ghost:
     def tick(self):
         
         if self.state == GhostState.IN_GHOST_HOUSE:
-            self.canvas_position [0] += self.direction[0]*self.speed*self.speed_modifier
-            self.canvas_position [1] += self.direction[1]*self.speed*self.speed_modifier
+            self.canvas_position [0] += self.direction[0]*Ghost.SPEED*self.speed_modifier
+            self.canvas_position [1] += self.direction[1]*Ghost.SPEED*self.speed_modifier
 
             self.calculateCurrentCell()    
             # calculate target position
@@ -105,9 +105,9 @@ class Ghost:
             
             #move ghost
             #print("SPEED:", self.speed_modifier)
-            #print("SPEED:", self.speed)
-            self.canvas_position [0] += self.direction[0]*self.speed*self.speed_modifier
-            self.canvas_position [1] += self.direction[1]*self.speed*self.speed_modifier
+            #print("SPEED:", Ghost.SPEED)
+            self.canvas_position [0] += self.direction[0]*Ghost.SPEED*self.speed_modifier
+            self.canvas_position [1] += self.direction[1]*Ghost.SPEED*self.speed_modifier
             return
         
         elif self.state == GhostState.MOVING_INTO_GHOST_HOUSE:
@@ -138,8 +138,8 @@ class Ghost:
                 self.calculateNextCell()
             
             #move ghost
-            self.canvas_position [0] += self.direction[0]*self.speed*self.speed_modifier
-            self.canvas_position [1] += self.direction[1]*self.speed*self.speed_modifier
+            self.canvas_position [0] += self.direction[0]*Ghost.SPEED*self.speed_modifier
+            self.canvas_position [1] += self.direction[1]*Ghost.SPEED*self.speed_modifier
             return
         
         if self.state == GhostState.DEAD and self.current_cell == self.target:
@@ -187,8 +187,8 @@ class Ghost:
         #print("GHOST Direction:", self.direction)
 
         # move ghost in direction
-        self.canvas_position [0] += self.direction[0]*self.speed*self.speed_modifier
-        self.canvas_position [1] += self.direction[1]*self.speed*self.speed_modifier
+        self.canvas_position [0] += self.direction[0]*Ghost.SPEED*self.speed_modifier
+        self.canvas_position [1] += self.direction[1]*Ghost.SPEED*self.speed_modifier
         
         #print("GHOST Current position:", self.canvas_position)
         self.calculateCurrentCell()    
@@ -259,19 +259,15 @@ class Ghost:
         self.target_position = [x,y]
 
     def snapPosition(self):
-        next_position = [
-                self.canvas_position[0] + self.speed * self.speed_modifier * self.direction[0],
-                self.canvas_position[1] + self.speed * self.speed_modifier * self.direction[1]
-            ]
-        
+
         match(self.direction):
-            case [0,1]:  next_position[0] = self.target_position[0] # moving in the y direction so snap to the middle of the x cell
-            case [0,-1]: next_position[0] = self.target_position[0] # moving in the y direction so snap to the middle of the x cell
-            case [1,0]:  next_position[1] = self.target_position[1] # moving in the x direction so snap to the middle of the y cell
-            case [-1,0]: next_position[1] = self.target_position[1] # moving in the x direction so snap to the middle of the y cell
+            case [0,1]:  self.canvas_position[0] = self.target_position[0] # moving in the y direction so snap to the middle of the x cell
+            case [0,-1]: self.canvas_position[0] = self.target_position[0] # moving in the y direction so snap to the middle of the x cell
+            case [1,0]:  self.canvas_position[1] = self.target_position[1] # moving in the x direction so snap to the middle of the y cell
+            case [-1,0]: self.canvas_position[1] = self.target_position[1] # moving in the x direction so snap to the middle of the y cell
         
         if self.direction != [0, 0]:  # Only snap if we're moving
-            self.canvas_position = next_position
+            self.canvas_position = self.canvas_position
 
     def checkFrameSwitch(self, direction_has_changed):
         if direction_has_changed:
@@ -432,3 +428,7 @@ class Ghost:
 
         if self.colour == "red": # this is needed since blinky does not have a dot limit
             self.state = GhostState.CHASE
+
+
+    def serialise(self) -> dict:
+        pass

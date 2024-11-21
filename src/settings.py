@@ -51,3 +51,5 @@ class Settings():
             
         return False
         
+    def serialise(self) -> dict:
+        pass

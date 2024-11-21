@@ -1,4 +1,5 @@
-from tkinter import Frame, Tk, Canvas, Event, Button, Label, Entry, messagebox, filedialog
+from tkinter import Frame, Tk, Canvas, Event, Button, Label, Entry, messagebox, filedialog, Scrollbar, Text, END
+from tkinter import ttk
 import threading
 import pickle, json
 from src.animate import Animate
@@ -132,7 +133,7 @@ class MainMenu(Frame):
         self.title_image = Animate("assets/title/title.gif", title_label, scale=1.1)
         self.for_legal_image = Animate("assets/title/forLegal.gif", for_legal_label, scale=1.1)
 
-        arrow_start_y = for_legal_label.winfo_pointery() + for_legal_label.winfo_reqheight()
+        arrow_start_y = 340
         print(arrow_start_y)
 
         
@@ -140,33 +141,46 @@ class MainMenu(Frame):
         self.selection = 0 # will determine where the arrow will be
 
         self.arrow = Label(self, image="", background="#000")
-        self.arrow.place(x=100, y=(90*self.selection + arrow_start_y))
+        self.arrow.place(x=100, y=arrow_start_y)
 
         self.arrow_image = Animate(fileLoc="assets/pacman-right/1.png", parent=self.arrow, scale=2.5)
 
-        # play button
-        play_button = Button(self, text="New Game", background="#000", fg="#FFF", command=lambda: controller.switchFrame(App.screenNums["NameScreen"]))
-        play_button.pack()
+         # Utility function for buttons
+        def create_button(text, command):
+            return Button(self, text=text, bg="#444", fg="#FFF", font=('Liberation Mono', 20, "bold"),
+                          activebackground="#666", activeforeground="#FFF", pady=10, padx=20,
+                          bd=2, relief="raised", command=command)
+
+        # Play button
+        play_button = create_button("New Game", lambda: controller.switchFrame(App.screenNums["NameScreen"]))
+        play_button.pack(pady=10)
 
         self.buttonHeight = play_button.winfo_reqheight()
-        # options
+        
+        # Load Game button
+        load_button = create_button("Load Game", self.open_file_explorer)
+        load_button.pack(pady=10)
 
-        Button(self, text="Load Game", background="#000", fg="#FFF", command=self.open_file_explorer).pack()
+        # Options button
+        options_button = create_button("Options", lambda: controller.switchFrame(App.screenNums["OptionScreen"]))
+        options_button.pack(pady=10)
 
-        Button(self, text="Options", background="#000", fg="#FFF", command=lambda: controller.switchFrame(App.screenNums["OptionScreen"])).pack()
-        # leaderboard
-        Button(self, text="Leaderboard", background="#000", fg="#FFF", command=lambda: controller.switchFrame(App.screenNums["LeaderboardScreen"])).pack()
-        # exit
-        Button(self, text="Exit", background="#000", fg="#FFF", command=lambda: self.controller.root.quit()).pack()
+        # Leaderboard button
+        leaderboard_button = create_button("Leaderboard", lambda: controller.switchFrame(App.screenNums["LeaderboardScreen"]))
+        leaderboard_button.pack(pady=10)
+
+        # Exit button
+        exit_button = create_button("Exit", lambda: self.controller.root.quit())
+        exit_button.pack(pady=10)
 
     def changeArrowSelection(self, direction: bool):  # direction False: up, True: down
-        if(direction and self.selection < 3):
+        if(direction and self.selection < 4):
             self.selection += 1
-            self.arrow.place(x=100, y=(self.buttonHeight * self.selection +300))
 
         elif(not direction and self.selection > 0):
             self.selection -= 1
-            self.arrow.place(x=100, y=(self.buttonHeight * self.selection +300))
+        
+        self.arrow.place(x=100, y=((self.buttonHeight+20) * (self.selection) +340))
 
     def open_file_explorer(self):
         filename = filedialog.askopenfilename(initialdir = "/",
@@ -189,9 +203,10 @@ class MainMenu(Frame):
         elif event.keysym_num == 65293: # enter key
             match(self.selection):
                 case 0: self.controller.switchFrame(App.screenNums["NameScreen"]) # name screen
-                case 1: self.controller.switchFrame(App.screenNums["OptionScreen"]) # options
-                case 2: self.controller.switchFrame(App.screenNums["LeaderboardScreen"]) # leaderboard
-                case 3: self.controller.root.quit() # exit
+                case 1: self.open_file_explorer()
+                case 2: self.controller.switchFrame(App.screenNums["OptionScreen"]) # options
+                case 3: self.controller.switchFrame(App.screenNums["LeaderboardScreen"]) # leaderboard
+                case 4: self.controller.root.quit() # exit
 
     def toggleThreads(self):
         self.title_image.toggleAnimation()
@@ -207,27 +222,38 @@ class NameScreen(Frame):
 
         self.controller = controller
 
-        title_label = Label(self, image="", background="#000") # create the title label
-        title_label.pack()
-
         self.current_player = controller.player
-        
-        # add current highest score 
-        Button(self, text="Back",command=lambda: controller.goToPreviousScreen()).pack()
-        
-        Label(self, text="Enter Name").pack()
-        # add input box for the user name
-        name_entry = Entry(self, font="Helvetica 11 bold",bg="white")
-        name_entry.pack()
-        # add submit button
-        Button(self, text="Play!",command=lambda: self.nameButtonSubmit(name_entry.get())).pack()
 
-        # back button at the top
+        #Center everything in a Frame
+        self.center_frame = Frame(self, bg="#000")
+        self.center_frame.pack(expand=True, fill="both", padx=40, pady=40)  # Expand to fill the screen
+
+
+        self.title_label = Label(self.center_frame, text="Enter Your Name",
+                                 font=('Liberation Mono', 24, "bold"), bg="#000", fg="#FFD700", pady=20)
+        self.title_label.pack()
+
+        # Input box for the user name
+        self.name_entry = Entry(self.center_frame, font=('Liberation Mono', 16), bg="#FFF", fg="#000", bd=2, relief="solid")
+        self.name_entry.pack(pady=20, ipadx=10, ipady=10, fill="x", expand=True)
+
+        # Play Button (Centered)
+        self.play_button = Button(self.center_frame, text="Play!", bg="#3A3", fg="#FFF", font=('Liberation Mono', 16, "bold"),
+                                  activebackground="#5A5", activeforeground="#FFF", bd=2, relief="raised",
+                                  command=lambda: self.nameButtonSubmit(self.name_entry.get()))
+        self.play_button.pack(pady=20)
+
+        # Back Button (Centered)
+        self.back_button = Button(self.center_frame, text="Back", bg="#444", fg="#FFF", font=('Liberation Mono', 14),
+                                  activebackground="#666", activeforeground="#FFF", bd=2, relief="raised",
+                                  command=lambda: self.controller.goToPreviousScreen())
+        self.back_button.pack(pady=10)
   
     def nameButtonSubmit(self, text_entered):
         if text_entered.strip() != "":
             
             self.current_player.name = text_entered.strip() 
+            self.current_player.score = 0
             
             self.controller.switchFrame(App.screenNums["LevelScreen"])
         else:
@@ -238,23 +264,57 @@ class NameScreen(Frame):
 
 class LevelScreen(Frame):
     def __init__(self, parent, controller):
-        Frame.__init__(self, parent, bg="#000")
-
+        Frame.__init__(self, parent, bg="#222")  # Dark background for consistency
         self.controller = controller
 
-        title_label = Label(self, text="LOADING LEVEL", background="#000", fg="#FFF", font=("Ariel", 20)) # create the title label
-        title_label.pack(anchor="center") 
+        self.inner_frame = Frame(self, bg="#000")
+        self.inner_frame.pack(expand=True, fill="both")
+
+        self.title_label = Label(self.inner_frame, text="Loading Level...",
+                                 font=('Liberation Mono', 24, "bold"),
+                                 bg="#000", fg="#FFD700", pady=20)  # Golden color for emphasis
+        self.title_label.pack(pady=50)
+
+        # Animated Loading Icon (Centered)
+        self.loading_label = Label(self.inner_frame, bg="#000")
+        self.loading_label.pack(pady=20)
+        self.loading_animation = Animate("assets/loading.gif", self.loading_label, scale=1.5)
+
+        # Subtext Instruction (Centered)
+        self.instruction_label = Label(self.inner_frame, text="Please wait while the next level is prepared.",
+                                        font=('Liberation Mono', 12, "italic"),
+                                        bg="#000", fg="#AAA", pady=10)
+        self.instruction_label.pack(pady=20)
 
     def check_game_screen(self):
-        # check if game screen is instanciated in app
+        """Checks if the game screen is ready and initiates the loading process."""
         if isinstance(self.controller.frames[3], GameScreen):
-            # load new level
-            self.controller.loading_thread = threading.Thread(target=self.controller.frames[3].next_level())
+            # If the game screen exists, prepare for the next level
+            self.controller.loading_thread = threading.Thread(target=self.controller.frames[3].next_level)
+            self.controller.loading_thread.start()
         else:
-            self.controller.loading_thread = threading.Thread(target=self.controller.instantiate_game_screen())
+            # Instantiate a new game screen
+            self.controller.loading_thread = threading.Thread(target=self.controller.instantiate_game_screen)
+            self.controller.loading_thread.start()
 
-    def tkraise(self, aboveThis = None):
-        self.after(10, self.check_game_screen)
+    def update_loading_animation(self):
+        """Ensures the loading animation continues while the background thread works."""
+        self.loading_animation.toggleAnimation()  # Toggle animation state
+        self.after(100, self.check_loading_thread)  # Recheck the thread every 100ms
+
+    def check_loading_thread(self):
+        """Checks if the loading thread has finished, and updates accordingly."""
+        if self.controller.loading_thread.is_alive():
+            self.update_loading_animation()  # Keep updating if thread is still alive
+        else:
+            # Once the thread is done, stop the animation and switch the screen
+            self.loading_animation.toggleAnimation()
+            self.controller.switchFrame(App.screenNums["GameScreen"])
+
+    def tkraise(self, aboveThis=None):
+        """Refreshes the screen and starts the loading process."""
+        self.after(5, self.check_game_screen)
+        self.update_loading_animation()  # Start the animation update
         return super().tkraise(aboveThis)
 
     def EventHandler(self, event: Event):
@@ -295,16 +355,16 @@ class GameScreen(Frame):
 
         self.lives_images.clear()
 
-        Label(self.game_canvas, text=self.current_player.name, font=('Arial', 25), bg="#000", fg="#FFF").place(x=3*32, y=10)
-        self.player_score_label = Label(self.game_canvas, text=self.current_player.score, font=('Arial', 25), bg="#000", fg="#FFF")
+        Label(self.game_canvas, text=self.current_player.name, font=('liberation mono', 25), bg="#000", fg="#FFF").place(x=3*32, y=10)
+        self.player_score_label = Label(self.game_canvas, text=self.current_player.score, font=('liberation mono', 25), bg="#000", fg="#FFF")
         self.player_score_label.place(x=3*32, y=42)
 
-        Label(self.game_canvas, text="High Score", bg="#000", fg="#FFF", font=('Arial', 25)).place(relx=0.5, y=10, anchor="c")
-        self.high_score_label = Label(self.game_canvas, text=self.high_score, bg="#000", fg="#FFF", font=('Arial', 25))
+        Label(self.game_canvas, text="High Score", bg="#000", fg="#FFF", font=('liberation mono', 25)).place(relx=0.5, y=10, anchor="c")
+        self.high_score_label = Label(self.game_canvas, text=self.high_score, bg="#000", fg="#FFF", font=('liberation mono', 25))
         self.high_score_label.place(relx=0.5, y=42, anchor="c")
 
         Label(self.game_canvas, text="Level", bg="#000", fg="#FFF", font=('Arial', 90)).place(x=23*32, y=10)
-        self.level_label = Label(self.game_canvas, text=self.game.level, bg="#000", fg="#FFF", font=('Arial', 25))
+        self.level_label = Label(self.game_canvas, text=self.game.level, bg="#000", fg="#FFF", font=('liberation mono', 25))
         self.level_label.place(x=23*32, y=42)
 
         if (DEBUG):
@@ -393,7 +453,7 @@ class GameScreen(Frame):
 
             if self.game.lives == 0:
                 # add game over message
-                Label(self.game_canvas, text="GAME OVER", bg="#000", fg="#FFF").place(relx=.5, rely=.5, anchor="c")
+                Label(self.game_canvas, text="GAME OVER", bg="#000", fg="#FFF", font=('liberation mono', 30)).place(relx=.5, rely=.48, anchor="c")
                 pacman_life = self.lives_images[-1]
                 self.lives_images.remove(pacman_life)
                 self.after(3000, self.game_over)  
@@ -429,18 +489,6 @@ class GameScreen(Frame):
         
         self.game_canvas.tag_raise(self.game.pacman.image.id)
 
-    def remove_image_parents(self):
-        for i, row in enumerate(self.game.maze.maze):
-            for j, cell in enumerate(row):
-                if cell != None and hasattr(cell, "image"):
-                    del cell.image
-        
-        del self.game.pacman.image
-        
-        for ghost in self.game.ghosts:
-            del ghost.image
-
-
     def load_game(self, game):
         self.game = game
         # add parents to all of the images
@@ -472,6 +520,7 @@ class GameScreen(Frame):
     def save_game(self):
         name = filedialog.asksaveasfilename(defaultextension=".pickle")
 
+        self.game.serialize()
 
         with open(name, 'wb') as handle:
             for object in dir(self.game):
@@ -493,21 +542,41 @@ class GameScreen(Frame):
 
 class PauseMenu(Frame):
     def __init__(self, parent, controller):
-        Frame.__init__(self, parent, bg="#FFF", )
+        Frame.__init__(self, parent, bg="#000", )
 
         self.controller = controller
-        Label(self, text="GAME PAUSED", font=("Arial", 25), fg="#FFF", bg='#3F3').pack(anchor="center")
-        # resume button
-        self.resume_button = Button(self, text="Resume", command=lambda: self.controller.manual_unpause())
-        self.resume_button.pack(anchor="center")
-        # save button
-        self.save_button = Button(self, text="Save", command=self.save_button_event)
-        self.save_button.pack(anchor="center")
-        # settings ?
-        self.settings_button =Button(self, text="Settings", command=self.settings_button_event)
-        self.settings_button.pack(anchor="center")
-        # quit button
-        Button(self, text="Quit", command=self.quit_button_event).pack(anchor="center")
+
+        # Create a semi-transparent frame to hold the content
+        self.pause_frame = Frame(self, bg="#333", bd=2, relief="solid")
+        self.pause_frame.pack(expand=True, fill="both")
+
+        # GAME PAUSED TITLE
+        self.title_label = Label(self.pause_frame, text="Game Paused", font=("Helvetica", 24, "bold"), fg="#FFD700", bg="#333")
+        self.title_label.pack(pady=20)
+
+        # Resume Button
+        self.resume_button = Button(self.pause_frame, text="Resume", bg="#3A3", fg="#FFF", font=("Helvetica", 16, "bold"),
+                                    activebackground="#5A5", activeforeground="#FFF", bd=2, relief="raised",
+                                    command=lambda: self.controller.manual_unpause())
+        self.resume_button.pack(pady=15, fill="x")
+
+        # Save Button
+        self.save_button = Button(self.pause_frame, text="Save", bg="#444", fg="#FFF", font=("Helvetica", 16),
+                                  activebackground="#666", activeforeground="#FFF", bd=2, relief="raised",
+                                  command=self.save_button_event)
+        self.save_button.pack(pady=15, fill="x")
+
+        # Settings Button
+        self.settings_button = Button(self.pause_frame, text="Settings", bg="#555", fg="#FFF", font=("Helvetica", 16),
+                                      activebackground="#777", activeforeground="#FFF", bd=2, relief="raised",
+                                      command=self.settings_button_event)
+        self.settings_button.pack(pady=15, fill="x")
+
+        # Quit Button
+        self.quit_button = Button(self.pause_frame, text="Quit", bg="#D9534F", fg="#FFF", font=("Helvetica", 16),
+                                  activebackground="#E57373", activeforeground="#FFF", bd=2, relief="raised",
+                                  command=self.quit_button_event)
+        self.quit_button.pack(pady=15, fill="x")
 
     def save_button_event(self):
         self.controller.save_game()
@@ -526,67 +595,122 @@ class PauseMenu(Frame):
 
 class LeaderboardScreen(Frame):
     def __init__(self, parent, controller):
-        Frame.__init__(self, parent, bg="#000")
+        Frame.__init__(self, parent, bg="#222")  # Dark background for a modern look
 
         self.controller = controller
-
-        title_label = Label(self, image="", background="#000") # create the title label
-        title_label.pack() 
-
         self.leaderboard = controller.leaderboard
 
+        # Title Label
+        title_label = Label(self, text="Leaderboard", font=('Liberation Mono', 24, "bold"),
+                            bg="#222", fg="#FFD700", pady=20)  # Golden color for emphasis
+        title_label.pack()
+
+        # Instruction Label
+        instruction_label = Label(self, text="Top scores are listed below.", font=('Liberation Mono', 12, "italic"),
+                                   bg="#222", fg="#AAA", pady=10)
+        instruction_label.pack()
+
+        # Frame for Leaderboard Entries
+        self.leaderboard_frame = Frame(self, bg="#222")
+        self.leaderboard_frame.pack(pady=20, padx=20)
+
+        self.max_entries = 10
+
+        # Back Button
+        back_button = Button(self, text="Back", bg="#444", fg="#FFF",
+                             font=('Liberation Mono', 14, "bold"),
+                             activebackground="#666", activeforeground="#FFF",
+                             bd=2, relief="raised",
+                             command=lambda: self.controller.goToPreviousScreen())
+        back_button.pack(pady=20)
+
     def populate(self):
-        
-        for widget in self.winfo_children():
+        """Populates the leaderboard with the current scores."""
+        # Clear any existing widgets in the leaderboard frame
+        for widget in self.leaderboard_frame.winfo_children():
             widget.destroy()
 
-        Label(self, text="Leaderboard").pack()
+        # Add leaderboard entries
+        if not self.leaderboard.scores:
+            Label(self.leaderboard_frame, text="No scores available.", font=('Liberation Mono', 14),
+                  bg="#222", fg="#FFF").pack(pady=10)
+        else:
 
-        # iterate through the scores and display them
-        for score in self.leaderboard.scores:
-            Label(self, text=f"{score[0]}: {score[1]}", bg="#000", fg="#fff").pack()
+            scores = self.leaderboard.scores[:self.max_entries]
 
-        Button(self, text="Back", command=lambda: self.controller.goToPreviousScreen()).pack() # lambda is used because otherwise it doesnt work (i dont know why)
+            for idx, score in enumerate(scores):
+                rank_label = Label(self.leaderboard_frame, text=f"{idx + 1}.",
+                                   font=('Liberation Mono', 14, "bold"),
+                                   bg="#222", fg="#FFD700", width=3, anchor="e")
+                rank_label.grid(row=idx, column=0, padx=10, pady=5)
 
+                name_label = Label(self.leaderboard_frame, text=f"{score[0]}",
+                                   font=('Liberation Mono', 14), bg="#222", fg="#FFF", width=20, anchor="w")
+                name_label.grid(row=idx, column=1, padx=10, pady=5)
+
+                score_label = Label(self.leaderboard_frame, text=f"{score[1]}",
+                                    font=('Liberation Mono', 14, "bold"), bg="#222", fg="#FFD700", width=10, anchor="e")
+                score_label.grid(row=idx, column=2, padx=10, pady=5)
+
+    def tkraise(self, aboveThis=None):
+        """Refreshes the leaderboard when the screen is raised."""
+        self.populate()
+        return super().tkraise(aboveThis)
 
     def EventHandler(self, event: Event):
         if event.keysym_num == 65293: # enter key
             self.controller.goToPreviousScreen()
 
-    def tkraise(self, aboveThis = None) -> None:
-        self.populate()
-        return super().tkraise(aboveThis)
-
 class OptionScreen(Frame):
     def __init__(self, parent, controller):
-        Frame.__init__(self, parent, bg="#000")
+        Frame.__init__(self, parent, bg="#222")  # Use a darker background for contrast
 
         self.controller = controller
+        self.settings = controller.settings
+        self.listen = False  # Becomes True when waiting for a key press
+        self.to_change = ""  # Stores the setting key to change
+        self.clicked_button = None  # Stores the index of the clicked button
 
-        self.settings =  controller.settings
-
-        self.listen = False # will become true when a button is clicked 
-        self.to_change = "" # the setting key to change
-        self.clicked_button = None
-
-        title_label = Label(self, image="", background="#000") # create the title label
+        # Title Label
+        title_label = Label(self, text="Options", font=('Liberation Mono', 24, "bold"),
+                            bg="#222", fg="#FFF", pady=20)
         title_label.pack()
 
+        # Instruction Label
+        instruction_label = Label(self, text="Click a setting to change the key binding, then press a new key.",
+                                   font=('Liberation Mono', 12, "italic"),
+                                   bg="#222", fg="#AAA", pady=10)
+        instruction_label.pack()
+
+        # Buttons for each setting
         self.buttons = []
+        button_frame = Frame(self, bg="#222")  # Group buttons in a frame for alignment
+        button_frame.pack(pady=20)
 
         for i, option in enumerate(self.settings.getKeyValues()):
             option_name = option[0]
             option_info = option[1]
-            Label(self, text=option_name).pack()
 
-            self.buttons.append( Button(self, 
-                                        text = f"{option_info[1]}: {option_info[0]}", 
-                                        command=lambda opt=option_name, idx=i: self.buttonPress(opt, idx))
-                                        )
-            
-            self.buttons[i].pack()
-        
-        Button(self, text="back", command = lambda: self.controller.goToPreviousScreen()).pack()
+            # Label for setting name
+            Label(button_frame, text=option_name, font=('Liberation Mono', 14), bg="#222", fg="#FFF").grid(row=i, column=0, padx=20, pady=10, sticky="w")
+
+            # Button to display current key binding
+            button = Button(button_frame,
+                            text=f"{option_info[1]}: {option_info[0]}",
+                            bg="#444", fg="#FFF", font=('Liberation Mono', 12, "bold"),
+                            activebackground="#666", activeforeground="#FFF",
+                            bd=2, relief="raised",
+                            command=lambda opt=option_name, idx=i: self.buttonPress(opt, idx))
+            button.grid(row=i, column=1, padx=20, pady=10, sticky="e")
+            self.buttons.append(button)
+
+        # Back Button
+        back_button = Button(self, text="Back", bg="#444", fg="#FFF",
+                             font=('Liberation Mono', 14, "bold"),
+                             activebackground="#666", activeforeground="#FFF",
+                             bd=2, relief="raised",
+                             command=lambda: self.controller.goToPreviousScreen())
+        back_button.pack(pady=20)
 
     def buttonPress(self, setting_name: str, clicked_button_index: int) -> None:
         self.listen = True
@@ -614,12 +738,9 @@ class BossScreen(Frame):
 
         self.controller = controller
 
-        title_label = Label(self, image="", background="#000") # create the title label
-        title_label.pack()
-         
-
     def EventHandler(self, event: Event):
         pass
+
 
 if __name__ == "__main__":
     main = Tk()

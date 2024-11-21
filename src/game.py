@@ -5,6 +5,7 @@ from src.objects.ghosts.ghost_state import GhostState
 from src.objects.pacman import Pacman
 from src.objects.ghosts import Blinky, Inky, Clyde, Ghost, Pinky
 from src.settings import Settings
+import inspect
 from src.maze import Maze
 from src.player import Player
 
@@ -20,15 +21,14 @@ class Game:
 
         self.dotsCounter = 0
         self.settings = settings
-        self.level_info = self.maze.get_level_info(0)
+        self._level_info_ = self.maze.get_level_info(0)
         self.mode_pointer = 0
         self.pacman_frame_halt = 0
         self.saved_frame_counter = 0 # when ever we switch to fright mode the frame counter is overridden so we need to store the frame count elsewhere
         self.frame_counter = 0
-
         
         self.pacman = Pacman([416,816], self.maze)
-        self.pacman.speed_modifier = self.level_info["pacmanSpeed"]
+        self.pacman.speed_modifier = self._level_info_["pacmanSpeed"]
         self.ghosts = [
             Blinky.Blinky([416, 436], self.maze, self.pacman), 
             Pinky.Pinky  ([416, 528], self.maze, self.pacman), 
@@ -48,7 +48,8 @@ class Game:
         self.level = 0
         self.lives = 3
 
-        self.cheat_funcs = [self.life_cheat, self.reset_ghosts_cheat, self.release_all_ghosts_cheat, self.increase_speed_cheat]
+        # it starts and ends with _ so that the serialiser will ignore it
+        self._cheat_funcs_ = [self.life_cheat, self.reset_ghosts_cheat, self.release_all_ghosts_cheat, self.increase_speed_cheat]
         self.next_tick_increment_lives = False
 
 
@@ -58,7 +59,7 @@ class Game:
         self.maze.reset()
         self.level += 1
         self.dotsCounter = 0
-        self.level_info = self.maze.get_level_info(self.level)
+        self._level_info_ = self.maze.get_level_info(self.level)
         self.pacman.reset(self.level, self.maze)
         # set ghost dot limit
         ghost_startpos = [[416, 436],
@@ -71,24 +72,24 @@ class Game:
         
 
     def check_fright_mode(self):
-        if self.frame_counter == self.level_info["frightFlashStart"]:
+        if self.frame_counter == self._level_info_["frightFrames"] - self._level_info_["frightFlashStart"]:
             for ghost in self.ghosts:
                 if ghost.is_frightened:
                     ghost.image.switchFrameSet(ghost.white_frightened_image.frames)
-        elif self.frame_counter == self.level_info["frightFrames"]:
+        elif self.frame_counter == self._level_info_["frightFrames"]:
             #restore frame counter
             self.frame_counter = self.saved_frame_counter
             # disable fright mode
-            self.change_all_ghost_state(self.level_info["modes"][self.mode_pointer][0])
+            self.change_all_ghost_state(self._level_info_["modes"][self.mode_pointer][0])
             # change pac man speed
-            self.pacman.speed_modifier = self.level_info["pacmanSpeed"]
+            self.pacman.speed_modifier = self._level_info_["pacmanSpeed"]
             self.frightened_mode = False
             
     def check_mode_switch(self):
-        frame_target = self.level_info["modes"][self.mode_pointer][1]
+        frame_target = self._level_info_["modes"][self.mode_pointer][1]
         if self.frame_counter >= frame_target:
             self.mode_pointer += 1
-            self.change_all_ghost_state(self.level_info["modes"][self.mode_pointer][0])
+            self.change_all_ghost_state(self._level_info_["modes"][self.mode_pointer][0])
 
     def info_pause_switch(self):
         if self.frame_counter == 5*23:
@@ -210,7 +211,7 @@ class Game:
         self.info_pause = False
         self.frame_counter = 0
         self.mode_pointer = 0
-        self.pacman.speed_modifier = self.level_info["pacmanSpeed"]
+        self.pacman.speed_modifier = self._level_info_["pacmanSpeed"]
 
     def ghost_reset(self):
         ghost_startpos = [[416, 436],
@@ -231,7 +232,7 @@ class Game:
 
     def change_all_ghost_state(self, state):
         if state == GhostState.FRIGHTENED:
-            self.pacman.speed_modifier = self.level_info["frightPacManSpeed"]
+            self.pacman.speed_modifier = self._level_info_["frightPacManSpeed"]
             for ghost in self.ghosts:
                 if ghost.state == GhostState.CHASE or ghost.state == GhostState.SCATTER:
                     ghost.changeState(state)
@@ -297,7 +298,14 @@ class Game:
 
         elif event.keysym_num in self.settings.cheat_keys:
             index = self.settings.get_cheat_code_index(event.keysym_num)
-            self.cheat_funcs[index]()
+            self._cheat_funcs_[index]()
+
+    def serialize(self) -> dict:
+        self_all_attr = inspect.getmembers(self, lambda a: not(inspect.isroutine(a)))
+        self_filtered = [attr for attr in self_all_attr if not(attr[0].startswith("_") and attr[0].endswith("_"))]
+        
+        print(self_filtered)
+
 
 """
 # Notes while researching:
@@ -347,10 +355,6 @@ class Game:
 # Blue - After 30 dots eaten
 # over 1/3 of dots eaten
 
-# on a life lost the dot counter is set to global and reset as follows
-# Pink   - 7
-# Cyan - 17
-# Orange - 32
 
 # In chase mode
 # Red - Pac Man Square
@@ -387,5 +391,6 @@ Add save / load game
 Populate the boss screen
 Make it look nicer
 Add consumeables
+Pinky just kinda spawns in on pacman dead reset idk why
 
 """
