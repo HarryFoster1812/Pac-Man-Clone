@@ -55,7 +55,7 @@ class Ghost:
             self.calculateTargetPos()
             self.calculateNextCell()
         
-            next_cell = self._maze_._maze_[int(self.next_cell[1])][int(self.next_cell[0])]
+            next_cell = self._maze_.maze[int(self.next_cell[1])][int(self.next_cell[0])]
 
             if isinstance(next_cell, Wall):
                 # snap ghost to the correct placement next to the wall
@@ -69,7 +69,7 @@ class Ghost:
             #print("TRYING TO MOVE OUT", self.colour)
             self.calculateCurrentCell()
             self.calculateNextCell()
-            next_cell = self._maze_._maze_[int(self.next_cell[1])][int(self.next_cell[0])]
+            next_cell = self._maze_.maze[int(self.next_cell[1])][int(self.next_cell[0])]
 
             if isinstance(next_cell, Wall) and self.canvas_position[0] != 416:
                 # calculate which direction will get the ghost to 416
@@ -164,7 +164,7 @@ class Ghost:
                 direction_has_changed = True
             
             # get out current cell
-            temp_current_cell = self._maze_._maze_[int(self.current_cell[1])][int(self.current_cell[0])]
+            temp_current_cell = self._maze_.maze[int(self.current_cell[1])][int(self.current_cell[0])]
 
             # check if we have hit a teleport square
             if isinstance(temp_current_cell, Moveable) and temp_current_cell.is_teleport:
@@ -179,7 +179,7 @@ class Ghost:
             
             else:
                 self.calculateNextCell()
-                temp_next_cell = self._maze_._maze_[int(self.next_cell[1])][int(self.next_cell[0])]
+                temp_next_cell = self._maze_.maze[int(self.next_cell[1])][int(self.next_cell[0])]
                 # check if next cell is junction
                 if isinstance(temp_next_cell, Moveable) and temp_next_cell.is_juction:
                         self.calculateNextDirection(temp_next_cell)
@@ -200,7 +200,7 @@ class Ghost:
         #print("Target Position:", self.target_position)
         #print("Target cell:", self.next_cell, end="\n\n")
         
-        next_cell = self._maze_._maze_[int(self.next_cell[1])][int(self.next_cell[0])]
+        next_cell = self._maze_.maze[int(self.next_cell[1])][int(self.next_cell[0])]
         
         if isinstance(next_cell, Wall):
             # snap ghost to the correct placement next to the wall
@@ -371,7 +371,7 @@ class Ghost:
             junction_location[1] = int(junction_location[1])
 
             # get the cell from the _maze_
-            cell_next_to_juction = self._maze_._maze_[junction_location[1]][junction_location[0]]
+            cell_next_to_juction = self._maze_.maze[junction_location[1]][junction_location[0]]
 
             # check if is not traversable
             if not isinstance(cell_next_to_juction, Moveable):

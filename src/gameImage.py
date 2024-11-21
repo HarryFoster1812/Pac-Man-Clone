@@ -104,4 +104,14 @@ class GameImage:
         self.isIdle = True
 
     def serialise(self) -> dict:
-        pass
+        return {
+           "current_frame": self.current_frame,
+           "isIdle": self.isIdle,
+           "image_path": self.image_path,
+           "rotation": self.rotation,
+           "scale": self.scale,
+           "flip": self.flip,
+           "frame": self.frame,
+           "calulate_rotations": self.calulate_rotations,
+           "load_ghost_variations": self.load_ghost_variations
+        }

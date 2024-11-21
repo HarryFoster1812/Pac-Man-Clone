@@ -540,7 +540,7 @@ class GameScreen(Frame):
 
         json_data = self.game.serialise()
 
-        with open(name, 'wb') as file:
+        with open(name, 'w') as file:
             json.dump(json_data, file)
 
         self.add_image_parents()

@@ -110,7 +110,7 @@ class Maze:
 	    	"frightPacManSpeed" : 2,
 	    	"frightGhostSpeed" : 0.6,
 	    	"frightFrames" : 2*60,
-	    	"frightFlash" : 5*2*5,
+	    	"frightFlashStart" : 5*2*5,
 	    	"modes" : [[GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1037*60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
 	    },
     
@@ -120,7 +120,7 @@ class Maze:
 	    	"frightPacManSpeed" : 2,
 	    	"frightGhostSpeed" : 0.6,
 	    	"frightFrames" : 2*60,
-	    	"frightFlash" : 5*2*5,
+	    	"frightFlashStart" : 5*2*5,
 	    	"modes" : [[GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1037*60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
 	    },
     
@@ -130,7 +130,7 @@ class Maze:
 	    	"frightPacManSpeed" : 2,
 	    	"frightGhostSpeed" : 0.5,
 	    	"frightFrames" : 2*60,
-	    	"frightFlash" : 5*2*5,
+	    	"frightFlashStart" : 5*2*5,
 	    	"modes" : [[GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1037*60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
 	    },
     
@@ -140,7 +140,7 @@ class Maze:
 	    	"frightPacManSpeed" : 2,
 	    	"frightGhostSpeed" : 0.6,
 	    	"frightFrames" : 2*60,
-	    	"frightFlash" : 5*2*5,
+	    	"frightFlashStart" : 5*2*5,
 	    	"modes" : [[GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1037], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
 	    },
     
@@ -150,7 +150,7 @@ class Maze:
 	    	"frightPacManSpeed" : 1,
 	    	"frightGhostSpeed" : 0.6,
 	    	"frightFrames" : 1*60,
-	    	"frightFlash" : 5*2*3,
+	    	"frightFlashStart" : 5*2*3,
 	    	"modes" : [[GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1037], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
 	    },
     
@@ -160,7 +160,7 @@ class Maze:
 	    	"frightPacManSpeed" : 1,
 	    	"frightGhostSpeed" : 0.6,
 	    	"frightFrames" : 3*60,
-	    	"frightFlash" : 5*2*5,
+	    	"frightFlashStart" : 5*2*5,
 	    	"modes" : [[GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1037], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
 	    }
     ]
@@ -174,9 +174,11 @@ class Maze:
 
         self.file_loc = file_location 
 
-        assetsPath = "assets/"
+        self.load_maze(maze_file)
 
+    def load_maze(self, maze_file):
         # parse each line
+        assetsPath = "assets/"
         for line in maze_file:
             
             tempType = []
@@ -238,14 +240,28 @@ class Maze:
         self.maze[y][x] = None
         del obj
 
-    def serialise(self) -> dict:
-        serial_dict = {}
-        serialised_maze = []
-
+    def serialise(self) -> list:
+        reversed_dict  = {v: k for k, v in self.maze_dict.items()}
+        unicode_converted = []
         for row in self.maze:
-            serialised_row = []
+            temp_row = []
             for cell in row:
+                temp = []
+
                 if cell is None:
-                    serialised_row.append(None)
+                    temp_row.append("X")
+
                 else:
-                    serialised_row.append(cell.serialise())
+                    if isinstance(cell, Wall):
+                        temp.append(Wall)
+                        serialised = cell.serialise()
+                        temp.append([serialised["image_path"], serialised["frame_no"]])
+
+                    elif isinstance(cell, Moveable):
+                        temp.append(Moveable)
+                        serialised = cell.serialise()
+                        arguments = [i  for i in serialised.values()]
+                        temp.append(arguments)
+
+                    char = reversed_dict[temp]
+                    temp_row.append(char)

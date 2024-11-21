@@ -53,8 +53,6 @@ class Game:
         self.next_tick_increment_lives = False
 
 
-        
-
     def next_level(self):
         self.maze.reset()
         self.level += 1
@@ -75,7 +73,7 @@ class Game:
         if self.frame_counter == self._level_info_["frightFrames"] - self._level_info_["frightFlashStart"]:
             for ghost in self.ghosts:
                 if ghost.is_frightened:
-                    ghost.image.switchFrameSet(ghost.white_frightened_image.frames)
+                    ghost.image.switchFrameSet(ghost._white_frightened_image_.frames)
         elif self.frame_counter == self._level_info_["frightFrames"]:
             #restore frame counter
             self.frame_counter = self.saved_frame_counter
@@ -325,6 +323,7 @@ class Game:
             else:
                 serial_dict[attr[0]] = self.serialise_attr(attr[1])
 
+        return serial_dict
 """
 # Notes while researching:
 # Pac man is considered to be in a tile when his centre point is in the tile. Tile being 8x8 pixels (for this the original dimensions are scaled by 4x so each tile is now 32x32
