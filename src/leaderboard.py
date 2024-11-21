@@ -1,11 +1,12 @@
 import json
 from src.player import Player
 
+
 class Leaderboard:
 
     def __init__(self):
         self.num_scores = 0
-        self.scores = []  # scores are formatted as [["name", score]] 
+        self.scores = []  # scores are formatted as [["name", score]]
         self.readScores()
 
     def readScores(self):
@@ -14,8 +15,8 @@ class Leaderboard:
             self.num_scores = len(self.scores)
 
     def writeScores(self):
-        
-        self.sortScores() # sort them
+
+        self.sortScores()  # sort them
 
         with open("src/leaderboard.json", "w") as leaderboard_file:
             json.dump(self.scores, leaderboard_file)
@@ -25,7 +26,7 @@ class Leaderboard:
 
     def get_high_score(self):
         return self.scores[0][1]
-    
+
     def add_new_score(self, player: Player):
         name = player.name
         score = player.score
