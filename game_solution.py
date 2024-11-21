@@ -309,7 +309,6 @@ class LevelScreen(Frame):
         else:
             # Once the thread is done, stop the animation and switch the screen
             self.loading_animation.toggleAnimation()
-            self.controller.switchFrame(App.screenNums["GameScreen"])
 
     def tkraise(self, aboveThis=None):
         """Refreshes the screen and starts the loading process."""
@@ -322,16 +321,13 @@ class LevelScreen(Frame):
 
 class GameScreen(Frame):
     def __init__(self, parent, controller):
-        Frame.__init__(self, parent, bg="#000")
+        Frame.__init__(self, parent, bg="#000", bd=0)
 
         self.controller = controller
         self.pause_menu_active = True
         self.thread_id = ""
 
-        title_label = Label(self, image="", background="#000") # create the title label
-        title_label.pack()
-
-        self.game_canvas = Canvas(self, background="#000")
+        self.game_canvas = Canvas(self, background="#000", highlightthickness=0)
         self.game_canvas.pack(fill="both", expand = True)
 
 
@@ -355,17 +351,40 @@ class GameScreen(Frame):
 
         self.lives_images.clear()
 
-        Label(self.game_canvas, text=self.current_player.name, font=('liberation mono', 25), bg="#000", fg="#FFF").place(x=3*32, y=10)
-        self.player_score_label = Label(self.game_canvas, text=self.current_player.score, font=('liberation mono', 25), bg="#000", fg="#FFF")
-        self.player_score_label.place(x=3*32, y=42)
+        # Modern font and colors for the labels
+        label_font = ("Liberation Mono", 16, "bold")
+        label_fg = "#FFF"  # White text for visibility
+        label_bg = "#000"
 
-        Label(self.game_canvas, text="High Score", bg="#000", fg="#FFF", font=('liberation mono', 25)).place(relx=0.5, y=10, anchor="c")
-        self.high_score_label = Label(self.game_canvas, text=self.high_score, bg="#000", fg="#FFF", font=('liberation mono', 25))
-        self.high_score_label.place(relx=0.5, y=42, anchor="c")
+        # Player Name Label (Left side)
+        self.player_name_label = Label(self.game_canvas, text=self.current_player.name,
+                                       font=label_font, fg=label_fg, bg=label_bg, padx=15, pady=10, relief="solid")
+        self.player_name_label.place(x=2*32, y=10, anchor="w")
 
-        Label(self.game_canvas, text="Level", bg="#000", fg="#FFF", font=('Arial', 90)).place(x=23*32, y=10)
-        self.level_label = Label(self.game_canvas, text=self.game.level, bg="#000", fg="#FFF", font=('liberation mono', 25))
-        self.level_label.place(x=23*32, y=42)
+        # Player Score Label (Left side, below player name)
+        self.player_score_label = Label(self.game_canvas, text=self.current_player.score,
+                                        font=label_font, fg=label_fg, bg=label_bg, padx=15, pady=10, relief="solid")
+        self.player_score_label.place(x=3*32, y=70, anchor="center")
+
+        # High Score Label (Centered in the middle of the screen)
+        self.high_score_label = Label(self.game_canvas, text="High Score",
+                                      font=label_font, fg=label_fg, bg=label_bg, padx=15, pady=10, relief="solid")
+        self.high_score_label.place(relx=0.5, y=17, anchor="center")  # Centering the label
+
+        # High Score Value (Below the High Score label, centered)
+        self.high_score_value_label = Label(self.game_canvas, text=f"{self.high_score}",
+                                            font=label_font, fg=label_fg, bg=label_bg, padx=15, pady=10, relief="solid")
+        self.high_score_value_label.place(relx=0.5, y=70, anchor="center")  # Below the High Score label
+
+        # Level Label (Right side)
+        self.level_label = Label(self.game_canvas, text="Level",
+                                 font=label_font, fg=label_fg, bg=label_bg, padx=15, pady=10, relief="solid")
+        self.level_label.place(x=26*32, y=17, anchor="center")  # Right side of the screen
+        self.level_label = Label(self.game_canvas, text=self.game.level,
+                                 font=label_font, fg=label_fg, bg=label_bg, padx=15, pady=10, relief="solid")
+        self.level_label.place(x=26*32, y=70, anchor="center")  # Right side of the screen
+
+        
 
         if (DEBUG):
             for i in range(36):
@@ -411,6 +430,7 @@ class GameScreen(Frame):
         self.pause_frame = PauseMenu(self.game_canvas, self)
         self.pause_frame.place(relx=0.5, rely=0.5, anchor="center")
         self.pause_menu_active = True
+        self.after_cancel(self.thread_id)
     
     def destroy_pause_menu(self):
         self.pause_frame.destroy()
@@ -551,29 +571,29 @@ class PauseMenu(Frame):
         self.pause_frame.pack(expand=True, fill="both")
 
         # GAME PAUSED TITLE
-        self.title_label = Label(self.pause_frame, text="Game Paused", font=("Helvetica", 24, "bold"), fg="#FFD700", bg="#333")
+        self.title_label = Label(self.pause_frame, text="Game Paused", font=('Liberation Mono', 24, "bold"), fg="#FFD700", bg="#333")
         self.title_label.pack(pady=20)
 
         # Resume Button
-        self.resume_button = Button(self.pause_frame, text="Resume", bg="#3A3", fg="#FFF", font=("Helvetica", 16, "bold"),
+        self.resume_button = Button(self.pause_frame, text="Resume", bg="#3A3", fg="#FFF", font=('Liberation Mono', 16, "bold"),
                                     activebackground="#5A5", activeforeground="#FFF", bd=2, relief="raised",
                                     command=lambda: self.controller.manual_unpause())
         self.resume_button.pack(pady=15, fill="x")
 
         # Save Button
-        self.save_button = Button(self.pause_frame, text="Save", bg="#444", fg="#FFF", font=("Helvetica", 16),
+        self.save_button = Button(self.pause_frame, text="Save", bg="#444", fg="#FFF", font=('Liberation Mono', 16),
                                   activebackground="#666", activeforeground="#FFF", bd=2, relief="raised",
                                   command=self.save_button_event)
         self.save_button.pack(pady=15, fill="x")
 
         # Settings Button
-        self.settings_button = Button(self.pause_frame, text="Settings", bg="#555", fg="#FFF", font=("Helvetica", 16),
+        self.settings_button = Button(self.pause_frame, text="Settings", bg="#555", fg="#FFF", font=('Liberation Mono', 16),
                                       activebackground="#777", activeforeground="#FFF", bd=2, relief="raised",
                                       command=self.settings_button_event)
         self.settings_button.pack(pady=15, fill="x")
 
         # Quit Button
-        self.quit_button = Button(self.pause_frame, text="Quit", bg="#D9534F", fg="#FFF", font=("Helvetica", 16),
+        self.quit_button = Button(self.pause_frame, text="Quit", bg="#D9534F", fg="#FFF", font=('Liberation Mono', 16),
                                   activebackground="#E57373", activeforeground="#FFF", bd=2, relief="raised",
                                   command=self.quit_button_event)
         self.quit_button.pack(pady=15, fill="x")
