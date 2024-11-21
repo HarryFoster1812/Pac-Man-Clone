@@ -384,8 +384,6 @@ class GameScreen(Frame):
                                  font=label_font, fg=label_fg, bg=label_bg, padx=15, pady=10, relief="solid")
         self.level_label.place(x=26*32, y=70, anchor="center")  # Right side of the screen
 
-        
-
         if (DEBUG):
             for i in range(36):
                 for j in range(28):
@@ -463,7 +461,7 @@ class GameScreen(Frame):
             if self.current_player.score > self.high_score:
                 self.high_score = self.current_player.score
             
-            self.high_score_label.configure(text=self.high_score)
+            self.high_score_value_label.configure(text=self.high_score)
             self.player_score_label.configure(text=self.current_player.score)
             # if win then reset and change to level frame
             if self.game.dotsCounter == 250:
@@ -540,14 +538,12 @@ class GameScreen(Frame):
     def save_game(self):
         name = filedialog.asksaveasfilename(defaultextension=".pickle")
 
-        self.game.serialize()
+        json_data = self.game.serialise()
 
-        with open(name, 'wb') as handle:
-            for object in dir(self.game):
-                pickle.dump(object, handle)
+        with open(name, 'wb') as file:
+            json.dump(json_data, file)
 
         self.add_image_parents()
-
 
     def tkraise(self, aboveThis = None):
         self.drawGame()
@@ -757,10 +753,11 @@ class BossScreen(Frame):
         Frame.__init__(self, parent, bg="#000")
 
         self.controller = controller
+        
+        Label(self, text="Very productive work going on here", font=('Liberation Mono', 30), bg="#000", fg="#FFF").place(relx=0.5, rely=0.5, anchor="center")
 
     def EventHandler(self, event: Event):
         pass
-
 
 if __name__ == "__main__":
     main = Tk()
@@ -769,4 +766,4 @@ if __name__ == "__main__":
     main.resizable(width=False, height=False)
     app = App(main)
     main.mainloop()
-    
+  

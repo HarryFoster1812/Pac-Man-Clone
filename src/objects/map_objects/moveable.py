@@ -24,3 +24,12 @@ class Moveable:
         self.is_powerup = False
         self.points = 0
         del self.image
+
+    def serialise(self):
+        return {
+            "has_dot":self.has_dot, 
+            "is_junction":self.is_juction, 
+            "can_move_up":self.can_move_up, 
+            "is_poweup":self.is_powerup, 
+            "is_teleport":self.is_teleport
+            }

@@ -1,5 +1,6 @@
 import random
 import math
+import inspect
 from src.objects.pacman import Pacman
 from src.gameImage import GameImage
 from src.objects.map_objects.moveable import Moveable
@@ -10,7 +11,7 @@ class Ghost:
 
     SPEED = 5.05050508333 # the base pixel movement Ghost.SPEED of the ghost  
 
-    def __init__(self, start_pos, maze, pacman: Pacman) -> None:
+    def __init__(self, start_pos, _maze_, pacman: Pacman) -> None:
         self.state = GhostState.SCATTER # the current state of the ghost, 0 = default, 1 = scatter, 2 = fright, 3 = dead
         self.target = [] # the target square that the ghost its trying to get to
         self.direction = [] # [x, y] eg [1, 0] will be right, [0, -1] will be down
@@ -35,13 +36,13 @@ class Ghost:
 
         self.image=None
 
-        self.dead_image = GameImage("assets/Ghosts/GhostEyes.gif")
-        self.frightened_image = GameImage("assets/Ghosts/FrightendGhost.gif")
-        self.white_frightened_image = GameImage("assets/Ghosts/WhiteFrightendGhost.gif")
+        self._dead_image_ = GameImage("assets/Ghosts/GhostEyes.gif")
+        self._frightened_image_ = GameImage("assets/Ghosts/FrightendGhost.gif")
+        self._white_frightened_image_ = GameImage("assets/Ghosts/WhiteFrightendGhost.gif")
 
-        self.maze = maze
+        self._maze_ = _maze_
 
-        self.level_info = self.maze.get_level_info(0)
+        self.level_info = self._maze_.get_level_info(0)
 
     def tick(self):
         
@@ -54,7 +55,7 @@ class Ghost:
             self.calculateTargetPos()
             self.calculateNextCell()
         
-            next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
+            next_cell = self._maze_._maze_[int(self.next_cell[1])][int(self.next_cell[0])]
 
             if isinstance(next_cell, Wall):
                 # snap ghost to the correct placement next to the wall
@@ -68,7 +69,7 @@ class Ghost:
             #print("TRYING TO MOVE OUT", self.colour)
             self.calculateCurrentCell()
             self.calculateNextCell()
-            next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
+            next_cell = self._maze_._maze_[int(self.next_cell[1])][int(self.next_cell[0])]
 
             if isinstance(next_cell, Wall) and self.canvas_position[0] != 416:
                 # calculate which direction will get the ghost to 416
@@ -163,12 +164,12 @@ class Ghost:
                 direction_has_changed = True
             
             # get out current cell
-            temp_current_cell = self.maze.maze[int(self.current_cell[1])][int(self.current_cell[0])]
+            temp_current_cell = self._maze_._maze_[int(self.current_cell[1])][int(self.current_cell[0])]
 
             # check if we have hit a teleport square
             if isinstance(temp_current_cell, Moveable) and temp_current_cell.is_teleport:
                 # get the index of the other teleport square
-                index_other_cell = self.maze.getOtherTeleportSquareLocation(temp_current_cell)
+                index_other_cell = self._maze_.getOtherTeleportSquareLocation(temp_current_cell)
                 # change co-ordinates
                 index_next_square_after_teleport = [index_other_cell[0] + self.next_direction[0], index_other_cell[1]+self.next_direction[1]]  
                 self.canvas_position[0] = index_next_square_after_teleport[0]*32 -16
@@ -178,7 +179,7 @@ class Ghost:
             
             else:
                 self.calculateNextCell()
-                temp_next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
+                temp_next_cell = self._maze_._maze_[int(self.next_cell[1])][int(self.next_cell[0])]
                 # check if next cell is junction
                 if isinstance(temp_next_cell, Moveable) and temp_next_cell.is_juction:
                         self.calculateNextDirection(temp_next_cell)
@@ -199,7 +200,7 @@ class Ghost:
         #print("Target Position:", self.target_position)
         #print("Target cell:", self.next_cell, end="\n\n")
         
-        next_cell = self.maze.maze[int(self.next_cell[1])][int(self.next_cell[0])]
+        next_cell = self._maze_._maze_[int(self.next_cell[1])][int(self.next_cell[0])]
         
         if isinstance(next_cell, Wall):
             # snap ghost to the correct placement next to the wall
@@ -236,7 +237,7 @@ class Ghost:
             case GhostState.FRIGHTENED: 
                 self.enableFrightened()
                 self.speed_modifier = self.level_info["frightGhostSpeed"]
-                self.image.switchFrameSet(self.frightened_image.frames)
+                self.image.switchFrameSet(self._frightened_image_.frames)
             
             case GhostState.DEAD:
                 self.speed_modifier = 1
@@ -274,16 +275,16 @@ class Ghost:
             if self.is_dead:
                 match(self.direction):
                     case [0,1] : 
-                        self.updateFrame(self.dead_image.frames)
+                        self.updateFrame(self._dead_image_.frames)
                         self.image.setFrameStatic(0)
                     case [0,-1]: 
-                        self.updateFrame(self.dead_image.frames)
+                        self.updateFrame(self._dead_image_.frames)
                         self.image.setFrameStatic(1)
                     case [1,0] : 
-                        self.updateFrame(self.dead_image.frames)
+                        self.updateFrame(self._dead_image_.frames)
                         self.image.setFrameStatic(2)
                     case [-1,0]: 
-                        self.updateFrame(self.dead_image.frames)
+                        self.updateFrame(self._dead_image_.frames)
                         self.image.setFrameStatic(3)
 
             elif self.is_frightened:
@@ -369,8 +370,8 @@ class Ghost:
             junction_location[0] = int(junction_location[0])
             junction_location[1] = int(junction_location[1])
 
-            # get the cell from the maze
-            cell_next_to_juction = self.maze.maze[junction_location[1]][junction_location[0]]
+            # get the cell from the _maze_
+            cell_next_to_juction = self._maze_._maze_[junction_location[1]][junction_location[0]]
 
             # check if is not traversable
             if not isinstance(cell_next_to_juction, Moveable):
@@ -397,7 +398,7 @@ class Ghost:
 
     def enableFrightened(self):
         self.is_frightened = True
-        self.updateFrame(self.frightened_image.frames)
+        self.updateFrame(self._frightened_image_.frames)
         # set target square to outside ghostHouse
 
     def disableFrightened(self):
@@ -414,10 +415,10 @@ class Ghost:
         b = (pos1[1] - pos2[1])**2
         return math.sqrt(a + b) 
     
-    def reset(self, level, maze,startpos):
+    def reset(self, level, _maze_,startpos):
         self.canvas_position = startpos
-        self.maze = maze
-        self.level_info = self.maze.get_level_info(level)
+        self._maze_ = _maze_
+        self.level_info = self._maze_.get_level_info(level)
         self.is_dead = False
         self.is_frightened = False
 
@@ -431,4 +432,6 @@ class Ghost:
 
 
     def serialise(self) -> dict:
-        pass
+        self_all_attr = inspect.getmembers(self, lambda a: not(inspect.isroutine(a)))
+        self_filtered = [attr for attr in self_all_attr if not(attr[0].startswith("_") and attr[0].endswith("_"))]
+        print(self_filtered)

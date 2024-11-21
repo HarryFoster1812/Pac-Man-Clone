@@ -300,12 +300,30 @@ class Game:
             index = self.settings.get_cheat_code_index(event.keysym_num)
             self._cheat_funcs_[index]()
 
-    def serialize(self) -> dict:
+    def serialise_attr(self, attr):
+        module = attr.__class__.__module__
+        if module == "builtins":
+            return attr
+        else:
+            return attr.serialise()
+
+    def serialise(self) -> dict:
+        serial_dict = {}
         self_all_attr = inspect.getmembers(self, lambda a: not(inspect.isroutine(a)))
         self_filtered = [attr for attr in self_all_attr if not(attr[0].startswith("_") and attr[0].endswith("_"))]
         
-        print(self_filtered)
+        # loop over each attribute in the class
+        for attr in self_filtered:
+            # check is the attribute is a list
+            if isinstance(attr[1], list):
+                temp_list = []
+                for custom_object in attr[1]:
+                    temp_list.append(self.serialise_attr(custom_object))
+                        
+                serial_dict[attr[0]] = temp_list
 
+            else:
+                serial_dict[attr[0]] = self.serialise_attr(attr[1])
 
 """
 # Notes while researching:
@@ -384,12 +402,12 @@ add another life
 reset the ghosts
 release all of the ghosts
 Speed inc
+Populate the boss screen
+Make it look nicer
 
 TO DO:
 
 Add save / load game
-Populate the boss screen
-Make it look nicer
 Add consumeables
 Pinky just kinda spawns in on pacman dead reset idk why
 

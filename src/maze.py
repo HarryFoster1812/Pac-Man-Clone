@@ -239,4 +239,13 @@ class Maze:
         del obj
 
     def serialise(self) -> dict:
-        pass
+        serial_dict = {}
+        serialised_maze = []
+
+        for row in self.maze:
+            serialised_row = []
+            for cell in row:
+                if cell is None:
+                    serialised_row.append(None)
+                else:
+                    serialised_row.append(cell.serialise())

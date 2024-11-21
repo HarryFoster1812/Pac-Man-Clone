@@ -176,4 +176,21 @@ class Pacman:
         self.is_dead = True
 
     def serialise(self) -> dict:
-        pass
+        serialised_dict = {
+            "canvas_position" : self.canvas_position,
+            "target_position" : self.target_position,
+            "current_cell" : self.current_cell,
+            "next_cell" : self.next_cell,
+            "direction" : self.direction,
+            "next_direction" : self.next_direction,
+            "speed_modifier" : self.speed_modifier,
+            "tick_count" : self.tick_count,
+            "self.is_dead" : self.is_dead
+        }
+
+        return serialised_dict
+
+    def deserialise(self, info: dict):
+        for key, value in dict.items():
+            self.__setattr__(key, value)
+            self.updateFrame()

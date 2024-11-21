@@ -1,15 +1,8 @@
-from src.game import Game
-from src.settings import Settings
-from src.player import Player
-import pickle
-from tkinter import *
+import json
+from PIL import Image
 
-root =  Tk()
-
-settings = Settings()
-player = Player()
-test = Game(settings, player)
+root =  Image.open("assets/Dot.png")
 
 
-with open("file.pickle", "wb") as my_file:
-    pickle.dump(test, my_file)
+with open("file.json", "wb") as my_file:
+    json.dump(root, my_file)

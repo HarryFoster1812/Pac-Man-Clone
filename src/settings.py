@@ -52,4 +52,7 @@ class Settings():
         return False
         
     def serialise(self) -> dict:
-        pass
+        return self.__settings
+    
+    def deserialise(self, settings):
+        self.__settings = settings
