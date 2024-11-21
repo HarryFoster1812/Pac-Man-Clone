@@ -64,9 +64,9 @@ class Maze:
 
     level_info = [
         {
-            "pacmanSpeed" : 0.8,
-	    	"ghostSpeed" : 0.75,
-	    	"frightPacManSpeed" : 0.9,
+            "pacmanSpeed" : 1.3,
+	    	"ghostSpeed" : 0.6,
+	    	"frightPacManSpeed" : 1.6,
 	    	"frightGhostSpeed" : 0.5,
 	    	"frightFrames" : 6*60,
 	    	"frightFlashStart" : 5*2*5,
@@ -74,9 +74,9 @@ class Maze:
 	    }, 
     
 	    {
-	    	"pacmanSpeed" : 0.9,
-	    	"ghostSpeed" : 0.85,
-	    	"frightPacManSpeed" : 0.95,
+	    	"pacmanSpeed" : 1.6,
+	    	"ghostSpeed" : 0.6,
+	    	"frightPacManSpeed" : 1.7,
 	    	"frightGhostSpeed" : 0.55,
 	    	"frightFrames" : 5*60,
 	    	"frightFlashStart" : 5*2*5,
@@ -84,9 +84,9 @@ class Maze:
 	    }, 
     
 	    {
-	    	"pacmanSpeed" : 0.9,
-	    	"ghostSpeed" : 0.85,
-	    	"frightPacManSpeed" : 0.95,
+	    	"pacmanSpeed" : 1.6,
+	    	"ghostSpeed" : 0.65,
+	    	"frightPacManSpeed" : 1.7,
 	    	"frightGhostSpeed" : 0.55,
 	    	"frightFrames" : 4*60,
 	    	"frightFlashStart" : 5*2*5,
@@ -94,9 +94,9 @@ class Maze:
 	    } ,
     
 	    {
-	    	"pacmanSpeed" : 0.9,
-	    	"ghostSpeed" : 0.85,
-	    	"frightPacManSpeed" : 0.95,
+	    	"pacmanSpeed" : 1.6,
+	    	"ghostSpeed" : 0.65,
+	    	"frightPacManSpeed" : 2,
 	    	"frightGhostSpeed" : 0.55,
 	    	"frightFrames" : 3*60,
 	    	"frightFlashStart" : 5*2*5,
@@ -105,9 +105,9 @@ class Maze:
     
     
 	    {
-	    	"pacmanSpeed" : 1,
-	    	"ghostSpeed" : 0.95,
-	    	"frightPacManSpeed" : 1,
+	    	"pacmanSpeed" : 1.6,
+	    	"ghostSpeed" : 0.7,
+	    	"frightPacManSpeed" : 2,
 	    	"frightGhostSpeed" : 0.6,
 	    	"frightFrames" : 2*60,
 	    	"frightFlash" : 5*2*5,
@@ -115,9 +115,9 @@ class Maze:
 	    },
     
 	    {
-	    	"pacmanSpeed" : 1,
-	    	"ghostSpeed" : 0.95,
-	    	"frightPacManSpeed" : 1,
+	    	"pacmanSpeed" : 1.5,
+	    	"ghostSpeed" : 0.7,
+	    	"frightPacManSpeed" : 2,
 	    	"frightGhostSpeed" : 0.6,
 	    	"frightFrames" : 2*60,
 	    	"frightFlash" : 5*2*5,
@@ -125,19 +125,19 @@ class Maze:
 	    },
     
 	    {
-	    	"pacmanSpeed" : 1,
-	    	"ghostSpeed" : 0.95,
-	    	"frightPacManSpeed" : 1,
-	    	"frightGhostSpeed" : 0.6,
+	    	"pacmanSpeed" : 1.5,
+	    	"ghostSpeed" : 0.7,
+	    	"frightPacManSpeed" : 2,
+	    	"frightGhostSpeed" : 0.5,
 	    	"frightFrames" : 2*60,
 	    	"frightFlash" : 5*2*5,
 	    	"modes" : [[GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 20*60], [GhostState.SCATTER, 5*60], [GhostState.CHASE, 1037*60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]
 	    },
     
 	    {
-	    	"pacmanSpeed" : 1,
-	    	"ghostSpeed" : 0.95,
-	    	"frightPacManSpeed" : 1,
+	    	"pacmanSpeed" : 1.5,
+	    	"ghostSpeed" : 0.8,
+	    	"frightPacManSpeed" : 2,
 	    	"frightGhostSpeed" : 0.6,
 	    	"frightFrames" : 2*60,
 	    	"frightFlash" : 5*2*5,
@@ -145,8 +145,8 @@ class Maze:
 	    },
     
 	    {
-	    	"pacmanSpeed" : 1,
-	    	"ghostSpeed" : 0.95,
+	    	"pacmanSpeed" : 1.5,
+	    	"ghostSpeed" : 0.8,
 	    	"frightPacManSpeed" : 1,
 	    	"frightGhostSpeed" : 0.6,
 	    	"frightFrames" : 1*60,
@@ -155,8 +155,8 @@ class Maze:
 	    },
     
 	    {
-	    	"pacmanSpeed" : 1,
-	    	"ghostSpeed" : 0.95,
+	    	"pacmanSpeed" : 1.5,
+	    	"ghostSpeed" : 1,
 	    	"frightPacManSpeed" : 1,
 	    	"frightGhostSpeed" : 0.6,
 	    	"frightFrames" : 3*60,

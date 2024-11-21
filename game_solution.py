@@ -1,12 +1,13 @@
 from tkinter import Frame, Tk, Canvas, Event, Button, Label, Entry, messagebox, filedialog
 import threading
-import pickle
+import pickle, json
 from src.animate import Animate
 from src.leaderboard import Leaderboard
 from src.game import Game
 from src.settings import Settings
 from src.player import Player
-DEBUG = True
+
+DEBUG = False
 
 class App():
 
@@ -241,8 +242,8 @@ class LevelScreen(Frame):
 
         self.controller = controller
 
-        title_label = Label(self, text="LOADING LEVEL", background="#000", fg="#FFF") # create the title label
-        title_label.pack() 
+        title_label = Label(self, text="LOADING LEVEL", background="#000", fg="#FFF", font=("Ariel", 20)) # create the title label
+        title_label.pack(anchor="center") 
 
     def check_game_screen(self):
         # check if game screen is instanciated in app
@@ -279,23 +280,32 @@ class GameScreen(Frame):
 
         self.high_score = self.controller.leaderboard.get_high_score()
 
+        self.lives_images = []
+
+        self.player_score_label = None
+        self.high_score_label = None
+        self.level_label = None
+
         self.game_canvas.update()
         self.ms_delay = 17 #17
 
     def drawGame(self):
         # player Name label
         self.game_canvas.delete("all")
-        Label(self.game_canvas, text=self.current_player.name).place(x=0, y=0)
-        self.player_score_label = Label(self.game_canvas, text=self.current_player.score)
-        self.player_score_label.place(x=0, y=32)
 
-        Label(self.game_canvas, text="High Score").place(x=32, y=0)
-        self.high_score_label = Label(self.game_canvas, text=self.high_score)
-        self.high_score_label.place(x=32, y=32)
+        self.lives_images.clear()
 
-        Label(self.game_canvas, text="Level").place(x=32, y=0)
-        self.high_score_label = Label(self.game_canvas, text=self.game.level)
-        self.high_score_label.place(x=32, y=32)
+        Label(self.game_canvas, text=self.current_player.name, font=('Arial', 25), bg="#000", fg="#FFF").place(x=3*32, y=10)
+        self.player_score_label = Label(self.game_canvas, text=self.current_player.score, font=('Arial', 25), bg="#000", fg="#FFF")
+        self.player_score_label.place(x=3*32, y=42)
+
+        Label(self.game_canvas, text="High Score", bg="#000", fg="#FFF", font=('Arial', 25)).place(relx=0.5, y=10, anchor="c")
+        self.high_score_label = Label(self.game_canvas, text=self.high_score, bg="#000", fg="#FFF", font=('Arial', 25))
+        self.high_score_label.place(relx=0.5, y=42, anchor="c")
+
+        Label(self.game_canvas, text="Level", bg="#000", fg="#FFF", font=('Arial', 90)).place(x=23*32, y=10)
+        self.level_label = Label(self.game_canvas, text=self.game.level, bg="#000", fg="#FFF", font=('Arial', 25))
+        self.level_label.place(x=23*32, y=42)
 
         if (DEBUG):
             for i in range(36):
@@ -316,6 +326,14 @@ class GameScreen(Frame):
                 self.game_canvas.create_rectangle((ghost_temp_rectangle_x,ghost_temp_rectangle_y), (ghost_temp_rectangle_x+32,ghost_temp_rectangle_y+32), fill=ghost.colour)
         
         self.add_image_parents()
+        for i in range(self.game.lives):
+            temp = Label(self, image="", bg="#000")
+            temp.place(x=(i*64+5),y=(35*32-16))
+            temp_image = Animate("assets/PacManRight.gif", frame=1)
+            temp_image.addParent(temp)
+            self.lives_images.append([temp, temp_image])
+
+
 
         # top level 
         #PLAYERNAME       HIGHSCORE     LEVEL
@@ -339,10 +357,12 @@ class GameScreen(Frame):
         self.pause_menu_active = False
     # 60 fps
     def update(self):
+        print(self.tk.call("after", "info"))
         if self.game.isPaused:
             self.create_pause_menu()
             return
         else:
+            lives_before = self.game.lives
             self.game.tick()
             # draw pac man
             pacman_pos = self.game.pacman.canvas_position
@@ -371,8 +391,25 @@ class GameScreen(Frame):
                 self.game.isPaused = True
                 self.controller.switchFrame(App.screenNums["LevelScreen"])
 
-            if self.game.lives == -1:
-                self.game_over()
+            if self.game.lives == 0:
+                # add game over message
+                Label(self.game_canvas, text="GAME OVER", bg="#000", fg="#FFF").place(relx=.5, rely=.5, anchor="c")
+                pacman_life = self.lives_images[-1]
+                self.lives_images.remove(pacman_life)
+                self.after(3000, self.game_over)  
+                return
+            
+            elif self.game.lives < lives_before:
+                pacman_life = self.lives_images[-1]
+                self.lives_images.remove(pacman_life)
+            
+            elif self.game.lives > lives_before:
+                temp = Label(self, image="", bg="#000")
+                i = len(self.lives_images)
+                temp.place(x=(i*64+5),y=(35*32-16))
+                temp_image = Animate("assets/PacManRight.gif", frame=1)
+                temp_image.addParent(temp)
+                self.lives_images.append([temp, temp_image])
                 
         
         self.thread_id = self.after(self.ms_delay, self.update)
@@ -389,6 +426,8 @@ class GameScreen(Frame):
         for ghost in self.game.ghosts:
             ghost_pos = ghost.canvas_position
             ghost.image.addParent(self.game_canvas, x=ghost_pos[0], y=ghost_pos[1])
+        
+        self.game_canvas.tag_raise(self.game.pacman.image.id)
 
     def remove_image_parents(self):
         for i, row in enumerate(self.game.maze.maze):
@@ -401,12 +440,18 @@ class GameScreen(Frame):
         for ghost in self.game.ghosts:
             del ghost.image
 
+
     def load_game(self, game):
         self.game = game
         # add parents to all of the images
 
     def game_over(self):
-        pass
+        self.controller.leaderboard.add_new_score(self.current_player)
+        # switch to main menu
+        self.controller.switchFrame(App.screenNums["MainMenu"])
+        self.controller.replace_game_screen()
+        # destroy its self
+        self.destroy()
 
     def manual_unpause(self):
         self.destroy_pause_menu()
@@ -421,7 +466,7 @@ class GameScreen(Frame):
     def next_level(self):
         self.pause_update_thread()
         self.game.next_level()
-        self.ms_delay = 200
+        self.level_label.configure(text=self.game.level)
         self.controller.switchFrame(App.screenNums["GameScreen"])
 
     def save_game(self):
@@ -459,7 +504,7 @@ class PauseMenu(Frame):
         self.save_button = Button(self, text="Save", command=self.save_button_event)
         self.save_button.pack(anchor="center")
         # settings ?
-        self.settings_button =Button(self, text="Settings", command=lambda: self.controller.controller.switchFrame(App.screenNums["OptionScreen"]))
+        self.settings_button =Button(self, text="Settings", command=self.settings_button_event)
         self.settings_button.pack(anchor="center")
         # quit button
         Button(self, text="Quit", command=self.quit_button_event).pack(anchor="center")
@@ -467,10 +512,14 @@ class PauseMenu(Frame):
     def save_button_event(self):
         self.controller.save_game()
 
+    def settings_button_event(self):
+        # save leaderboard Score
+        self.controller.controller.switchFrame(App.screenNums["OptionScreen"])
+        self.destroy()
+
     def quit_button_event(self):
         # save leaderboard Score
-
-        self.controller.destroy()
+        self.controller.game_over()
 
     def EventHandler(self, event: Event):
         pass
@@ -486,17 +535,27 @@ class LeaderboardScreen(Frame):
 
         self.leaderboard = controller.leaderboard
 
+    def populate(self):
+        
+        for widget in self.winfo_children():
+            widget.destroy()
+
         Label(self, text="Leaderboard").pack()
 
         # iterate through the scores and display them
         for score in self.leaderboard.scores:
             Label(self, text=f"{score[0]}: {score[1]}", bg="#000", fg="#fff").pack()
 
-        Button(self, text="Back", command=lambda: controller.goToPreviousScreen()).pack() # lambda is used because otherwise it doesnt work (i dont know why)
+        Button(self, text="Back", command=lambda: self.controller.goToPreviousScreen()).pack() # lambda is used because otherwise it doesnt work (i dont know why)
+
 
     def EventHandler(self, event: Event):
         if event.keysym_num == 65293: # enter key
             self.controller.goToPreviousScreen()
+
+    def tkraise(self, aboveThis = None) -> None:
+        self.populate()
+        return super().tkraise(aboveThis)
 
 class OptionScreen(Frame):
     def __init__(self, parent, controller):

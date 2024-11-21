@@ -10,6 +10,7 @@ from src.player import Player
 
 class Game:
 
+
     def __init__(self, settings: Settings, player: Player) -> None:
         self.isPaused = True # this is when the user pauses the game
         self.info_pause = False # this is when the game is paused to show the score or when pac man is dead
@@ -24,6 +25,7 @@ class Game:
         self.pacman_frame_halt = 0
         self.saved_frame_counter = 0 # when ever we switch to fright mode the frame counter is overridden so we need to store the frame count elsewhere
         self.frame_counter = 0
+
         
         self.pacman = Pacman([416,816], self.maze)
         self.pacman.speed_modifier = self.level_info["pacmanSpeed"]
@@ -45,6 +47,10 @@ class Game:
         self.next_ghost_to_release = 1
         self.level = 0
         self.lives = 3
+
+        self.cheat_funcs = [self.life_cheat, self.reset_ghosts_cheat, self.release_all_ghosts_cheat, self.increase_speed_cheat]
+        self.next_tick_increment_lives = False
+
 
         
 
@@ -84,11 +90,32 @@ class Game:
             self.mode_pointer += 1
             self.change_all_ghost_state(self.level_info["modes"][self.mode_pointer][0])
 
+    def info_pause_switch(self):
+        if self.frame_counter == 5*23:
+            if self.pacman.is_dead:
+                self.dead_reset()
+                self.lives -= 1
+            
+            else:
+                self.info_pause = False
+        elif self.pacman.is_dead:
+            self.pacman.tick()
+
     def tick(self):
         
         self.frame_counter += 1
-        if self.frightened_mode: # check is frightened mode should end
+        if self.next_tick_increment_lives:
+            self.lives += 1
+            self.next_tick_increment_lives = False
+
+
+        if self.info_pause:
+            self.info_pause_switch()
+            return
+        
+        elif self.frightened_mode: # check is frightened mode should end
             self.check_fright_mode()
+    
         else:
             self.check_mode_switch()
 
@@ -163,20 +190,27 @@ class Game:
                         case Ghost.GhostState.FRIGHTENED: self.ghostDead(ghost) # frightend
                         case Ghost.GhostState.DEAD: pass
                         case Ghost.GhostState.MOVING_INTO_GHOST_HOUSE: pass
-                        case _: self.deadPacMan()    
+                        case _: 
+                            self.deadPacMan()   
+                            return 
 
     def deadPacMan(self):
         # game pauses
         self.info_pause = True
-        print("PACMAN DEAD")
+        self.frame_counter = 0
         # pacman changes to dead animation
+        self.pacman.start_death()
+        print("PACMAN DEAD")
         # disable controllers
 
 
     def dead_reset(self): # just pac man and the ghosts reset
         self.pacman.reset(self.level, self.maze)
         self.ghost_reset()
-        
+        self.info_pause = False
+        self.frame_counter = 0
+        self.mode_pointer = 0
+        self.pacman.speed_modifier = self.level_info["pacmanSpeed"]
 
     def ghost_reset(self):
         ghost_startpos = [[416, 436],
@@ -227,6 +261,21 @@ class Game:
                     case _:
                         ghost.disableFrightened()
 
+
+    def life_cheat(self):
+        self.next_tick_increment_lives = True
+
+    def reset_ghosts_cheat(self):
+        self.ghost_reset()
+
+    def release_all_ghosts_cheat(self):
+        for ghost in self.ghosts:
+            if ghost.state == GhostState.IN_GHOST_HOUSE:
+                ghost.changeState(GhostState.MOVING_OUT_OF_GHOST_HOUSE)
+
+    def increase_speed_cheat(self):
+        self.pacman.speed_modifier = 2.5
+
     def EventHandler(self, event):
         if self.isPaused:
             self.toggleGame()
@@ -247,7 +296,8 @@ class Game:
             self.toggleGame() # pause the game
 
         elif event.keysym_num in self.settings.cheat_keys:
-            pass
+            index = self.settings.get_cheat_code_index(event.keysym_num)
+            self.cheat_funcs[index]()
 
 """
 # Notes while researching:
@@ -320,18 +370,22 @@ NEED TO ADD A PAUSE SCREEN
 Add game timer to allow the switching of States
 Add level based values (speed modifiers)
 
-TO DO:
-
-Add save / load game
-Add death
-Add reset level / redraw after death
 Add game over / save score
-Populate the boss screen
-Make it look nicer
-Add consumeables
+Add death
+Add lives Drawing
+Add reset level / redraw after death
 
 Need to add cheat codes
 add another life
 reset the ghosts
 release all of the ghosts
+Speed inc
+
+TO DO:
+
+Add save / load game
+Populate the boss screen
+Make it look nicer
+Add consumeables
+
 """

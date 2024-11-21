@@ -60,7 +60,6 @@ class GameImage:
         self.isIdle = False
         self.frames = frameList[:]
         self.nextFrame()
-        pass
 
     def rotateFrames(self, frames:list, theta: int) -> list:
         temp = []

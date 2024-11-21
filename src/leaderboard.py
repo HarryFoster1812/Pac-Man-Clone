@@ -1,4 +1,5 @@
 import json
+from src.player import Player
 
 class Leaderboard:
 
@@ -20,7 +21,14 @@ class Leaderboard:
             json.dump(self.scores, leaderboard_file)
 
     def sortScores(self):
-        pass
+        self.scores = sorted(self.scores, key=lambda x: x[1], reverse=True)
 
     def get_high_score(self):
         return self.scores[0][1]
+    
+    def add_new_score(self, player: Player):
+        name = player.name
+        score = player.score
+        self.scores.append([name, score])
+        self.sortScores()
+        self.writeScores()

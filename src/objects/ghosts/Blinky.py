@@ -17,7 +17,13 @@ class Blinky(Ghost):
 
     def reset(self, level, maze, startpos):
         super().reset(level, maze, startpos)
+       
+        parent = self.image.parent
+        id = self.image.id
         self.image = GameImage("assets/Ghosts/Red/Red", load_ghost_variations=True)
+        self.image.id = id
+        self.image.parent = parent
+       
         self.direction = [0, 0]
         self.next_direction = [-1,0]
         self.calculateCurrentCell()

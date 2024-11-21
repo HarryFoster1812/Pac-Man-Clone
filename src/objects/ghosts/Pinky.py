@@ -19,7 +19,13 @@ class Pinky(Ghost):
 
     def reset(self, level, maze, startpos):
         super().reset(level, maze, startpos)
+        
+        parent = self.image.parent
+        id = self.image.id
         self.image = GameImage("assets/Ghosts/Pink/Pink", load_ghost_variations=True) # need to fill this out
+        self.image.id = id
+        self.image.parent = parent
+        
         self.direction = [0, 1]
         self.next_direction = [0,1]
         self.calculateCurrentCell()

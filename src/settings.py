@@ -23,9 +23,10 @@ class Settings():
             "down_key":  [65364, 'Down'],
             "pause_key": [32, 'Space']
         }
-        self.cheat_keys = [108, # add a life
-                           109, # change speed
-                           103 # reset ghosts
+        self.cheat_keys = [108, # add a life      'l'
+                           109, # reset ghosts    'm'
+                           103, # release ghosts  'g'
+                           104  # speed up pacman 'h'
                            ]
 
     def getKey(self, key_name: str) -> int:
@@ -37,6 +38,9 @@ class Settings():
     def getKeyValues(self) -> list:
         return [item for item in self.__settings.items()] 
     
+    def get_cheat_code_index(self, code):
+        return self.cheat_keys.index(code)
+
     def key_exists(self, key_to_check) -> bool:
         if key_to_check in self.cheat_keys:
             return True

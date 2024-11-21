@@ -13,14 +13,23 @@ class Pacman:
         self.direction = [0,0] # the current direction that pacman is traveling
         self.next_direction = [0,0] # this will be via user input 
         self.speed = 5.05050508333 # pixels this is from 
+        self.maze = maze
         self.speed_modifier = 2 # float 0-1
         
+        self.pacman_death_image = GameImage("assets/pacmanDeath.gif")
+
         self.image = GameImage("assets/PacManRight.gif", calculate_rotations=True) # need to fill this out
         self.tick_count = 0
 
-        self.maze = maze
+        self.is_dead = False
+
 
     def tick(self):
+
+        if self.is_dead:
+            self.updateFrame()
+            return
+
         direction_has_changed = False
 
         self.calculateCurrentCell()
@@ -91,8 +100,14 @@ class Pacman:
         self.target_position = [x,y]
 
     def reset(self, level, maze):
+        parent = self.image.parent
+        id = self.image.id
         self.__init__([416,816], maze)
+        self.image.parent = parent
+        self.image.id = id
         self.calculateCurrentCell()
+        self.is_dead = False
+        self.updateFrame(self.image.right)
 
     def snapPosition(self):
         next_position = [
@@ -152,3 +167,7 @@ class Pacman:
 
     def disableIdle(self):
         self.image.disableIdle()
+
+    def start_death(self):
+        self.updateFrame(self.pacman_death_image.frames)
+        self.is_dead = True
