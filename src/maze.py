@@ -1,7 +1,7 @@
+import math
 from src.objects.map_objects.wall import Wall
 from src.objects.map_objects.moveable import Moveable
 from src.objects.ghosts.ghost_state import GhostState
-import math
 
 
 class Maze:
@@ -68,95 +68,188 @@ class Maze:
 
     # has dot, is junction, can move up, is powerup , is teleport
 
-    level_info = [{"pacmanSpeed": 1.3, "ghostSpeed": 0.6, "frightPacManSpeed": 1.6, "frightGhostSpeed": 0.5, "frightFrames": 6 *
-                   60, "frightFlashStart": 5 *
-                   2 *
-                   5, "modes": [[GhostState.SCATTER, 7 *
-                                 60], [GhostState.CHASE, 20 *
-                                       60], [GhostState.SCATTER, 7 *
-                                             60], [GhostState.CHASE, 20 *
-                                                   60], [GhostState.SCATTER, 5 *
-                                                         60], [GhostState.CHASE, 20 *
-                                                               60], [GhostState.SCATTER, 5 *
-                                                                     60], [GhostState.CHASE, math.inf]]}, {"pacmanSpeed": 1.6, "ghostSpeed": 0.6, "frightPacManSpeed": 1.7, "frightGhostSpeed": 0.55, "frightFrames": 5 *
-                                                                                                           60, "frightFlashStart": 5 *
-                                                                                                           2 *
-                                                                                                           5, "modes": [[GhostState.SCATTER, 7 *
-                                                                                                                         60], [GhostState.CHASE, 20 *
-                                                                                                                               60], [GhostState.SCATTER, 7 *
-                                                                                                                                     60], [GhostState.CHASE, 20 *
-                                                                                                                                           60], [GhostState.SCATTER, 5 *
-                                                                                                                                                 60], [GhostState.CHASE, 1033 *
-                                                                                                                                                       60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]}, {"pacmanSpeed": 1.6, "ghostSpeed": 0.65, "frightPacManSpeed": 1.7, "frightGhostSpeed": 0.55, "frightFrames": 4 *
-                                                                                                                                                                                                                      60, "frightFlashStart": 5 *
-                                                                                                                                                                                                                      2 *
-                                                                                                                                                                                                                      5, "modes": [[GhostState.SCATTER, 7 *
-                                                                                                                                                                                                                                    60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                          60], [GhostState.SCATTER, 7 *
-                                                                                                                                                                                                                                                60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                                      60], [GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                            60], [GhostState.CHASE, 1033 *
-                                                                                                                                                                                                                                                                  60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]}, {"pacmanSpeed": 1.6, "ghostSpeed": 0.65, "frightPacManSpeed": 2, "frightGhostSpeed": 0.55, "frightFrames": 3 *
-                                                                                                                                                                                                                                                                                                                                 60, "frightFlashStart": 5 *
-                                                                                                                                                                                                                                                                                                                                 2 *
-                                                                                                                                                                                                                                                                                                                                 5, "modes": [[GhostState.SCATTER, 7 *
-                                                                                                                                                                                                                                                                                                                                               60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                                                                                                                                     60], [GhostState.SCATTER, 7 *
-                                                                                                                                                                                                                                                                                                                                                           60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                                                                                                                                                 60], [GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                       60], [GhostState.CHASE, 1033 *
-                                                                                                                                                                                                                                                                                                                                                                             60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]}, {"pacmanSpeed": 1.6, "ghostSpeed": 0.7, "frightPacManSpeed": 2, "frightGhostSpeed": 0.6, "frightFrames": 2 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                            60, "frightFlashStart": 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                            2 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                            5, "modes": [[GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                          60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                60], [GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                      60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            60], [GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  60], [GhostState.CHASE, 1037 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]}, {"pacmanSpeed": 1.5, "ghostSpeed": 0.7, "frightPacManSpeed": 2, "frightGhostSpeed": 0.6, "frightFrames": 2 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       60, "frightFlashStart": 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       2 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       5, "modes": [[GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           60], [GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       60], [GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             60], [GhostState.CHASE, 1037 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]}, {"pacmanSpeed": 1.5, "ghostSpeed": 0.7, "frightPacManSpeed": 2, "frightGhostSpeed": 0.5, "frightFrames": 2 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  60, "frightFlashStart": 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  2 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  5, "modes": [[GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      60], [GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  60], [GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        60], [GhostState.CHASE, 1037 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              60], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]}, {"pacmanSpeed": 1.5, "ghostSpeed": 0.8, "frightPacManSpeed": 2, "frightGhostSpeed": 0.6, "frightFrames": 2 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             60, "frightFlashStart": 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             2 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             5, "modes": [[GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 60], [GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             60], [GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   60], [GhostState.CHASE, 1037], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]}, {"pacmanSpeed": 1.5, "ghostSpeed": 0.8, "frightPacManSpeed": 1, "frightGhostSpeed": 0.6, "frightFrames": 1 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            60, "frightFlashStart": 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            2 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            3, "modes": [[GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                60], [GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            60], [GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  60], [GhostState.CHASE, 1037], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]}, {"pacmanSpeed": 1.5, "ghostSpeed": 1, "frightPacManSpeed": 1, "frightGhostSpeed": 0.6, "frightFrames": 3 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           60, "frightFlashStart": 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           2 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           5, "modes": [[GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               60], [GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     60], [GhostState.CHASE, 20 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           60], [GhostState.SCATTER, 5 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 60], [GhostState.CHASE, 1037], [GhostState.SCATTER, 1], [GhostState.CHASE, math.inf]]}]
+    level_info = [
+    {
+        "pacmanSpeed": 0.8,
+        "ghostSpeed": 0.75,
+        "frightPacManSpeed": 0.9,
+        "frightGhostSpeed": 0.5,
+        "frightFrames": 6 * 60,
+        "frightFlashStart": 5 * 2 * 5,
+        "modes": [
+            [GhostState.SCATTER, 7 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 7 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, math.inf],
+        ],
+    },
+    {
+        "pacmanSpeed": 0.9,
+        "ghostSpeed": 0.85,
+        "frightPacManSpeed": 0.95,
+        "frightGhostSpeed": 0.55,
+        "frightFrames": 5 * 60,
+        "frightFlashStart": 5 * 2 * 5,
+        "modes": [
+            [GhostState.SCATTER, 7 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 7 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 1033 * 60],
+            [GhostState.SCATTER, 1],
+            [GhostState.CHASE, math.inf],
+        ],
+    },
+    {
+        "pacmanSpeed": 0.9,
+        "ghostSpeed": 0.85,
+        "frightPacManSpeed": 0.95,
+        "frightGhostSpeed": 0.55,
+        "frightFrames": 4 * 60,
+        "frightFlashStart": 5 * 2 * 5,
+        "modes": [
+            [GhostState.SCATTER, 7 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 7 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 1033 * 60],
+            [GhostState.SCATTER, 1],
+            [GhostState.CHASE, math.inf],
+        ],
+    },
+    {
+        "pacmanSpeed": 0.9,
+        "ghostSpeed": 0.85,
+        "frightPacManSpeed": 0.95,
+        "frightGhostSpeed": 0.55,
+        "frightFrames": 3 * 60,
+        "frightFlashStart": 5 * 2 * 5,
+        "modes": [
+            [GhostState.SCATTER, 7 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 7 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 1033 * 60],
+            [GhostState.SCATTER, 1],
+            [GhostState.CHASE, math.inf],
+        ],
+    },
+    {
+        "pacmanSpeed": 1,
+        "ghostSpeed": 0.95,
+        "frightPacManSpeed": 1,
+        "frightGhostSpeed": 0.6,
+        "frightFrames": 2 * 60,
+        "frightFlashStart": 5 * 2 * 5,
+        "modes": [
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 1037 * 60],
+            [GhostState.SCATTER, 1],
+            [GhostState.CHASE, math.inf],
+        ],
+    },
+    {
+        "pacmanSpeed": 1,
+        "ghostSpeed": 0.95,
+        "frightPacManSpeed": 1,
+        "frightGhostSpeed": 0.6,
+        "frightFrames": 2 * 60,
+        "frightFlashStart": 5 * 2 * 5,
+        "modes": [
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 1037 * 60],
+            [GhostState.SCATTER, 1],
+            [GhostState.CHASE, math.inf],
+        ],
+    },
+    {
+        "pacmanSpeed": 1,
+        "ghostSpeed": 0.95,
+        "frightPacManSpeed": 1,
+        "frightGhostSpeed": 0.6,
+        "frightFrames": 2 * 60,
+        "frightFlashStart": 5 * 2 * 5,
+        "modes": [
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 1037 * 60],
+            [GhostState.SCATTER, 1],
+            [GhostState.CHASE, math.inf],
+        ],
+    },
+    {
+        "pacmanSpeed": 1,
+        "ghostSpeed": 0.95,
+        "frightPacManSpeed": 1,
+        "frightGhostSpeed": 0.6,
+        "frightFrames": 2 * 60,
+        "frightFlashStart": 5 * 2 * 5,
+        "modes": [
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 1037],
+            [GhostState.SCATTER, 1],
+            [GhostState.CHASE, math.inf],
+        ],
+    },
+    {
+        "pacmanSpeed": 1,
+        "ghostSpeed": 0.95,
+        "frightPacManSpeed": 1,
+        "frightGhostSpeed": 0.65,
+        "frightFrames": 1 * 60,
+        "frightFlashStart": 5 * 2 * 3,
+        "modes": [
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 1037],
+            [GhostState.SCATTER, 1],
+            [GhostState.CHASE, math.inf],
+        ],
+    },
+    {
+        "pacmanSpeed": 1,
+        "ghostSpeed": 0.95,
+        "frightPacManSpeed": 1,
+        "frightGhostSpeed": 0.7,
+        "frightFrames": 3 * 60,
+        "frightFlashStart": 5 * 2 * 5,
+        "modes": [
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 20 * 60],
+            [GhostState.SCATTER, 5 * 60],
+            [GhostState.CHASE, 1037],
+            [GhostState.SCATTER, 1],
+            [GhostState.CHASE, math.inf],
+        ],
+    },
+]
 
     def __init__(self, file_location: str):
         with open(file_location, "r") as maze_file:

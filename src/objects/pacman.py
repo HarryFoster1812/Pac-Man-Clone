@@ -20,7 +20,7 @@ class Pacman:
         self.next_direction = [0, 0]  # this will be via user input
 
         self._maze_ = maze
-        self.speed_modifier = 2  # float 0-1
+        self.speed_modifier = 0.8  # float 0-1
 
         self._pacman_death_image_ = GameImage("assets/pacmanDeath.gif")
 

@@ -521,8 +521,7 @@ class GameScreen(Frame):
         # High Score Value (Below the High Score label, centered)
         self.high_score_value_label = Label(
             self.game_canvas,
-            text=f"{
-                self.high_score}",
+            text=f"{self.high_score}",
             font=label_font,
             fg=label_fg,
             bg=label_bg,
@@ -739,8 +738,6 @@ class GameScreen(Frame):
         with open(name, 'w') as file:
             json.dump(json_data, file)
 
-        self.add_image_parents()
-
     def tkraise(self, aboveThis=None):
         self.drawGame()
         self.thread_id = self.after(self.ms_delay, self.update)
@@ -929,8 +926,7 @@ class LeaderboardScreen(Frame):
             for idx, score in enumerate(scores):
                 rank_label = Label(
                     self.leaderboard_frame,
-                    text=f"{
-                        idx + 1}.",
+                    text=f"{idx + 1}.",
                     font=(
                         'Liberation Mono',
                         14,
@@ -947,8 +943,7 @@ class LeaderboardScreen(Frame):
 
                 score_label = Label(
                     self.leaderboard_frame,
-                    text=f"{
-                        score[1]}",
+                    text=f"{score[1]}",
                     font=(
                         'Liberation Mono',
                         14,
@@ -1034,9 +1029,7 @@ class OptionScreen(Frame):
             # Button to display current key binding
             button = Button(
                 button_frame,
-                text=f"{
-                    option_info[1]}: {
-                    option_info[0]}",
+                text=f"{option_info[1]}: {option_info[0]}",
                 bg="#444",
                 fg="#FFF",
                 font=(
